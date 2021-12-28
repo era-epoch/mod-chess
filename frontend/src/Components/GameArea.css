@@ -1,0 +1,7 @@
+.GameArea {
+  grid-column: main / right-sidebar;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
