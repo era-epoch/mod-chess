@@ -21,7 +21,7 @@ const standardSquares = [
 const initialGameState: (SquareContents|null)[][] = [
   [null, null, null, null, null, null, null, null, null, null],
   [null, constructPiece(RookBasic(), Owner.dark), constructPiece(KnightBasic(), Owner.dark), 
-    constructPiece(BishopBasic(), Owner.dark), constructPiece(KingBasic(), Owner.dark), constructPiece(QueenBasic(), Owner.dark), 
+    constructPiece(BishopBasic(), Owner.dark), constructPiece(QueenBasic(), Owner.dark), constructPiece(KingBasic(), Owner.dark), 
     constructPiece(BishopBasic(), Owner.dark), constructPiece(KnightBasic(), Owner.dark), constructPiece(RookBasic(), Owner.dark), null],
     [null, constructPiece(PawnBasic(), Owner.dark), constructPiece(PawnBasic(), Owner.dark), 
       constructPiece(PawnBasic(), Owner.dark), constructPiece(PawnBasic(), Owner.dark), constructPiece(PawnBasic(), Owner.dark), 
@@ -34,7 +34,7 @@ const initialGameState: (SquareContents|null)[][] = [
     constructPiece(PawnBasic(), Owner.light), constructPiece(PawnBasic(), Owner.light), constructPiece(PawnBasic(), Owner.light), 
     constructPiece(PawnBasic(), Owner.light), constructPiece(PawnBasic(), Owner.light), constructPiece(PawnBasic(), Owner.light), null],
   [null, constructPiece(RookBasic(), Owner.light), constructPiece(KnightBasic(), Owner.light), 
-    constructPiece(BishopBasic(), Owner.light), constructPiece(KingBasic(), Owner.light), constructPiece(QueenBasic(), Owner.light), 
+    constructPiece(BishopBasic(), Owner.light), constructPiece(QueenBasic(), Owner.light), constructPiece(KingBasic(), Owner.light), 
     constructPiece(BishopBasic(), Owner.light), constructPiece(KnightBasic(), Owner.light), constructPiece(RookBasic(), Owner.light), null],
   [null, null, null, null, null, null, null, null, null, null],
 ]
