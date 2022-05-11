@@ -1,7 +1,12 @@
 .Board {
-  background-color: bisque;
-  height: 80vh;
-  width: 80vh;
-  border-radius: 0.25rem;
-  box-shadow: 5px 5px 5px #bfbfbf;
+  height: 90vh;
+  width: 90vh;
+  background-color: whitesmoke;
+  display: flex;
+  flex-direction: column;
+}
+
+.row {
+  display: flex;
+  flex: 1;
 }
