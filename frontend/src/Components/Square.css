@@ -14,6 +14,7 @@
 
 .icon-wrapper {
   margin: auto;
+  display: grid;
 }
 
 .active-square {
@@ -35,12 +36,13 @@
   color: black;
 }
 
+.square-highlighted {
+  color: rgba(255,255,0,0.75);
+  font-size: 1.25rem;
+}
+
 .inactive-square {
   background-color: transparent;
   color: transparent;
   box-shadow: none;
-}
-
-svg {
-  margin: 0 auto;
 }

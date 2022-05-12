@@ -3,17 +3,36 @@ export enum Owner {
   'dark' = 1,
 }
 
-export interface Square {
-  posX: number;
-  posY: number;
-  contents: SquareContents;
+export enum PieceOrientation {
+  'top' = 0,
+  'bottom' = 1,
 }
+
+export enum SquareStatus {
+  HL = 'square-highlighted',
+  SEL = 'square-selected',
+}
+
+export enum PieceStatus {
+
+}
+
+export interface Move {
+  row: number,
+  col: number,
+}
+
 
 export interface SquareContents {
-  owner: Owner | null,
-  statusEffects: number[],
-  moveF: Function,
-  icon: any,
+  piece: Piece,
+  squareStatuses: Set<SquareStatus>,
 }
 
-export interface Piece extends SquareContents { }
+export interface Piece {
+  owner: Owner | null,
+  pieceStatuses: number[],
+  moveF: Function,
+  icon: any,
+  nMoves: number,
+  orientation: PieceOrientation | null,
+}
