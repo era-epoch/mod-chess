@@ -1,11 +1,13 @@
 export enum Owner {
   'light' = 0,
   'dark' = 1,
+  'neutral' = 2,
 }
 
-export enum PieceOrientation {
+export enum Orientation {
   'top' = 0,
   'bottom' = 1,
+  'neutral' = 2,
 }
 
 export enum SquareStatus {
@@ -17,6 +19,16 @@ export enum PieceStatus {
 
 }
 
+export enum PieceType {
+  'empty' = 0,
+  'pawn' = 1,
+  'rook' = 2,
+  'knight' = 3,
+  'bishop' = 4,
+  'queen' = 5,
+  'king' = 6,
+}
+
 export interface Move {
   row: number,
   col: number,
@@ -24,15 +36,17 @@ export interface Move {
 
 
 export interface SquareContents {
+  inBounds: boolean,
   piece: Piece,
   squareStatuses: Set<SquareStatus>,
 }
 
 export interface Piece {
-  owner: Owner | null,
-  pieceStatuses: number[],
-  moveF: Function,
+  owner: Owner,
+  pieceStatuses: Set<PieceStatus>,
+  moveF: (piece: Piece, row: number, col: number, board: SquareContents[][], checkKing: boolean) => Move[],
   icon: any,
   nMoves: number,
-  orientation: PieceOrientation | null,
+  orientation: Orientation,
+  pieceType: PieceType,
 }

@@ -7,33 +7,38 @@ interface Props {
   listener: boolean,
   row: number,
   col: number,
-  content: Piece|null,
-  statuses: Set<SquareStatus>,
-  gameState: (SquareContents|null)[][],
+  content: SquareContents,
+  gameState: (SquareContents)[][],
   clickHandler: Function,
 }
 
 const Square = (props: Props): JSX.Element => {
   let statusClasses = '';
-  props.statuses.forEach((s) => {
+  props.content.squareStatuses.forEach((s) => {
     statusClasses += s + ' ';
   })
 
   return (
-    <div className={`square ${props.content !== null ? 'active-square' : 'inactive-square'} ${statusClasses}`
+    <div className={`square ${props.content.inBounds ? 'active-square' : 'inactive-square'}`
     + `${(props.row + props.col)%2 === 0 ? ' light-square' : ' dark-square'}`} onClick={
-      () => props.clickHandler(props.row, props.col, props.gameState)
+      () => props.clickHandler(props.row, props.col)
       }>
-      <div className={`icon-wrapper`}>
-        {props.content && props.content.icon? 
-          <FontAwesomeIcon icon={props.content.icon} className={props.content.owner === Owner.dark ? 'dark-piece' : 'light-piece'} />
+      <div className={`icon-stack`}>
+        {props.content && props.content.piece.icon? 
+          <div className='icon-wrapper'>
+            <FontAwesomeIcon icon={props.content.piece.icon} className={props.content.piece.owner === Owner.dark ? 'dark-piece' : 'light-piece'} />
+          </div>
         : null }
-        {props.statuses.has(SquareStatus.HL)? 
-          <div className='square-highlighted'>
+        {props.content.squareStatuses.has(SquareStatus.HL)? 
+          <div className='icon-wrapper square-highlighted'>
             <FontAwesomeIcon icon={faCircle} /> 
           </div>
         : null}
-      </div> 
+        {props.content.squareStatuses.has(SquareStatus.SEL)?
+          <div className='square-selected'>
+          </div>
+        : null}
+      </div>
     </div>
   )
 }
