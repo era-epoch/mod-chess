@@ -1,4 +1,4 @@
-import { faCircle, faCrown } from '@fortawesome/free-solid-svg-icons';
+import { faCircle, faCrown, faSkull } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Owner, SquareContents, SquareStatus } from '../types';
 import './Square.css';
@@ -8,7 +8,7 @@ interface Props {
   row: number,
   col: number,
   content: SquareContents,
-  gameState: (SquareContents)[][],
+  gameState: SquareContents[][],
   clickHandler: Function,
 }
 
@@ -37,6 +37,11 @@ const Square = (props: Props): JSX.Element => {
         {props.content.squareStatuses.has(SquareStatus.HLC)? 
           <div className='icon-wrapper square-highlighted'>
             <FontAwesomeIcon icon={faCrown} /> 
+          </div>
+        : null}
+        {props.content.squareStatuses.has(SquareStatus.HLK)? 
+          <div className='icon-wrapper square-highlighted-kill'>
+            <FontAwesomeIcon icon={faSkull} /> 
           </div>
         : null}
         {props.content.squareStatuses.has(SquareStatus.SEL)?

@@ -52,6 +52,11 @@
   font-size: 1.25rem;
 }
 
+.square-highlighted-kill {
+  color: rgba(255,0,0,0.75);
+  font-size: 1.25rem;
+}
+
 .square-selected {
   background-color: rgba(0,0,0, 0.25);
   z-index: 1;

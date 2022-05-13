@@ -109,6 +109,7 @@ const Board = (): JSX.Element => {
           prevState[i][j]?.squareStatuses.delete(SquareStatus.HL);
           prevState[i][j]?.squareStatuses.delete(SquareStatus.SEL);
           prevState[i][j]?.squareStatuses.delete(SquareStatus.HLC);
+          prevState[i][j]?.squareStatuses.delete(SquareStatus.HLK);
           j++;
         }
         i++;
@@ -129,11 +130,15 @@ const Board = (): JSX.Element => {
         for (const cell of row) {
           let match = false;
           let castle = false;
+          let kill = false;
           for (const move of movesToHighlight) {
             if (move.row === i && move.col === j) {
               match = true;
               if (move.flags?.has(MoveFlag.castle)) {
                 castle = true;
+              }
+              if (move.flags?.has(MoveFlag.kill)) {
+                kill = true;
               }
               break;
             }
@@ -141,12 +146,15 @@ const Board = (): JSX.Element => {
           if (match && !selectedSameSquare) {
             if (castle) {
               prevState[i][j]?.squareStatuses.add(SquareStatus.HLC);
+            } else if (kill) {
+              prevState[i][j]?.squareStatuses.add(SquareStatus.HLK);
             } else {
               prevState[i][j]?.squareStatuses.add(SquareStatus.HL);
             }
           } else {
             prevState[i][j]?.squareStatuses.delete(SquareStatus.HL);
             prevState[i][j]?.squareStatuses.delete(SquareStatus.HLC);
+            prevState[i][j]?.squareStatuses.delete(SquareStatus.HLK);
           }
           prevState[i][j]?.squareStatuses.delete(SquareStatus.SEL);
           j++;
@@ -168,7 +176,8 @@ const Board = (): JSX.Element => {
 
   const selectSquare = (row: number, col: number) => {
     const madeMove = gameState[row][col]?.squareStatuses.has(SquareStatus.HL) 
-      || gameState[row][col]?.squareStatuses.has(SquareStatus.HLC);
+      || gameState[row][col]?.squareStatuses.has(SquareStatus.HLC)
+      || gameState[row][col]?.squareStatuses.has(SquareStatus.HLK);
     if (madeMove) {
       handleMove(row, col);
     } else {

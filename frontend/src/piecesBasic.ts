@@ -43,10 +43,10 @@ const pawnBasicMoveF = (piece: Piece, row: number, col: number, board: (SquareCo
       moves.push({ row: row - 2, col: col });
     }
     if (board[row - 1][col - 1].piece.owner === (piece.owner + 1) % 2) {
-      moves.push({ row: row - 1, col: col - 1 });
+      moves.push({ row: row - 1, col: col - 1, flags: new Set<MoveFlag>([MoveFlag.kill]) });
     }
     if (board[row - 1][col + 1].piece.owner === (piece.owner + 1) % 2) {
-      moves.push({ row: row - 1, col: col + 1 });
+      moves.push({ row: row - 1, col: col + 1, flags: new Set<MoveFlag>([MoveFlag.kill]) });
     }
   } else if (piece.orientation === Orientation.top) {
     if (board[row + 1][col].piece.pieceType === PieceType.empty) {
@@ -58,10 +58,10 @@ const pawnBasicMoveF = (piece: Piece, row: number, col: number, board: (SquareCo
       moves.push({ row: row + 2, col: col });
     }
     if (board[row + 1][col - 1].piece.owner === (piece.owner + 1) % 2) {
-      moves.push({ row: row + 1, col: col - 1 });
+      moves.push({ row: row + 1, col: col - 1, flags: new Set<MoveFlag>([MoveFlag.kill]) });
     }
     if (board[row + 1][col + 1].piece.owner === (piece.owner + 1) % 2) {
-      moves.push({ row: row + 1, col: col + 1 });
+      moves.push({ row: row + 1, col: col + 1, flags: new Set<MoveFlag>([MoveFlag.kill]) });
     }
   }
   // Filter moves that put the king in danger & out-of-bounds moves
@@ -91,7 +91,7 @@ const rookBasicMoveF = (piece: Piece, row: number, col: number, board: SquareCon
     i++;
   }
   if (row + i < board.length && board[row + i][col].piece.owner !== piece.owner) {
-    moves.push({ row: row + i, col: col });
+    moves.push({ row: row + i, col: col, flags: new Set<MoveFlag>([MoveFlag.kill]) });
   }
   i = 1;
   while (row - i >= 0 && board[row - i][col].piece.pieceType === PieceType.empty) {
@@ -99,7 +99,7 @@ const rookBasicMoveF = (piece: Piece, row: number, col: number, board: SquareCon
     i++;
   }
   if (row - i >= 0 && board[row - i][col].piece.owner !== piece.owner) {
-    moves.push({ row: row - i, col: col });
+    moves.push({ row: row - i, col: col, flags: new Set<MoveFlag>([MoveFlag.kill]) });
   }
   i = 1;
   while (col + i < board[0].length && board[row][col + i].piece.pieceType === PieceType.empty) {
@@ -107,7 +107,7 @@ const rookBasicMoveF = (piece: Piece, row: number, col: number, board: SquareCon
     i++;
   }
   if (col + i < board[0].length && board[row][col + i].piece.owner !== piece.owner) {
-    moves.push({ row: row, col: col + i });
+    moves.push({ row: row, col: col + i, flags: new Set<MoveFlag>([MoveFlag.kill]) });
   }
   i = 1;
   while (col - i >= 0 && board[row][col - i].piece.pieceType === PieceType.empty) {
@@ -115,7 +115,7 @@ const rookBasicMoveF = (piece: Piece, row: number, col: number, board: SquareCon
     i++;
   }
   if (col - i >= 0 && board[row][col - i].piece.owner !== piece.owner) {
-    moves.push({ row: row, col: col - i });
+    moves.push({ row: row, col: col - i, flags: new Set<MoveFlag>([MoveFlag.kill]) });
   }
   // Filter moves that put the king in danger & out-of-bounds moves
   moves = moves.filter((move: Move) => board[move.row][move.col].inBounds);
@@ -144,7 +144,7 @@ const bishopBasicMoveF = (piece: Piece, row: number, col: number, board: SquareC
     i++;
   }
   if (row + i < board.length && col + i < board[0].length && board[row + i][col + i].piece.owner !== piece.owner) {
-    moves.push({ row: row + i, col: col + i });
+    moves.push({ row: row + i, col: col + i, flags: new Set<MoveFlag>([MoveFlag.kill]) });
   }
   i = 1;
   while (row + i < board.length && col - i >= 0 && board[row + i][col - i].piece.pieceType === PieceType.empty) {
@@ -152,7 +152,7 @@ const bishopBasicMoveF = (piece: Piece, row: number, col: number, board: SquareC
     i++;
   }
   if (row + i < board.length && col - i >= 0 && board[row + i][col - i].piece.owner !== piece.owner) {
-    moves.push({ row: row + i, col: col - i });
+    moves.push({ row: row + i, col: col - i, flags: new Set<MoveFlag>([MoveFlag.kill]) });
   }
   i = 1;
   while (row - i >= 0 && col - i >= 0 && board[row - i][col - i].piece.pieceType === PieceType.empty) {
@@ -160,7 +160,7 @@ const bishopBasicMoveF = (piece: Piece, row: number, col: number, board: SquareC
     i++;
   }
   if (row - i >= 0 && col - i >= 0 && board[row - i][col - i].piece.owner !== piece.owner) {
-    moves.push({ row: row - i, col: col - i });
+    moves.push({ row: row - i, col: col - i, flags: new Set<MoveFlag>([MoveFlag.kill]) });
   }
   i = 1;
   while (row - i >= 0 && col + i < board[0].length && board[row - i][col + i].piece.pieceType === PieceType.empty) {
@@ -168,7 +168,7 @@ const bishopBasicMoveF = (piece: Piece, row: number, col: number, board: SquareC
     i++;
   }
   if (row - i >= 0 && col + i < board[0].length && board[row - i][col + i].piece.owner !== piece.owner) {
-    moves.push({ row: row - i, col: col + i });
+    moves.push({ row: row - i, col: col + i, flags: new Set<MoveFlag>([MoveFlag.kill]) });
   }
   // Filter moves that put the king in danger & out-of-bounds moves
   moves = moves.filter((move: Move) => board[move.row][move.col].inBounds);
@@ -197,7 +197,11 @@ const knightBasicMoveF = (piece: Piece, row: number, col: number, board: SquareC
       && col + option[1] >= 0 && col + option[1] < board[0].length
       && (board[row + option[0]][col + option[1]].piece.pieceType === PieceType.empty
         || board[row + option[0]][col + option[1]].piece.owner !== piece.owner)) {
-      moves.push({ row: row + option[0], col: col + option[1] });
+      if (board[row + option[0]][col + option[1]].piece.owner === (piece.owner + 1) % 2) {
+        moves.push({ row: row + option[0], col: col + option[1], flags: new Set<MoveFlag>([MoveFlag.kill]) });
+      } else {
+        moves.push({ row: row + option[0], col: col + option[1] });
+      }
     }
   }
   // Filter moves that put the king in danger & out-of-bounds moves
@@ -227,7 +231,7 @@ const queenBasicMoveF = (piece: Piece, row: number, col: number, board: SquareCo
     i++;
   }
   if (row + i < board.length && board[row + i][col].piece.owner !== piece.owner) {
-    moves.push({ row: row + i, col: col });
+    moves.push({ row: row + i, col: col, flags: new Set<MoveFlag>([MoveFlag.kill]) });
   }
   i = 1;
   while (row - i >= 0 && board[row - i][col].piece.pieceType === PieceType.empty) {
@@ -235,7 +239,7 @@ const queenBasicMoveF = (piece: Piece, row: number, col: number, board: SquareCo
     i++;
   }
   if (row - i >= 0 && board[row - i][col].piece.owner !== piece.owner) {
-    moves.push({ row: row - i, col: col });
+    moves.push({ row: row - i, col: col, flags: new Set<MoveFlag>([MoveFlag.kill]) });
   }
   i = 1;
   while (col + i < board[0].length && board[row][col + i].piece.pieceType === PieceType.empty) {
@@ -243,7 +247,7 @@ const queenBasicMoveF = (piece: Piece, row: number, col: number, board: SquareCo
     i++;
   }
   if (col + i < board[0].length && board[row][col + i].piece.owner !== piece.owner) {
-    moves.push({ row: row, col: col + i });
+    moves.push({ row: row, col: col + i, flags: new Set<MoveFlag>([MoveFlag.kill]) });
   }
   i = 1;
   while (col - i >= 0 && board[row][col - i].piece.pieceType === PieceType.empty) {
@@ -251,7 +255,7 @@ const queenBasicMoveF = (piece: Piece, row: number, col: number, board: SquareCo
     i++;
   }
   if (col - i >= 0 && board[row][col - i].piece.owner !== piece.owner) {
-    moves.push({ row: row, col: col - i });
+    moves.push({ row: row, col: col - i, flags: new Set<MoveFlag>([MoveFlag.kill]) });
   }
   i = 1;
   while (row + i < board.length && col + i < board[0].length && board[row + i][col + i].piece.pieceType === PieceType.empty) {
@@ -259,7 +263,7 @@ const queenBasicMoveF = (piece: Piece, row: number, col: number, board: SquareCo
     i++;
   }
   if (row + i < board.length && col + i < board[0].length && board[row + i][col + i].piece.owner !== piece.owner) {
-    moves.push({ row: row + i, col: col + i });
+    moves.push({ row: row + i, col: col + i, flags: new Set<MoveFlag>([MoveFlag.kill]) });
   }
   i = 1;
   while (row + i < board.length && col - i >= 0 && board[row + i][col - i].piece.pieceType === PieceType.empty) {
@@ -267,7 +271,7 @@ const queenBasicMoveF = (piece: Piece, row: number, col: number, board: SquareCo
     i++;
   }
   if (row + i < board.length && col - i >= 0 && board[row + i][col - i].piece.owner !== piece.owner) {
-    moves.push({ row: row + i, col: col - i });
+    moves.push({ row: row + i, col: col - i, flags: new Set<MoveFlag>([MoveFlag.kill]) });
   }
   i = 1;
   while (row - i >= 0 && col - i >= 0 && board[row - i][col - i].piece.pieceType === PieceType.empty) {
@@ -275,7 +279,7 @@ const queenBasicMoveF = (piece: Piece, row: number, col: number, board: SquareCo
     i++;
   }
   if (row - i >= 0 && col - i >= 0 && board[row - i][col - i].piece.owner !== piece.owner) {
-    moves.push({ row: row - i, col: col - i });
+    moves.push({ row: row - i, col: col - i, flags: new Set<MoveFlag>([MoveFlag.kill]) });
   }
   i = 1;
   while (row - i >= 0 && col + i < board[0].length && board[row - i][col + i].piece.pieceType === PieceType.empty) {
@@ -283,7 +287,7 @@ const queenBasicMoveF = (piece: Piece, row: number, col: number, board: SquareCo
     i++;
   }
   if (row - i >= 0 && col + i < board[0].length && board[row - i][col + i].piece.owner !== piece.owner) {
-    moves.push({ row: row - i, col: col + i });
+    moves.push({ row: row - i, col: col + i, flags: new Set<MoveFlag>([MoveFlag.kill]) });
   }
   // Filter moves that put the king in danger & out-of-bounds moves
   moves = moves.filter((move: Move) => board[move.row][move.col].inBounds);
@@ -312,7 +316,11 @@ const kingBasicMoveF = (piece: Piece, row: number, col: number, board: SquareCon
       && col + option[1] >= 0 && col + option[1] < board[0].length
       && (board[row + option[0]][col + option[1]].piece.pieceType === PieceType.empty
         || board[row + option[0]][col + option[1]].piece.owner !== piece.owner)) {
-      moves.push({ row: row + option[0], col: col + option[1] });
+      if (board[row + option[0]][col + option[1]].piece.owner === (piece.owner + 1) % 2) {
+        moves.push({ row: row + option[0], col: col + option[1], flags: new Set<MoveFlag>([MoveFlag.kill]) });
+      } else {
+        moves.push({ row: row + option[0], col: col + option[1] });
+      }
     }
   }
   if (piece.nMoves === 0) {
