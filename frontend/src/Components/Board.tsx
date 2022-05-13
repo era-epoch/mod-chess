@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { BishopBasic, setUpSquare, EmptySquare, KingBasic, KnightBasic, PawnBasic, QueenBasic, RookBasic } from "../piecesBasic";
-import { Move, Piece, SquareContents, SquareStatus } from "../types";
+import { Move, MoveFlag, Owner, Piece, PieceType, SquareContents, SquareStatus } from "../types";
 import "./Board.css";
 import Square from "./Square";
 
@@ -50,9 +50,10 @@ const initialGameState: SquareContents[][] = [
 
 const Board = (): JSX.Element => {
   const [gameState, setGameState] = useState(initialGameState);
-  const [anyState, setAnyState] = useState(false);
+  const [listener, setListener] = useState(false);
   const [selectedRow, setSelectedRow] = useState<number|null>(null);
   const [selectedCol, setSelectedCol] = useState<number|null>(null);
+  const [turn, setTurn] = useState<Owner>(0);
 
   const removePiece = (prevState: SquareContents[][], row: number, col: number) => {
     // prevState[row][col].piece.onDeath();
@@ -62,6 +63,33 @@ const Board = (): JSX.Element => {
   const movePiece = (prevState: SquareContents[][], piece: Piece, row: number, col: number) => {
     // piece.onMove();
     // TODO: fix nMoves counting too much
+    if (prevState[row][col].squareStatuses.has(SquareStatus.HLC)) {
+      // Castle Logic
+      let kingPos = 0;
+      for (let i = 0; i < prevState[row].length; i++) {
+        if (prevState[row][i].squareStatuses.has(SquareStatus.SEL)) {
+          kingPos = i;
+          break;
+        }
+      }
+      if (col < kingPos) {
+        // Castling to the left
+        let i = 1;
+        while (prevState[row][col - i].piece.pieceType !== PieceType.rook) {
+          i++;
+        }
+        prevState[row][col + 1].piece = prevState[row][col - i].piece;
+        prevState[row][col - i].piece = EmptySquare();
+      } else {
+        // Castling to the right
+        let i = 1;
+        while (prevState[row][col + i].piece.pieceType !== PieceType.rook) {
+          i++;
+        }
+        prevState[row][col - 1].piece = prevState[row][col + i].piece;
+        prevState[row][col + i].piece = EmptySquare();
+      }
+    }
     piece.nMoves++;
     prevState[row][col].piece = piece;
   }
@@ -80,6 +108,7 @@ const Board = (): JSX.Element => {
         for (const cell of row) {
           prevState[i][j]?.squareStatuses.delete(SquareStatus.HL);
           prevState[i][j]?.squareStatuses.delete(SquareStatus.SEL);
+          prevState[i][j]?.squareStatuses.delete(SquareStatus.HLC);
           j++;
         }
         i++;
@@ -87,7 +116,7 @@ const Board = (): JSX.Element => {
       console.log(prevState[row][col].piece.nMoves);
       return prevState;
     })
-    setAnyState(!anyState);
+    setListener(!listener);
   }
 
   const handleSelect = (row: number, col: number) => {
@@ -99,16 +128,25 @@ const Board = (): JSX.Element => {
         let j = 0;
         for (const cell of row) {
           let match = false;
+          let castle = false;
           for (const move of movesToHighlight) {
             if (move.row === i && move.col === j) {
               match = true;
+              if (move.flags?.has(MoveFlag.castle)) {
+                castle = true;
+              }
               break;
             }
           }
           if (match && !selectedSameSquare) {
-            prevState[i][j]?.squareStatuses.add(SquareStatus.HL);
+            if (castle) {
+              prevState[i][j]?.squareStatuses.add(SquareStatus.HLC);
+            } else {
+              prevState[i][j]?.squareStatuses.add(SquareStatus.HL);
+            }
           } else {
             prevState[i][j]?.squareStatuses.delete(SquareStatus.HL);
+            prevState[i][j]?.squareStatuses.delete(SquareStatus.HLC);
           }
           prevState[i][j]?.squareStatuses.delete(SquareStatus.SEL);
           j++;
@@ -125,11 +163,12 @@ const Board = (): JSX.Element => {
       setSelectedRow(null);
       setSelectedCol(null);
     }
-    setAnyState(!anyState);
+    setListener(!listener);
   }
 
   const selectSquare = (row: number, col: number) => {
-    const madeMove = gameState[row][col]?.squareStatuses.has(SquareStatus.HL);
+    const madeMove = gameState[row][col]?.squareStatuses.has(SquareStatus.HL) 
+      || gameState[row][col]?.squareStatuses.has(SquareStatus.HLC);
     if (madeMove) {
       handleMove(row, col);
     } else {
@@ -144,7 +183,7 @@ const Board = (): JSX.Element => {
           <div className="row">
           {row.map((val, colN) => {
             return <Square 
-            listener={anyState} 
+            listener={listener} 
             row={rowN} 
             col={colN} 
             content={val} 

@@ -1,4 +1,4 @@
-import { Move, Owner, Piece, Orientation, PieceStatus, SquareContents, SquareStatus, PieceType } from "./types";
+import { Move, Owner, Piece, Orientation, PieceStatus, SquareContents, SquareStatus, PieceType, MoveFlag } from "./types";
 import { faChessBishop, faChessKing, faChessKnight, faChessPawn, faChessQueen, faChessRook } from '@fortawesome/free-solid-svg-icons';
 import cloneDeep from "lodash.clonedeep";
 
@@ -31,17 +31,37 @@ export const EmptySquare = (): Piece => {
 }
 
 const pawnBasicMoveF = (piece: Piece, row: number, col: number, board: (SquareContents)[][], checkKing: boolean = true): Move[] => {
-  // TODO: Finish move logic (capture)
+  // TODO: en passant
   let moves: Move[] = [];
   if (piece.orientation === Orientation.bottom) {
-    moves.push({ row: row - 1, col: col });
-    if (piece.nMoves === 0) {
+    if (board[row - 1][col].piece.pieceType === PieceType.empty) {
+      moves.push({ row: row - 1, col: col });
+    }
+    if (piece.nMoves === 0
+      && board[row - 2][col].piece.pieceType === PieceType.empty
+      && board[row - 1][col].piece.pieceType === PieceType.empty) {
       moves.push({ row: row - 2, col: col });
     }
+    if (board[row - 1][col - 1].piece.owner === (piece.owner + 1) % 2) {
+      moves.push({ row: row - 1, col: col - 1 });
+    }
+    if (board[row - 1][col + 1].piece.owner === (piece.owner + 1) % 2) {
+      moves.push({ row: row - 1, col: col + 1 });
+    }
   } else if (piece.orientation === Orientation.top) {
-    moves.push({ row: row + 1, col: col });
-    if (piece.nMoves === 0) {
+    if (board[row + 1][col].piece.pieceType === PieceType.empty) {
+      moves.push({ row: row + 1, col: col });
+    }
+    if (piece.nMoves === 0
+      && board[row + 2][col].piece.pieceType === PieceType.empty
+      && board[row + 1][col].piece.pieceType === PieceType.empty) {
       moves.push({ row: row + 2, col: col });
+    }
+    if (board[row + 1][col - 1].piece.owner === (piece.owner + 1) % 2) {
+      moves.push({ row: row + 1, col: col - 1 });
+    }
+    if (board[row + 1][col + 1].piece.owner === (piece.owner + 1) % 2) {
+      moves.push({ row: row + 1, col: col + 1 });
     }
   }
   // Filter moves that put the king in danger & out-of-bounds moves
@@ -295,12 +315,58 @@ const kingBasicMoveF = (piece: Piece, row: number, col: number, board: SquareCon
       moves.push({ row: row + option[0], col: col + option[1] });
     }
   }
-  // TODO: Castling
+  if (piece.nMoves === 0) {
+    let blockedRight = false;
+    let i = 1;
+    while (col + i < board[0].length && board[row][col + i].piece.pieceType !== PieceType.rook) {
+      if (board[row][col + i].piece.pieceType !== PieceType.empty) {
+        blockedRight = true;
+      }
+      i++;
+    }
+    if (!blockedRight
+      && col + i < board[0].length
+      && board[row][col + i].piece.pieceType === PieceType.rook
+      && board[row][col + i].piece.owner === piece.owner
+      && board[row][col + i].piece.nMoves === 0
+      && validateMoveWRTKing(piece, row, col, board, { row: row, col: col + 1 })) {
+      moves.push({ row: row, col: col + 2, flags: new Set<MoveFlag>([MoveFlag.castle]) });
+    }
+    let blockedLeft = false;
+    i = 1;
+    while (col - i >= 0 && board[row][col - i].piece.pieceType !== PieceType.rook) {
+      if (board[row][col - i].piece.pieceType !== PieceType.empty) {
+        blockedLeft = true;
+      }
+      i++;
+    }
+    if (!blockedLeft
+      && col - i >= 0
+      && board[row][col - i].piece.pieceType === PieceType.rook
+      && board[row][col - i].piece.owner === piece.owner
+      && board[row][col - i].piece.nMoves === 0
+      && validateMoveWRTKing(piece, row, col, board, { row: row, col: col - 1 })) {
+      moves.push({ row: row, col: col - 2, flags: new Set<MoveFlag>([MoveFlag.castle]) });
+    }
+  }
 
   // Filter moves that put the king in danger & out-of-bounds moves
   moves = moves.filter((move: Move) => board[move.row][move.col].inBounds);
   if (checkKing) moves = moves.filter((move: Move) => validateMoveWRTKing(piece, row, col, board, move));
   return moves;
+}
+
+export const KingBasic = (): Piece => {
+  const piece = {
+    owner: Owner.neutral,
+    moveF: kingBasicMoveF,
+    icon: faChessKing,
+    nMoves: 0,
+    orientation: Orientation.neutral,
+    pieceStatuses: new Set<PieceStatus>(),
+    pieceType: PieceType.king,
+  }
+  return piece;
 }
 
 export const validateMoveWRTKing = (piece: Piece, row: number, col: number, board: SquareContents[][], move: Move): boolean => {
@@ -315,7 +381,7 @@ export const validateMoveWRTKing = (piece: Piece, row: number, col: number, boar
   const threatenedPositions: Move[] = [];
   for (let i = 0; i < Board.length; i++) {
     for (let j = 0; j < Board[0].length; j++) {
-      if (Board[i][j].piece.pieceType === PieceType.king) {
+      if (Board[i][j].piece.owner === piece.owner && Board[i][j].piece.pieceType === PieceType.king) {
         kingPositions.push({ row: i, col: j });
       }
       if (Board[i][j].piece.owner !== piece.owner) {
@@ -331,17 +397,4 @@ export const validateMoveWRTKing = (piece: Piece, row: number, col: number, boar
     }
   }
   return true;
-}
-
-export const KingBasic = (): Piece => {
-  const piece = {
-    owner: Owner.neutral,
-    moveF: kingBasicMoveF,
-    icon: faChessKing,
-    nMoves: 0,
-    orientation: Orientation.neutral,
-    pieceStatuses: new Set<PieceStatus>(),
-    pieceType: PieceType.king,
-  }
-  return piece;
 }

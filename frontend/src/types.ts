@@ -12,6 +12,7 @@ export enum Orientation {
 
 export enum SquareStatus {
   HL = 'square-highlighted',
+  HLC = 'square-highlighed-castle',
   SEL = 'square-selected',
 }
 
@@ -29,9 +30,14 @@ export enum PieceType {
   'king' = 6,
 }
 
+export enum MoveFlag {
+  'castle',
+}
+
 export interface Move {
   row: number,
   col: number,
+  flags?: Set<MoveFlag>,
 }
 
 
