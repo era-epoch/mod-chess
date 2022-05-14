@@ -11,10 +11,10 @@ interface Props {
 }
 
 const Square = (props: Props): JSX.Element => {
-  let statusClasses = '';
-  props.content.squareStatuses.forEach((s) => {
-    statusClasses += s + ' ';
-  })
+  // let statusClasses = '';
+  // props.content.squareStatuses.forEach((s) => {
+  //   statusClasses += s + ' ';
+  // })
 
   return (
     <div className={`square ${props.content.inBounds ? 'active-square' : 'inactive-square'}`

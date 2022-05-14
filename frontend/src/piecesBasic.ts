@@ -1,5 +1,9 @@
 import { Move, Owner, Piece, Orientation, PieceStatus, SquareContents, SquareStatus, PieceType, MoveFlag } from "./types";
 import { faChessBishop, faChessKing, faChessKnight, faChessPawn, faChessQueen, faChessRook } from '@fortawesome/free-solid-svg-icons';
+import { useDispatch } from "react-redux";
+import { GameState } from "./state/slices/gameSlice";
+import cloneDeep from "lodash.clonedeep";
+import produce, { Immer } from "immer";
 
 export const setUpSquare = (piece: Piece, owner: Owner, orientation: Orientation, inBounds: boolean): SquareContents => {
   piece.owner = owner;
@@ -12,7 +16,7 @@ export const setUpSquare = (piece: Piece, owner: Owner, orientation: Orientation
   return sc;
 }
 
-const emptyMoveF = (piece: Piece, row: number, col: number, board: SquareContents[][], checkKing: boolean = true): Move[] => {
+const emptyMoveF = (piece: Piece, row: number, col: number, state: GameState, checkKing: boolean = true): Move[] => {
   return [];
 }
 
@@ -29,10 +33,11 @@ export const EmptySquare = (): Piece => {
   return piece;
 }
 
-export const filterMoves = (piece: Piece, row: number, col: number, board: SquareContents[][], moves: Move[], checkKing: boolean): Move[] => {
+export const filterMoves = (piece: Piece, row: number, col: number, state: GameState, moves: Move[], checkKing: boolean): Move[] => {
+  const board = state.board;
   // Filter moves that put the king in danger & out-of-bounds moves
   moves = moves.filter((move: Move) => board[move.row][move.col].inBounds);
-  if (checkKing) moves = moves.filter((move: Move) => validateMoveWRTKing(piece, row, col, board, move));
+  if (checkKing) moves = moves.filter((move: Move) => validateMoveWRTKing(piece, row, col, state, move));
   // Add en passant targeted flag to moves that target an en passant square
   moves = moves.map((move: Move) => {
     if (board[move.row][move.col].squareStatuses.has(SquareStatus.EPV)) {
@@ -43,7 +48,8 @@ export const filterMoves = (piece: Piece, row: number, col: number, board: Squar
   return moves;
 }
 
-const pawnBasicMoveF = (piece: Piece, row: number, col: number, board: SquareContents[][], checkKing: boolean = true): Move[] => {
+const pawnBasicMoveF = (piece: Piece, row: number, col: number, state: GameState, checkKing: boolean = true): Move[] => {
+  const board = state.board;
   let moves: Move[] = [];
   if (piece.orientation === Orientation.bottom) {
     if (board[row - 1][col].piece.pieceType === PieceType.empty) {
@@ -76,7 +82,7 @@ const pawnBasicMoveF = (piece: Piece, row: number, col: number, board: SquareCon
       moves.push({ row: row + 1, col: col + 1, flags: new Set<MoveFlag>([MoveFlag.KILL]), oRow: row, oCol: col });
     }
   }
-  return filterMoves(piece, row, col, board, moves, checkKing);
+  return filterMoves(piece, row, col, state, moves, checkKing);
 }
 
 export const PawnBasic = (): Piece => {
@@ -92,7 +98,8 @@ export const PawnBasic = (): Piece => {
   return piece;
 }
 
-const rookBasicMoveF = (piece: Piece, row: number, col: number, board: SquareContents[][], checkKing: boolean = true): Move[] => {
+const rookBasicMoveF = (piece: Piece, row: number, col: number, state: GameState, checkKing: boolean = true): Move[] => {
+  const board = state.board;
   let moves: Move[] = [];
   let i = 1;
   while (row + i < board.length && board[row + i][col].piece.pieceType === PieceType.empty) {
@@ -126,7 +133,7 @@ const rookBasicMoveF = (piece: Piece, row: number, col: number, board: SquareCon
   if (col - i >= 0 && board[row][col - i].piece.owner !== piece.owner) {
     moves.push({ row: row, col: col - i, flags: new Set<MoveFlag>([MoveFlag.KILL]), oRow: row, oCol: col });
   }
-  return filterMoves(piece, row, col, board, moves, checkKing);
+  return filterMoves(piece, row, col, state, moves, checkKing);
 }
 
 export const RookBasic = (): Piece => {
@@ -142,7 +149,8 @@ export const RookBasic = (): Piece => {
   return piece;
 }
 
-const bishopBasicMoveF = (piece: Piece, row: number, col: number, board: SquareContents[][], checkKing: boolean = true): Move[] => {
+const bishopBasicMoveF = (piece: Piece, row: number, col: number, state: GameState, checkKing: boolean = true): Move[] => {
+  const board = state.board;
   let moves: Move[] = [];
   let i = 1;
   while (row + i < board.length && col + i < board[0].length && board[row + i][col + i].piece.pieceType === PieceType.empty) {
@@ -176,7 +184,7 @@ const bishopBasicMoveF = (piece: Piece, row: number, col: number, board: SquareC
   if (row - i >= 0 && col + i < board[0].length && board[row - i][col + i].piece.owner !== piece.owner) {
     moves.push({ row: row - i, col: col + i, flags: new Set<MoveFlag>([MoveFlag.KILL]), oRow: row, oCol: col });
   }
-  return filterMoves(piece, row, col, board, moves, checkKing);
+  return filterMoves(piece, row, col, state, moves, checkKing);
 }
 
 export const BishopBasic = (): Piece => {
@@ -192,7 +200,8 @@ export const BishopBasic = (): Piece => {
   return piece;
 }
 
-const knightBasicMoveF = (piece: Piece, row: number, col: number, board: SquareContents[][], checkKing: boolean = true): Move[] => {
+const knightBasicMoveF = (piece: Piece, row: number, col: number, state: GameState, checkKing: boolean = true): Move[] => {
+  const board = state.board;
   let moves: Move[] = [];
   const options = [[1, 2], [1, -2], [-1, 2], [-1, -2], [2, 1], [2, -1], [-2, 1], [-2, -1]];
   for (const option of options) {
@@ -207,7 +216,7 @@ const knightBasicMoveF = (piece: Piece, row: number, col: number, board: SquareC
       }
     }
   }
-  return filterMoves(piece, row, col, board, moves, checkKing);
+  return filterMoves(piece, row, col, state, moves, checkKing);
 }
 
 export const KnightBasic = (): Piece => {
@@ -223,7 +232,8 @@ export const KnightBasic = (): Piece => {
   return piece;
 }
 
-const queenBasicMoveF = (piece: Piece, row: number, col: number, board: SquareContents[][], checkKing: boolean = true): Move[] => {
+const queenBasicMoveF = (piece: Piece, row: number, col: number, state: GameState, checkKing: boolean = true): Move[] => {
+  const board = state.board;
   let moves: Move[] = [];
   let i = 1;
   while (row + i < board.length && board[row + i][col].piece.pieceType === PieceType.empty) {
@@ -289,7 +299,7 @@ const queenBasicMoveF = (piece: Piece, row: number, col: number, board: SquareCo
   if (row - i >= 0 && col + i < board[0].length && board[row - i][col + i].piece.owner !== piece.owner) {
     moves.push({ row: row - i, col: col + i, flags: new Set<MoveFlag>([MoveFlag.KILL]), oRow: row, oCol: col });
   }
-  return filterMoves(piece, row, col, board, moves, checkKing);
+  return filterMoves(piece, row, col, state, moves, checkKing);
 }
 
 export const QueenBasic = (): Piece => {
@@ -305,7 +315,8 @@ export const QueenBasic = (): Piece => {
   return piece;
 }
 
-const kingBasicMoveF = (piece: Piece, row: number, col: number, board: SquareContents[][], checkKing: boolean = true): Move[] => {
+const kingBasicMoveF = (piece: Piece, row: number, col: number, state: GameState, checkKing: boolean = true): Move[] => {
+  const board = state.board;
   let moves: Move[] = [];
   const options = [[1, 0], [-1, 0], [1, 1], [1, -1], [-1, 1], [-1, -1], [0, 1], [0, -1]];
   for (const option of options) {
@@ -334,7 +345,7 @@ const kingBasicMoveF = (piece: Piece, row: number, col: number, board: SquareCon
       && board[row][col + i].piece.pieceType === PieceType.rook
       && board[row][col + i].piece.owner === piece.owner
       && board[row][col + i].piece.nMoves === 0
-      && validateMoveWRTKing(piece, row, col, board, { row: row, col: col + 1, oRow: row, oCol: col })) {
+      && (checkKing ? validateMoveWRTKing(piece, row, col, state, { row: row, col: col + 1, oRow: row, oCol: col }) : true)) {
       moves.push({ row: row, col: col + 2, flags: new Set<MoveFlag>([MoveFlag.CSTL]), oRow: row, oCol: col });
     }
     let blockedLeft = false;
@@ -350,11 +361,11 @@ const kingBasicMoveF = (piece: Piece, row: number, col: number, board: SquareCon
       && board[row][col - i].piece.pieceType === PieceType.rook
       && board[row][col - i].piece.owner === piece.owner
       && board[row][col - i].piece.nMoves === 0
-      && validateMoveWRTKing(piece, row, col, board, { row: row, col: col - 1, oRow: row, oCol: col })) {
+      && (checkKing ? validateMoveWRTKing(piece, row, col, state, { row: row, col: col - 1, oRow: row, oCol: col }) : true)) {
       moves.push({ row: row, col: col - 2, flags: new Set<MoveFlag>([MoveFlag.CSTL]), oRow: row, oCol: col });
     }
   }
-  return filterMoves(piece, row, col, board, moves, checkKing);
+  return filterMoves(piece, row, col, state, moves, checkKing);
 }
 
 export const KingBasic = (): Piece => {
@@ -370,31 +381,35 @@ export const KingBasic = (): Piece => {
   return piece;
 }
 
-export const validateMoveWRTKing = (piece: Piece, row: number, col: number, board: SquareContents[][], move: Move): boolean => {
-  // board[move.row][move.col].piece.onDeath();
-  board[move.row][move.col].piece = EmptySquare();
-  board[row][col].piece.nMoves++;
-  // board[row][col].piece.onMove();
-  board[move.row][move.col].piece = board[row][col].piece;
-  board[row][col].piece = EmptySquare();
-  const kingPositions: Move[] = []
-  const threatenedPositions: Move[] = [];
-  for (let i = 0; i < board.length; i++) {
-    for (let j = 0; j < board[0].length; j++) {
-      if (board[i][j].piece.owner === piece.owner && board[i][j].piece.pieceType === PieceType.king) {
-        kingPositions.push({ row: i, col: j, oRow: row, oCol: col });
-      }
-      if (board[i][j].piece.owner !== piece.owner) {
-        threatenedPositions.push(...board[i][j].piece.moveF(board[i][j].piece, i, j, board, false))
-      }
-    }
-  }
-  for (const pos of threatenedPositions) {
-    for (const kpos of kingPositions) {
-      if (pos.col === kpos.col && pos.row === kpos.row) {
-        return false;
+export const validateMoveWRTKing = (piece: Piece, row: number, col: number, state: GameState, move: Move): boolean => {
+  let validation = true;
+  const nextState = produce(state.board, (draftState: SquareContents[][]) => {
+    const board = draftState;
+    // board[move.row][move.col].piece.onDeath();
+    board[move.row][move.col].piece = EmptySquare();
+    board[row][col].piece.nMoves++;
+    // board[row][col].piece.onMove();
+    board[move.row][move.col].piece = board[row][col].piece;
+    board[row][col].piece = EmptySquare();
+    const kingPositions: Move[] = []
+    const threatenedPositions: Move[] = [];
+    for (let i = 0; i < board.length; i++) {
+      for (let j = 0; j < board[0].length; j++) {
+        if (board[i][j].piece.owner === piece.owner && board[i][j].piece.pieceType === PieceType.king) {
+          kingPositions.push({ row: i, col: j, oRow: row, oCol: col });
+        }
+        if (board[i][j].piece.owner !== piece.owner) {
+          threatenedPositions.push(...board[i][j].piece.moveF(board[i][j].piece, i, j, state, false))
+        }
       }
     }
-  }
-  return true;
+    for (const pos of threatenedPositions) {
+      for (const kpos of kingPositions) {
+        if (pos.col === kpos.col && pos.row === kpos.row) {
+          validation = false;
+        }
+      }
+    }
+  })
+  return validation;
 }

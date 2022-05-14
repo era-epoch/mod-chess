@@ -45,9 +45,8 @@ const initialBoard: SquareContents[][] = [
   setUpSquare(EmptySquare(), 2, 2, false)],
 ]
 
-interface GameState {
+export interface GameState {
   board: SquareContents[][],
-  boardClone: SquareContents[][],
   turn: number,
   selectedRow: number | null,
   selectedCol: number | null,
@@ -59,7 +58,6 @@ interface GameState {
 
 const initialGameState: GameState = {
   board: initialBoard,
-  boardClone: initialBoard,
   turn: 0,
   selectedRow: null,
   selectedCol: null,
@@ -129,7 +127,7 @@ const gameSlice = createSlice({
     makeMove: (state: GameState, action: PayloadAction<{ row: number, col: number }>) => {
       if (state.selectedRow === null || state.selectedCol === null) return;
       const pieceToMove = state.board[state.selectedRow][state.selectedCol].piece;
-      const move = pieceToMove.moveF(pieceToMove, state.selectedRow, state.selectedCol, state.boardClone, true).find((move: Move) => move.row === action.payload.row
+      const move = pieceToMove.moveF(pieceToMove, state.selectedRow, state.selectedCol, state, true).find((move: Move) => move.row === action.payload.row
         && move.col === action.payload.col);
       if (!pieceToMove || !move) return;
       const originSquare = state.board[state.selectedRow][state.selectedCol];
@@ -163,13 +161,12 @@ const gameSlice = createSlice({
         }
         i++;
       }
-      state.boardClone = state.board;
+      // state.boardClone = state.board;
     },
     selectSquare: (state: GameState, action: PayloadAction<{ row: number, col: number }>) => {
       const row = action.payload.row;
       const col = action.payload.col;
-      // const movesToHighlight: Move[] = [];
-      const movesToHighlight: Move[] = state.board[row][col].piece.moveF(state.board[row][col].piece, row, col, state.boardClone, true);
+      const movesToHighlight: Move[] = state.board[row][col].piece.moveF(state.board[row][col].piece, row, col, state, true);
       const selectedSameSquare = (state.selectedRow === row && state.selectedCol === col);
       let i = 0;
       for (const row of state.board) {
@@ -222,8 +219,38 @@ const gameSlice = createSlice({
         state.selectedRow = null;
         state.selectedCol = null;
       }
-      state.boardClone = state.board;
+      // state.boardClone = state.board;
     },
+    // validateMoveWRTKing: (state: GameState,
+    //   action: PayloadAction<{ piece: Piece, row: number, col: number, move: Move }>) => {
+    //   const board = state.board;
+    //   // board[move.row][move.col].piece.onDeath();
+    //   board[action.payload.move.row][action.payload.move.col].piece = EmptySquare();
+    //   board[action.payload.row][action.payload.col].piece.nMoves++;
+    //   // board[row][col].piece.onMove();
+    //   board[action.payload.move.row][action.payload.move.col].piece = board[action.payload.row][action.payload.col].piece;
+    //   board[action.payload.row][action.payload.col].piece = EmptySquare();
+    //   const kingPositions: Move[] = []
+    //   const threatenedPositions: Move[] = [];
+    //   for (let i = 0; i < board.length; i++) {
+    //     for (let j = 0; j < board[0].length; j++) {
+    //       if (board[i][j].piece.owner === action.payload.piece.owner && board[i][j].piece.pieceType === PieceType.king) {
+    //         kingPositions.push({ row: i, col: j, oRow: action.payload.row, oCol: action.payload.col });
+    //       }
+    //       if (board[i][j].piece.owner !== action.payload.piece.owner) {
+    //         threatenedPositions.push(...board[i][j].piece.moveF(board[i][j].piece, i, j, board, false))
+    //       }
+    //     }
+    //   }
+    //   for (const pos of threatenedPositions) {
+    //     for (const kpos of kingPositions) {
+    //       if (pos.col === kpos.col && pos.row === kpos.row) {
+    //         state.validation = false;
+    //       }
+    //     }
+    //   }
+    //   state.boardClone = state.board;
+    // },
   },
 });
 export default gameSlice.reducer;

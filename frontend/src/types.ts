@@ -1,3 +1,5 @@
+import { GameState } from "./state/slices/gameSlice";
+
 export enum Owner {
   'light' = 0,
   'dark' = 1,
@@ -63,7 +65,7 @@ export interface SquareContents {
 export interface Piece {
   owner: Owner,
   pieceStatuses: Set<PieceStatus>,
-  moveF: (piece: Piece, row: number, col: number, board: SquareContents[][], checkKing: boolean) => Move[],
+  moveF: (piece: Piece, row: number, col: number, state: GameState, checkKing: boolean) => Move[],
   icon: any,
   nMoves: number,
   orientation: Orientation,
