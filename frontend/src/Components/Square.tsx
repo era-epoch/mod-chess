@@ -1,14 +1,12 @@
-import { faCircle, faCrown, faSkull } from '@fortawesome/free-solid-svg-icons';
+import { faChessPawn, faCircle, faCrown, faSkull } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Owner, SquareContents, SquareStatus } from '../types';
 import './Square.css';
 
 interface Props {
-  listener: boolean,
   row: number,
   col: number,
   content: SquareContents,
-  gameState: SquareContents[][],
   clickHandler: Function,
 }
 
@@ -20,7 +18,7 @@ const Square = (props: Props): JSX.Element => {
 
   return (
     <div className={`square ${props.content.inBounds ? 'active-square' : 'inactive-square'}`
-    + `${(props.row + props.col)%2 === 0 ? ' light-square' : ' dark-square'}`} onMouseDown={
+    + `${(props.row + props.col)%2 === 0 ? ' light-square' : ' dark-square'}`} onClick={
       () => props.clickHandler(props.row, props.col)
       }>
       <div className={`icon-stack`}>
@@ -42,6 +40,11 @@ const Square = (props: Props): JSX.Element => {
         {props.content.squareStatuses.has(SquareStatus.HLK)? 
           <div className='icon-wrapper square-highlighted-kill'>
             <FontAwesomeIcon icon={faSkull} /> 
+          </div>
+        : null}
+        {props.content.squareStatuses.has(SquareStatus.EPV)? 
+          <div className={`icon-wrapper en-passant-vulnerable`}>
+            <FontAwesomeIcon icon={faChessPawn} /> 
           </div>
         : null}
         {props.content.squareStatuses.has(SquareStatus.SEL)?
