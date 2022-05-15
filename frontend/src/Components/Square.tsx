@@ -1,6 +1,6 @@
 import { faChessPawn, faCircle, faCrown, faSkull } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Owner, SquareContents, SquareStatus } from '../types';
+import { Player, SquareContents, SquareStatus } from '../types';
 import './Square.css';
 
 interface Props {
@@ -24,7 +24,7 @@ const Square = (props: Props): JSX.Element => {
       <div className={`icon-stack`}>
         {props.content && props.content.piece.icon? 
           <div className='icon-wrapper'>
-            <FontAwesomeIcon icon={props.content.piece.icon} className={props.content.piece.owner === Owner.dark ? 'dark-piece' : 'light-piece'} />
+            <FontAwesomeIcon icon={props.content.piece.icon} className={props.content.piece.owner === Player.dark ? 'dark-piece' : 'light-piece'} />
           </div>
         : null }
         {props.content.squareStatuses.has(SquareStatus.HL)? 

@@ -1,6 +1,6 @@
-import { Move, Owner, Piece, Orientation, PieceStatus, SquareContents, SquareStatus, PieceType, MoveFlag } from "./types";
+import { Move, Player, Piece, Orientation, PieceStatus, SquareContents, SquareStatus, PieceType, MoveFlag } from "../types";
 import { faChessBishop, faChessKing, faChessKnight, faChessPawn, faChessQueen, faChessRook } from '@fortawesome/free-solid-svg-icons';
-import { GameState } from "./state/slices/gameSlice";
+import { GameState } from "../state/slices/gameSlice";
 import produce from "immer";
 
 let PID = 0;
@@ -9,7 +9,7 @@ export const genPID = (): number => {
   return PID;
 }
 
-export const setUpSquare = (piece: Piece, owner: Owner, orientation: Orientation, inBounds: boolean): SquareContents => {
+export const setUpSquare = (piece: Piece, owner: Player, orientation: Orientation, inBounds: boolean): SquareContents => {
   piece.owner = owner;
   piece.orientation = orientation;
   const sc: SquareContents = {
@@ -27,7 +27,7 @@ const emptyMoveF = (piece: Piece, row: number, col: number, state: GameState, ch
 
 export const EmptySquare = (): Piece => {
   const piece = {
-    owner: Owner.neutral,
+    owner: Player.neutral,
     moveF: emptyMoveF,
     icon: null,
     nMoves: 0,
@@ -98,7 +98,7 @@ const pawnBasicMoveF = (piece: Piece, row: number, col: number, state: GameState
 
 export const PawnBasic = (): Piece => {
   const piece = {
-    owner: Owner.neutral,
+    owner: Player.neutral,
     moveF: pawnBasicMoveF,
     icon: faChessPawn,
     nMoves: 0,
@@ -152,7 +152,7 @@ const rookBasicMoveF = (piece: Piece, row: number, col: number, state: GameState
 
 export const RookBasic = (): Piece => {
   const piece = {
-    owner: Owner.neutral,
+    owner: Player.neutral,
     moveF: rookBasicMoveF,
     icon: faChessRook,
     nMoves: 0,
@@ -206,7 +206,7 @@ const bishopBasicMoveF = (piece: Piece, row: number, col: number, state: GameSta
 
 export const BishopBasic = (): Piece => {
   const piece = {
-    owner: Owner.neutral,
+    owner: Player.neutral,
     moveF: bishopBasicMoveF,
     icon: faChessBishop,
     nMoves: 0,
@@ -241,7 +241,7 @@ const knightBasicMoveF = (piece: Piece, row: number, col: number, state: GameSta
 
 export const KnightBasic = (): Piece => {
   const piece = {
-    owner: Owner.neutral,
+    owner: Player.neutral,
     moveF: knightBasicMoveF,
     icon: faChessKnight,
     nMoves: 0,
@@ -327,7 +327,7 @@ const queenBasicMoveF = (piece: Piece, row: number, col: number, state: GameStat
 
 export const QueenBasic = (): Piece => {
   const piece = {
-    owner: Owner.neutral,
+    owner: Player.neutral,
     moveF: queenBasicMoveF,
     icon: faChessQueen,
     nMoves: 0,
@@ -396,7 +396,7 @@ const kingBasicMoveF = (piece: Piece, row: number, col: number, state: GameState
 
 export const KingBasic = (): Piece => {
   const piece = {
-    owner: Owner.neutral,
+    owner: Player.neutral,
     moveF: kingBasicMoveF,
     icon: faChessKing,
     nMoves: 0,

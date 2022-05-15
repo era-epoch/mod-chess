@@ -1,10 +1,12 @@
-import Board from "./Board";
+import CenterGameArea from "./CenterGameArea";
 import "./GameArea.css";
+import RightGameArea from "./RightGameArea";
 
 const GameArea = (): JSX.Element => {
   return (
-    <div className="GameArea">
-      <Board />
+    <div className="game-area">
+      <CenterGameArea />
+      <RightGameArea />
     </div>
   );
 }

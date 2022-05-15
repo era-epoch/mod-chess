@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { setUpSquare, EmptySquare, RookBasic, KnightBasic, BishopBasic, QueenBasic, KingBasic, PawnBasic } from '../../piecesBasic';
-import { Move, MoveFlag, Piece, PieceType, SquareContents, SquareStatus } from '../../types';
+import { setUpSquare, EmptySquare, RookBasic, KnightBasic, BishopBasic, QueenBasic, KingBasic, PawnBasic } from '../../GameObjects/piecesBasic';
+import { Graveyard, Move, MoveFlag, Piece, PieceType, Player, SquareContents, SquareStatus } from '../../types';
 
 const initialBoard: SquareContents[][] = [
   [setUpSquare(EmptySquare(), 2, 2, false), setUpSquare(EmptySquare(), 2, 2, false), setUpSquare(EmptySquare(), 2, 2, false),
@@ -50,6 +50,7 @@ export interface GameState {
   turn: number,
   selectedRow: number | null,
   selectedCol: number | null,
+  graveyards: Graveyard[],
 }
 
 // interface GameRecord {
@@ -61,6 +62,7 @@ const initialGameState: GameState = {
   turn: 0,
   selectedRow: null,
   selectedCol: null,
+  graveyards: [{ player: Player.light, contents: [] }, { player: Player.dark, contents: [] }]
 }
 
 // const onTurnTaken();
@@ -104,7 +106,7 @@ const movePiece = (gameState: GameState, piece: Piece, move: Move) => {
       for (const cell of row) {
         if (gameState.board[i][j].piece.id === gameState.board[move.row][move.col].enPassantOrigin?.id) {
           // gameState.board[i][j].piece.onDeath()
-          gameState.board[i][j].piece = EmptySquare();
+          removePieceAtLocation(gameState, i, j);
         }
         j++;
       }
@@ -146,9 +148,12 @@ const movePiece = (gameState: GameState, piece: Piece, move: Move) => {
   gameState.board[move.row][move.col].piece.nMoves++;
 }
 
-const removePiece = (gameState: GameState, piece: Piece, move: Move) => {
-  // prevState[row][col].piece.onDeath();
-  gameState.board[move.row][move.col].piece = EmptySquare();
+const removePieceAtLocation = (gameState: GameState, row: number, col: number) => {
+  // .onDeath();
+  const player = gameState.board[row][col].piece.owner;
+  const graveyard = gameState.graveyards.find((g: Graveyard) => g.player === player);
+  graveyard?.contents.push(gameState.board[row][col].piece);
+  gameState.board[row][col].piece = EmptySquare();
 }
 
 // Reducer
@@ -167,7 +172,7 @@ const gameSlice = createSlice({
       // LEAVING
       originSquare.piece = EmptySquare();
       // REMOVING TARGET
-      removePiece(state, pieceToMove, move);
+      removePieceAtLocation(state, move.row, move.col);
       // ENTERING & EFFECTS
       movePiece(state, pieceToMove, move);
       // CLEANUP

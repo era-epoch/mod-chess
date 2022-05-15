@@ -1,6 +1,5 @@
-.GameArea {
+.game-area {
   display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  flex-direction: row;
+  flex: 1;
 }
