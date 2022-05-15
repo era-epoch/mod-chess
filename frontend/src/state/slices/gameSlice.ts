@@ -63,10 +63,12 @@ const initialGameState: GameState = {
   selectedCol: null,
 }
 
+// const onTurnTaken();
+
 const movePiece = (gameState: GameState, piece: Piece, move: Move) => {
   // piece.onMove();
+  // Castle Logic
   if (move.flags?.has(MoveFlag.CSTL)) {
-    // Castle Logic
     let kingPos = 0;
     // Look for the selected king *in this row*
     for (let i = 0; i < gameState.board[move.row].length; i++) {
@@ -93,8 +95,35 @@ const movePiece = (gameState: GameState, piece: Piece, move: Move) => {
       gameState.board[move.row][move.col + i].piece = EmptySquare();
     }
   }
+  // En passant capture logic
+  if (gameState.board[move.row][move.col].squareStatuses.has(SquareStatus.EPV)
+    && gameState.board[move.row][move.col].enPassantOrigin?.owner !== piece.owner) {
+    let i = 0;
+    for (const row of gameState.board) {
+      let j = 0;
+      for (const cell of row) {
+        if (gameState.board[i][j].piece.id === gameState.board[move.row][move.col].enPassantOrigin?.id) {
+          // gameState.board[i][j].piece.onDeath()
+          gameState.board[i][j].piece = EmptySquare();
+        }
+        j++;
+      }
+      i++;
+    }
+  }
+  // Post EP cleanup
+  let i = 0;
+  for (const row of gameState.board) {
+    let j = 0;
+    for (const cell of row) {
+      gameState.board[i][j].squareStatuses.delete(SquareStatus.EPV);
+      gameState.board[i][j].enPassantOrigin = null;
+      j++;
+    }
+    i++;
+  }
+  // En passant logic
   if (move.flags?.has(MoveFlag.EP)) {
-    // En passant logic
     let pawnPos = 0;
     // Look for the selected pawn *in this column*
     for (let i = 0; i < gameState.board.length; i++) {
@@ -103,15 +132,18 @@ const movePiece = (gameState: GameState, piece: Piece, move: Move) => {
         break;
       }
     }
-    if (pawnPos < move.col) {
+    if (pawnPos < move.row) {
       // En passant square is above
       gameState.board[move.row - 1][move.col].squareStatuses.add(SquareStatus.EPV);
+      gameState.board[move.row - 1][move.col].enPassantOrigin = piece;
     } else {
       // En passant square is below
       gameState.board[move.row + 1][move.col].squareStatuses.add(SquareStatus.EPV);
+      gameState.board[move.row + 1][move.col].enPassantOrigin = piece;
     }
   }
   gameState.board[move.row][move.col].piece = piece;
+  gameState.board[move.row][move.col].piece.nMoves++;
 }
 
 const removePiece = (gameState: GameState, piece: Piece, move: Move) => {
@@ -131,28 +163,19 @@ const gameSlice = createSlice({
         && move.col === action.payload.col);
       if (!pieceToMove || !move) return;
       const originSquare = state.board[state.selectedRow][state.selectedCol];
-      // PRE-MOVE
-      let i = 0;
-      for (const row of state.board) {
-        let j = 0;
-        for (const cell of row) {
-          state.board[i][j].squareStatuses.delete(SquareStatus.EPV);
-          j++;
-        }
-        i++;
-      }
+      // PRE-MOVE (TODO: transfer to preMove() function)
       // LEAVING
       originSquare.piece = EmptySquare();
       // REMOVING TARGET
       removePiece(state, pieceToMove, move);
       // ENTERING & EFFECTS
       movePiece(state, pieceToMove, move);
-      state.board[action.payload.row][action.payload.col].piece.nMoves++;
       // CLEANUP
-      i = 0;
+      let i = 0;
       for (const row of state.board) {
         let j = 0;
         for (const cell of row) {
+          // TODO: Transfer cleanup to postMove function
           state.board[i][j].squareStatuses.delete(SquareStatus.HL);
           state.board[i][j].squareStatuses.delete(SquareStatus.SEL);
           state.board[i][j].squareStatuses.delete(SquareStatus.HLC);
@@ -161,7 +184,6 @@ const gameSlice = createSlice({
         }
         i++;
       }
-      // state.boardClone = state.board;
     },
     selectSquare: (state: GameState, action: PayloadAction<{ row: number, col: number }>) => {
       const row = action.payload.row;
@@ -184,9 +206,6 @@ const gameSlice = createSlice({
               }
               if (move.flags?.has(MoveFlag.KILL)) {
                 kill = true;
-              }
-              if (move.flags?.has(MoveFlag.EPT)) {
-                ept = true;
               }
               break;
             }
@@ -219,38 +238,7 @@ const gameSlice = createSlice({
         state.selectedRow = null;
         state.selectedCol = null;
       }
-      // state.boardClone = state.board;
     },
-    // validateMoveWRTKing: (state: GameState,
-    //   action: PayloadAction<{ piece: Piece, row: number, col: number, move: Move }>) => {
-    //   const board = state.board;
-    //   // board[move.row][move.col].piece.onDeath();
-    //   board[action.payload.move.row][action.payload.move.col].piece = EmptySquare();
-    //   board[action.payload.row][action.payload.col].piece.nMoves++;
-    //   // board[row][col].piece.onMove();
-    //   board[action.payload.move.row][action.payload.move.col].piece = board[action.payload.row][action.payload.col].piece;
-    //   board[action.payload.row][action.payload.col].piece = EmptySquare();
-    //   const kingPositions: Move[] = []
-    //   const threatenedPositions: Move[] = [];
-    //   for (let i = 0; i < board.length; i++) {
-    //     for (let j = 0; j < board[0].length; j++) {
-    //       if (board[i][j].piece.owner === action.payload.piece.owner && board[i][j].piece.pieceType === PieceType.king) {
-    //         kingPositions.push({ row: i, col: j, oRow: action.payload.row, oCol: action.payload.col });
-    //       }
-    //       if (board[i][j].piece.owner !== action.payload.piece.owner) {
-    //         threatenedPositions.push(...board[i][j].piece.moveF(board[i][j].piece, i, j, board, false))
-    //       }
-    //     }
-    //   }
-    //   for (const pos of threatenedPositions) {
-    //     for (const kpos of kingPositions) {
-    //       if (pos.col === kpos.col && pos.row === kpos.row) {
-    //         state.validation = false;
-    //       }
-    //     }
-    //   }
-    //   state.boardClone = state.board;
-    // },
   },
 });
 export default gameSlice.reducer;

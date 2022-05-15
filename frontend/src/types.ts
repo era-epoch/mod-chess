@@ -17,7 +17,6 @@ export enum SquareStatus {
   HLC = 'square-highlighted-castle',
   HLK = 'square-highlighted-kill',
   SEL = 'square-selected',
-  EPT = 'en-passant-target',
   EPV = 'en-passant-vulnerable',
 }
 
@@ -39,7 +38,6 @@ export enum MoveFlag {
   CSTL = 'castle',
   KILL = 'kill',
   EP = 'en-passant',
-  EPT = 'en-passant-target',
 }
 
 export interface Move {
@@ -50,19 +48,17 @@ export interface Move {
   flags?: Set<MoveFlag>,
 }
 
-export interface SquareStatusArg {
-  enPassantOrigin?: Owner,
-}
-
 
 export interface SquareContents {
   inBounds: boolean,
   piece: Piece,
   squareStatuses: Set<SquareStatus>,
-  statusArgs?: SquareStatusArg[],
+  enPassantOrigin: Piece | null,
 }
 
 export interface Piece {
+  name: string,
+  id: number,
   owner: Owner,
   pieceStatuses: Set<PieceStatus>,
   moveF: (piece: Piece, row: number, col: number, state: GameState, checkKing: boolean) => Move[],

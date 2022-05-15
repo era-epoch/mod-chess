@@ -1,9 +1,13 @@
 import { Move, Owner, Piece, Orientation, PieceStatus, SquareContents, SquareStatus, PieceType, MoveFlag } from "./types";
 import { faChessBishop, faChessKing, faChessKnight, faChessPawn, faChessQueen, faChessRook } from '@fortawesome/free-solid-svg-icons';
-import { useDispatch } from "react-redux";
 import { GameState } from "./state/slices/gameSlice";
-import cloneDeep from "lodash.clonedeep";
-import produce, { Immer } from "immer";
+import produce from "immer";
+
+let PID = 0;
+export const genPID = (): number => {
+  PID++;
+  return PID;
+}
 
 export const setUpSquare = (piece: Piece, owner: Owner, orientation: Orientation, inBounds: boolean): SquareContents => {
   piece.owner = owner;
@@ -12,6 +16,7 @@ export const setUpSquare = (piece: Piece, owner: Owner, orientation: Orientation
     inBounds: inBounds,
     piece: piece,
     squareStatuses: new Set<SquareStatus>(),
+    enPassantOrigin: null,
   }
   return sc;
 }
@@ -29,6 +34,8 @@ export const EmptySquare = (): Piece => {
     orientation: Orientation.neutral,
     pieceStatuses: new Set<PieceStatus>(),
     pieceType: PieceType.empty,
+    id: genPID(),
+    name: '',
   };
   return piece;
 }
@@ -40,8 +47,8 @@ export const filterMoves = (piece: Piece, row: number, col: number, state: GameS
   if (checkKing) moves = moves.filter((move: Move) => validateMoveWRTKing(piece, row, col, state, move));
   // Add en passant targeted flag to moves that target an en passant square
   moves = moves.map((move: Move) => {
-    if (board[move.row][move.col].squareStatuses.has(SquareStatus.EPV)) {
-      move.flags = new Set<MoveFlag>([MoveFlag.EPT]);
+    if (board[move.row][move.col].squareStatuses.has(SquareStatus.EPV) && board[move.row][move.col].enPassantOrigin?.owner !== piece.owner) {
+      move.flags = new Set<MoveFlag>([MoveFlag.KILL]);
     }
     return move;
   })
@@ -60,10 +67,12 @@ const pawnBasicMoveF = (piece: Piece, row: number, col: number, state: GameState
       && board[row - 1][col].piece.pieceType === PieceType.empty) {
       moves.push({ row: row - 2, col: col, flags: new Set<MoveFlag>([MoveFlag.EP]), oRow: row, oCol: col });
     }
-    if (board[row - 1][col - 1].piece.owner === (piece.owner + 1) % 2) {
+    if (board[row - 1][col - 1].piece.owner === (piece.owner + 1) % 2
+      || (board[row - 1][col - 1].enPassantOrigin !== null && board[row - 1][col - 1].enPassantOrigin?.owner !== piece.owner)) {
       moves.push({ row: row - 1, col: col - 1, flags: new Set<MoveFlag>([MoveFlag.KILL]), oRow: row, oCol: col });
     }
-    if (board[row - 1][col + 1].piece.owner === (piece.owner + 1) % 2) {
+    if (board[row - 1][col + 1].piece.owner === (piece.owner + 1) % 2
+      || (board[row - 1][col + 1].enPassantOrigin !== null && board[row - 1][col + 1].enPassantOrigin?.owner !== piece.owner)) {
       moves.push({ row: row - 1, col: col + 1, flags: new Set<MoveFlag>([MoveFlag.KILL]), oRow: row, oCol: col });
     }
   } else if (piece.orientation === Orientation.top) {
@@ -75,10 +84,12 @@ const pawnBasicMoveF = (piece: Piece, row: number, col: number, state: GameState
       && board[row + 1][col].piece.pieceType === PieceType.empty) {
       moves.push({ row: row + 2, col: col, flags: new Set<MoveFlag>([MoveFlag.EP]), oRow: row, oCol: col });
     }
-    if (board[row + 1][col - 1].piece.owner === (piece.owner + 1) % 2) {
+    if (board[row + 1][col - 1].piece.owner === (piece.owner + 1) % 2
+      || (board[row + 1][col - 1].enPassantOrigin !== null && board[row + 1][col - 1].enPassantOrigin?.owner !== piece.owner)) {
       moves.push({ row: row + 1, col: col - 1, flags: new Set<MoveFlag>([MoveFlag.KILL]), oRow: row, oCol: col });
     }
-    if (board[row + 1][col + 1].piece.owner === (piece.owner + 1) % 2) {
+    if (board[row + 1][col + 1].piece.owner === (piece.owner + 1) % 2
+      || (board[row + 1][col + 1].enPassantOrigin !== null && board[row + 1][col + 1].enPassantOrigin?.owner !== piece.owner)) {
       moves.push({ row: row + 1, col: col + 1, flags: new Set<MoveFlag>([MoveFlag.KILL]), oRow: row, oCol: col });
     }
   }
@@ -94,6 +105,9 @@ export const PawnBasic = (): Piece => {
     orientation: Orientation.neutral,
     pieceStatuses: new Set<PieceStatus>(),
     pieceType: PieceType.pawn,
+    statusArgs: [],
+    id: genPID(),
+    name: '',
   }
   return piece;
 }
@@ -144,7 +158,10 @@ export const RookBasic = (): Piece => {
     nMoves: 0,
     orientation: Orientation.neutral,
     pieceStatuses: new Set<PieceStatus>(),
-    pieceType: PieceType.rook
+    pieceType: PieceType.rook,
+    statusArgs: [],
+    id: genPID(),
+    name: '',
   }
   return piece;
 }
@@ -196,6 +213,9 @@ export const BishopBasic = (): Piece => {
     orientation: Orientation.neutral,
     pieceStatuses: new Set<PieceStatus>(),
     pieceType: PieceType.bishop,
+    statusArgs: [],
+    id: genPID(),
+    name: '',
   }
   return piece;
 }
@@ -228,6 +248,9 @@ export const KnightBasic = (): Piece => {
     orientation: Orientation.neutral,
     pieceStatuses: new Set<PieceStatus>(),
     pieceType: PieceType.knight,
+    statusArgs: [],
+    id: genPID(),
+    name: '',
   }
   return piece;
 }
@@ -311,6 +334,9 @@ export const QueenBasic = (): Piece => {
     orientation: Orientation.neutral,
     pieceStatuses: new Set<PieceStatus>(),
     pieceType: PieceType.queen,
+    statusArgs: [],
+    id: genPID(),
+    name: '',
   }
   return piece;
 }
@@ -377,14 +403,17 @@ export const KingBasic = (): Piece => {
     orientation: Orientation.neutral,
     pieceStatuses: new Set<PieceStatus>(),
     pieceType: PieceType.king,
+    statusArgs: [],
+    id: genPID(),
+    name: '',
   }
   return piece;
 }
 
 export const validateMoveWRTKing = (piece: Piece, row: number, col: number, state: GameState, move: Move): boolean => {
   let validation = true;
-  const nextState = produce(state.board, (draftState: SquareContents[][]) => {
-    const board = draftState;
+  const nextState = produce(state, (draftState: GameState) => {
+    const board = draftState.board;
     // board[move.row][move.col].piece.onDeath();
     board[move.row][move.col].piece = EmptySquare();
     board[row][col].piece.nMoves++;
@@ -399,7 +428,7 @@ export const validateMoveWRTKing = (piece: Piece, row: number, col: number, stat
           kingPositions.push({ row: i, col: j, oRow: row, oCol: col });
         }
         if (board[i][j].piece.owner !== piece.owner) {
-          threatenedPositions.push(...board[i][j].piece.moveF(board[i][j].piece, i, j, state, false))
+          threatenedPositions.push(...board[i][j].piece.moveF(board[i][j].piece, i, j, draftState, false))
         }
       }
     }

@@ -10,7 +10,6 @@ import Square from "./Square";
 const Board = (): JSX.Element => {
   // let gameState = initialGameState;
   const gameState = useSelector((state: RootState) => state.game.board)
-  const turn = useSelector((state: RootState) => state.game.turn);
   const dispatch = useDispatch();
 
   const handleMove = (row: number, col: number) => {
