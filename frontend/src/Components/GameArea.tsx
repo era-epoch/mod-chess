@@ -1,6 +1,6 @@
-import CenterGameArea from "./CenterGameArea";
-import "./GameArea.css";
-import RightGameArea from "./RightGameArea";
+import CenterGameArea from './CenterGameArea';
+import './GameArea.css';
+import RightGameArea from './RightGameArea';
 
 const GameArea = (): JSX.Element => {
   return (
@@ -9,6 +9,6 @@ const GameArea = (): JSX.Element => {
       <RightGameArea />
     </div>
   );
-}
+};
 
 export default GameArea;
