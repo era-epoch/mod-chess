@@ -53,7 +53,9 @@ const Square = (props: Props): JSX.Element => {
             <FontAwesomeIcon icon={faChessPawn} />
           </div>
         ) : null}
-        {props.content.squareStatuses.has(SquareStatus.SEL) ? <div className="square-selected"></div> : null}
+        {props.content.inBounds && props.content.squareStatuses.has(SquareStatus.SEL) ? (
+          <div className="square-selected"></div>
+        ) : null}
       </div>
     </div>
   );

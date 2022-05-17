@@ -2,7 +2,7 @@ import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
 import { uid } from 'react-uid';
 import { RootState } from '../state/rootReducer';
-import { makeMove, selectSquare } from '../state/slices/gameSlice';
+import { makeMove, selectSquare } from '../state/slices/gameSlice/slice';
 import { SquareStatus } from '../types';
 import './Board.css';
 import Square from './Square';
@@ -38,7 +38,7 @@ const Board = (): JSX.Element => {
     <div className="Board">
       {gameState.map((row, rowN) => {
         return (
-          <div className="row">
+          <div key={uid(rowN)} className="row">
             {row.map((val, colN) => {
               return <Square key={uid(val)} row={rowN} col={colN} content={val} clickHandler={handleSquareClick} />;
             })}

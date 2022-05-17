@@ -1,11 +1,14 @@
 import './RightGameArea.css';
 import GraveyardYard from './GraveyardYard';
 import { useSelector } from 'react-redux';
-import { Graveyard } from '../types';
+import { Graveyard, Player } from '../types';
 import { RootState } from '../state/rootReducer';
 
 const RightGameArea = (): JSX.Element => {
   const graveyards = useSelector((state: RootState) => state.game.graveyards);
+  const darkGraveyard = graveyards.filter((g: Graveyard) => g.player === Player.dark)[0];
+  const lightGraveyard = graveyards.filter((g: Graveyard) => g.player === Player.light)[0];
+
   return (
     <div className="right-game-area">
       <div className="right-game-area-top">
@@ -14,9 +17,8 @@ const RightGameArea = (): JSX.Element => {
         </div>
       </div>
       <div className="right-game-area-center">
-        {graveyards.map((graveyard: Graveyard) => {
-          return <GraveyardYard graveyard={graveyard} />;
-        })}
+        <GraveyardYard graveyard={darkGraveyard} />
+        <GraveyardYard graveyard={lightGraveyard} />
       </div>
       <div className="right-game-area-bottom">
         <div className="player-name">

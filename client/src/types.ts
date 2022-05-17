@@ -1,4 +1,4 @@
-import { GameState } from "./state/slices/gameSlice";
+import { GameState } from "./state/slices/gameSlice/slice";
 
 export enum Player {
   'light' = 0,
@@ -43,11 +43,16 @@ export enum MoveFlag {
 export interface Move {
   row: number,
   col: number,
-  oRow: number,
-  oCol: number,
+  oRow?: number,
+  oCol?: number,
   flags?: Set<MoveFlag>,
 }
 
+export interface UserInfo {
+  name: string,
+  color: Player,
+  elo?: number,
+}
 
 export interface SquareContents {
   inBounds: boolean,
