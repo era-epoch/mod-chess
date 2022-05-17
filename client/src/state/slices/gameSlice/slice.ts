@@ -10,7 +10,7 @@ import {
   PawnBasic,
 } from '../../../GameObjects/piecesBasic';
 import { Graveyard, Move, MoveFlag, Player, SquareContents, SquareStatus } from '../../../types';
-import { removePieceAtLocation, movePiece, isGameover, handleGameover } from './helpers';
+import { removePieceAtLocation, movePiece, isGameover, handleGameover, selectedPieceCanMove } from './helpers';
 
 const initialBoard: SquareContents[][] = [
   [
@@ -142,6 +142,7 @@ export interface GameState {
   selectedCol: number | null;
   graveyards: Graveyard[];
   completed: boolean;
+  winner: Player | null; // null = not finished, PLayer.neutral = Draw
 }
 
 // interface GameRecord {
@@ -158,6 +159,7 @@ const initialGameState: GameState = {
     { player: Player.dark, contents: [] },
   ],
   completed: false,
+  winner: null,
 };
 
 // Reducer
@@ -197,17 +199,15 @@ const gameSlice = createSlice({
       //.onTurnEnd()
       // if () .onRoundEnd()
       if (isGameover(state, pieceToMove.owner)) handleGameover(state, pieceToMove.owner);
+      state.turn++;
     },
     selectSquare: (state: GameState, action: PayloadAction<{ row: number; col: number }>) => {
       const row = action.payload.row;
       const col = action.payload.col;
-      const movesToHighlight: Move[] = state.board[row][col].piece.moveF(
-        state.board[row][col].piece,
-        row,
-        col,
-        state,
-        true,
-      );
+      const movesToHighlight: Move[] = [];
+      if (selectedPieceCanMove(state, row, col)) {
+        movesToHighlight.push(...state.board[row][col].piece.moveF(state.board[row][col].piece, row, col, state, true));
+      }
       const selectedSameSquare = state.selectedRow === row && state.selectedCol === col;
       let i = 0;
       for (const row of state.board) {

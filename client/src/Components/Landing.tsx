@@ -11,7 +11,6 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useNavigate } from 'react-router-dom';
-import { uid } from 'react-uid';
 import { useDispatch } from 'react-redux';
 import { addAlert, AlertType, getAlertID, removeAlert } from '../state/slices/UISlice/slice';
 

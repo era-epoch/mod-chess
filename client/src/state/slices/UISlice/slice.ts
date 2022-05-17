@@ -23,12 +23,12 @@ export interface UIState {
   alerts: Alert[];
 }
 
-const testAlerts = [
-  { type: AlertType.success, content: 'successsssssssssssssssssssssssssssssssssssssssssssssssssssssss', id: -1 },
-  { type: AlertType.warning, content: 'warning', id: -2 },
-  { type: AlertType.info, content: 'info', id: -3 },
-  { type: AlertType.error, content: 'error', id: -4 },
-];
+// const testAlerts = [
+//   { type: AlertType.success, content: 'successsssssssssssssssssssssssssssssssssssssssssssssssssssssss', id: -1 },
+//   { type: AlertType.warning, content: 'warning', id: -2 },
+//   { type: AlertType.info, content: 'info', id: -3 },
+//   { type: AlertType.error, content: 'error', id: -4 },
+// ];
 
 const initialUIState = {
   alerts: [],

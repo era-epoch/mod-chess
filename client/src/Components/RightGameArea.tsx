@@ -3,6 +3,7 @@ import GraveyardYard from './GraveyardYard';
 import { useSelector } from 'react-redux';
 import { Graveyard, Player } from '../types';
 import { RootState } from '../state/rootReducer';
+import TurnCounter from './TurnCounter';
 
 const RightGameArea = (): JSX.Element => {
   const graveyards = useSelector((state: RootState) => state.game.graveyards);
@@ -13,16 +14,17 @@ const RightGameArea = (): JSX.Element => {
     <div className="right-game-area">
       <div className="right-game-area-top">
         <div className="player-name">
-          <p>Player 1</p>
+          <p>Black</p>
         </div>
       </div>
       <div className="right-game-area-center">
         <GraveyardYard graveyard={darkGraveyard} />
+        <TurnCounter />
         <GraveyardYard graveyard={lightGraveyard} />
       </div>
       <div className="right-game-area-bottom">
         <div className="player-name">
-          <p>Player 2</p>
+          <p>White</p>
         </div>
       </div>
     </div>

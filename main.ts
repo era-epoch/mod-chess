@@ -14,7 +14,12 @@ console.log(`Server running in ${env} mode!`);
 app.use(bodyParser.json());
 
 // Serve the static files from the React app
-app.use(express.static(path.join(__dirname, 'frontend/build')));
+app.use(express.static(path.join(__dirname, 'client/build')));
+
+// Fallback route
+app.get('*', (req: Request, res: Response) => {
+  res.sendFile(path.join(__dirname + '/client/build/index.html'));
+});
 
 // Express server listening...
 const port = process.env.PORT || 5000;

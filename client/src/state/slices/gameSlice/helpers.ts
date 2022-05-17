@@ -115,8 +115,19 @@ export const handleGameover = (gameState: GameState, player: Player) => {
   if (kingInCheck(gameState, opponent)) {
     // Checkmate
     console.log('CHECKMATE');
+    gameState.winner = player;
   } else {
     // Stalemate
     console.log('STALEMATE');
+    gameState.winner = Player.neutral;
+  }
+  gameState.completed = true;
+};
+
+export const selectedPieceCanMove = (gameState: GameState, row: number, col: number) => {
+  if (gameState.turn % 2 === 0) {
+    return gameState.board[row][col].piece.owner === Player.light;
+  } else {
+    return gameState.board[row][col].piece.owner === Player.dark;
   }
 };
