@@ -10,20 +10,18 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: 0 0.5rem;
-  background-color: rgba(0, 0, 0, 0.5);
 }
 
 .right-game-area-top {
   border-bottom: 2px solid whitesmoke;
   height: 7.5vh;
-  background-color: rgba(0, 0, 0, 0.5);
+  /* background-color: rgba(0, 0, 0, 0.5); */
   text-align: center;
 }
 
 .right-game-area-bottom {
   border-top: 2px solid whitesmoke;
   height: 7.5vh;
-  background-color: rgba(0, 0, 0, 0.5);
+  /* background-color: rgba(0, 0, 0, 0.5); */
   text-align: center;
 }
