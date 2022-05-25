@@ -2,7 +2,8 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding-right: 1rem;
+  width: 10rem;
+  padding-left: 3rem;
 }
 
 .right-game-area-center {
@@ -31,8 +32,5 @@
 
 .player-name {
   font-size: 1.5rem;
-}
-
-.player-name p {
-  margin: 0;
+  font-weight: bold;
 }

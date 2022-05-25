@@ -1,5 +1,3 @@
-// const onTurnTaken();
-
 import { EmptySquare, kingInCheck } from '../../../GameObjects/piecesBasic';
 import { Piece, Move, MoveFlag, SquareStatus, PieceType, Graveyard, Player } from '../../../types';
 import { GameState } from './slice';
@@ -113,12 +111,10 @@ export const isGameover = (gameState: GameState, player: Player): boolean => {
 export const handleGameover = (gameState: GameState, player: Player) => {
   const opponent: Player = (player + 1) % 2;
   if (kingInCheck(gameState, opponent)) {
-    // Checkmate
-    console.log('CHECKMATE');
+    // console.log('CHECKMATE');
     gameState.winner = player;
   } else {
-    // Stalemate
-    console.log('STALEMATE');
+    // console.log('STALEMATE');
     gameState.winner = Player.neutral;
   }
   gameState.completed = true;

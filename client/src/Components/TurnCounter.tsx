@@ -24,7 +24,7 @@ const TurnCounter = (): JSX.Element => {
           </div>
         </>
       ) : (
-        <div className="turn-player-label">{turn === 0 ? 'White to move.' : 'Black to move.'}</div>
+        <div className="turn-player-label">{turn % 2 === 0 ? 'White to move.' : 'Black to move.'}</div>
       )}
     </div>
   );

@@ -1,0 +1,8 @@
+.left-game-area {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 10rem;
+  flex: 1;
+  padding-right: 3rem;
+}
