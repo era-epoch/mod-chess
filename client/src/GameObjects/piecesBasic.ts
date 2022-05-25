@@ -8,6 +8,7 @@ import {
   SquareStatus,
   PieceType,
   MoveFlag,
+  LifecycleF,
 } from '../types';
 import {
   faChessBishop,
@@ -17,7 +18,7 @@ import {
   faChessQueen,
   faChessRook,
 } from '@fortawesome/free-solid-svg-icons';
-import { GameState } from '../state/slices/gameSlice/slice';
+import { GameState } from '../state/slices/game/slice';
 import produce from 'immer';
 
 // TODO: ensure PID sync between users
@@ -25,6 +26,42 @@ let PID = 0;
 export const genPID = (): number => {
   PID++;
   return PID;
+};
+
+export const onDeathBasic = (piece: Piece, state: GameState, row: number, col: number): void => {
+  const fs = piece.onDeathFs.sort((a: LifecycleF, b: LifecycleF) =>
+    a.priority > b.priority ? 1 : b.priority > a.priority ? -1 : 0,
+  );
+  for (let i = 0; i < fs.length; i++) {
+    fs[i].function(piece, state, row, col);
+  }
+};
+
+export const onTurnStartBasic = (piece: Piece, state: GameState, row: number, col: number): void => {
+  const fs = piece.onTurnStartFs.sort((a: LifecycleF, b: LifecycleF) =>
+    a.priority > b.priority ? 1 : b.priority > a.priority ? -1 : 0,
+  );
+  for (let i = 0; i < fs.length; i++) {
+    fs[i].function(piece, state, row, col);
+  }
+};
+
+export const onTurnEndBasic = (piece: Piece, state: GameState, row: number, col: number): void => {
+  const fs = piece.onTurnEndFs.sort((a: LifecycleF, b: LifecycleF) =>
+    a.priority > b.priority ? 1 : b.priority > a.priority ? -1 : 0,
+  );
+  for (let i = 0; i < fs.length; i++) {
+    fs[i].function(piece, state, row, col);
+  }
+};
+
+export const onMovedBasic = (piece: Piece, state: GameState, row: number, col: number): void => {
+  const fs = piece.onMovedFs.sort((a: LifecycleF, b: LifecycleF) =>
+    a.priority > b.priority ? 1 : b.priority > a.priority ? -1 : 0,
+  );
+  for (let i = 0; i < fs.length; i++) {
+    fs[i].function(piece, state, row, col);
+  }
 };
 
 export const setUpSquare = (
@@ -49,7 +86,7 @@ const emptyMoveF = (piece: Piece, row: number, col: number, state: GameState, ch
 };
 
 export const EmptySquare = (): Piece => {
-  const piece = {
+  const piece: Piece = {
     owner: Player.neutral,
     moveF: emptyMoveF,
     icon: null,
@@ -59,6 +96,14 @@ export const EmptySquare = (): Piece => {
     pieceType: PieceType.empty,
     id: genPID(),
     name: '',
+    onDeath: onDeathBasic,
+    onDeathFs: [],
+    onTurnStart: onTurnStartBasic,
+    onTurnStartFs: [],
+    onTurnEnd: onTurnEndBasic,
+    onTurnEndFs: [],
+    onMoved: onMovedBasic,
+    onMovedFs: [],
   };
   return piece;
 };
@@ -152,7 +197,7 @@ const pawnBasicMoveF = (
 };
 
 export const PawnBasic = (): Piece => {
-  const piece = {
+  const piece: Piece = {
     owner: Player.neutral,
     moveF: pawnBasicMoveF,
     icon: faChessPawn,
@@ -160,9 +205,17 @@ export const PawnBasic = (): Piece => {
     orientation: Orientation.neutral,
     pieceStatuses: new Set<PieceStatus>(),
     pieceType: PieceType.pawn,
-    statusArgs: [],
+    // statusArgs: [],
     id: genPID(),
     name: '',
+    onDeath: onDeathBasic,
+    onDeathFs: [],
+    onTurnStart: onTurnStartBasic,
+    onTurnStartFs: [],
+    onTurnEnd: onTurnEndBasic,
+    onTurnEndFs: [],
+    onMoved: onMovedBasic,
+    onMovedFs: [],
   };
   return piece;
 };
@@ -212,7 +265,7 @@ const rookBasicMoveF = (
 };
 
 export const RookBasic = (): Piece => {
-  const piece = {
+  const piece: Piece = {
     owner: Player.neutral,
     moveF: rookBasicMoveF,
     icon: faChessRook,
@@ -220,9 +273,17 @@ export const RookBasic = (): Piece => {
     orientation: Orientation.neutral,
     pieceStatuses: new Set<PieceStatus>(),
     pieceType: PieceType.rook,
-    statusArgs: [],
+    // statusArgs: [],
     id: genPID(),
     name: '',
+    onDeath: onDeathBasic,
+    onDeathFs: [],
+    onTurnStart: onTurnStartBasic,
+    onTurnStartFs: [],
+    onTurnEnd: onTurnEndBasic,
+    onTurnEndFs: [],
+    onMoved: onMovedBasic,
+    onMovedFs: [],
   };
   return piece;
 };
@@ -276,7 +337,7 @@ const bishopBasicMoveF = (
 };
 
 export const BishopBasic = (): Piece => {
-  const piece = {
+  const piece: Piece = {
     owner: Player.neutral,
     moveF: bishopBasicMoveF,
     icon: faChessBishop,
@@ -284,9 +345,17 @@ export const BishopBasic = (): Piece => {
     orientation: Orientation.neutral,
     pieceStatuses: new Set<PieceStatus>(),
     pieceType: PieceType.bishop,
-    statusArgs: [],
+    // statusArgs: [],
     id: genPID(),
     name: '',
+    onDeath: onDeathBasic,
+    onDeathFs: [],
+    onTurnStart: onTurnStartBasic,
+    onTurnStartFs: [],
+    onTurnEnd: onTurnEndBasic,
+    onTurnEndFs: [],
+    onMoved: onMovedBasic,
+    onMovedFs: [],
   };
   return piece;
 };
@@ -336,7 +405,7 @@ const knightBasicMoveF = (
 };
 
 export const KnightBasic = (): Piece => {
-  const piece = {
+  const piece: Piece = {
     owner: Player.neutral,
     moveF: knightBasicMoveF,
     icon: faChessKnight,
@@ -344,9 +413,17 @@ export const KnightBasic = (): Piece => {
     orientation: Orientation.neutral,
     pieceStatuses: new Set<PieceStatus>(),
     pieceType: PieceType.knight,
-    statusArgs: [],
+    // statusArgs: [],
     id: genPID(),
     name: '',
+    onDeath: onDeathBasic,
+    onDeathFs: [],
+    onTurnStart: onTurnStartBasic,
+    onTurnStartFs: [],
+    onTurnEnd: onTurnEndBasic,
+    onTurnEndFs: [],
+    onMoved: onMovedBasic,
+    onMovedFs: [],
   };
   return piece;
 };
@@ -432,7 +509,7 @@ const queenBasicMoveF = (
 };
 
 export const QueenBasic = (): Piece => {
-  const piece = {
+  const piece: Piece = {
     owner: Player.neutral,
     moveF: queenBasicMoveF,
     icon: faChessQueen,
@@ -440,9 +517,17 @@ export const QueenBasic = (): Piece => {
     orientation: Orientation.neutral,
     pieceStatuses: new Set<PieceStatus>(),
     pieceType: PieceType.queen,
-    statusArgs: [],
+    // statusArgs: [],
     id: genPID(),
     name: '',
+    onDeath: onDeathBasic,
+    onDeathFs: [],
+    onTurnStart: onTurnStartBasic,
+    onTurnStartFs: [],
+    onTurnEnd: onTurnEndBasic,
+    onTurnEndFs: [],
+    onMoved: onMovedBasic,
+    onMovedFs: [],
   };
   return piece;
 };
@@ -530,7 +615,7 @@ const kingBasicMoveF = (
 };
 
 export const KingBasic = (): Piece => {
-  const piece = {
+  const piece: Piece = {
     owner: Player.neutral,
     moveF: kingBasicMoveF,
     icon: faChessKing,
@@ -538,9 +623,17 @@ export const KingBasic = (): Piece => {
     orientation: Orientation.neutral,
     pieceStatuses: new Set<PieceStatus>(),
     pieceType: PieceType.king,
-    statusArgs: [],
+    // statusArgs: [],
     id: genPID(),
     name: '',
+    onDeath: onDeathBasic,
+    onDeathFs: [],
+    onTurnStart: onTurnStartBasic,
+    onTurnStartFs: [],
+    onTurnEnd: onTurnEndBasic,
+    onTurnEndFs: [],
+    onMoved: onMovedBasic,
+    onMovedFs: [],
   };
   return piece;
 };

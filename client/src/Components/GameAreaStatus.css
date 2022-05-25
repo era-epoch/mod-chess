@@ -1,4 +1,4 @@
-.right-game-area {
+.game-area-status {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -6,14 +6,14 @@
   padding-left: 3rem;
 }
 
-.right-game-area-center {
+.game-area-status-center {
   height: 75vh;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
 }
 
-.right-game-area-top {
+.game-area-status-top {
   border-bottom: 2px solid whitesmoke;
   height: 7.5vh;
   /* background-color: rgba(0, 0, 0, 0.5); */
@@ -23,7 +23,7 @@
   justify-content: end;
 }
 
-.right-game-area-bottom {
+.game-area-status-bottom {
   border-top: 2px solid whitesmoke;
   height: 7.5vh;
   /* background-color: rgba(0, 0, 0, 0.5); */

@@ -2,7 +2,7 @@ import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
 import { uid } from 'react-uid';
 import { RootState } from '../state/rootReducer';
-import { makeMove, selectSquare } from '../state/slices/gameSlice/slice';
+import { makeMove, selectSquare } from '../state/slices/game/slice';
 import { SquareStatus } from '../types';
 import './Board.css';
 import Square from './Square';

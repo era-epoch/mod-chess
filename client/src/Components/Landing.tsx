@@ -12,7 +12,7 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { addAlert, AlertType, getAlertID, removeAlert } from '../state/slices/UISlice/slice';
+import { addAlert, AlertType, getAlertID, removeAlert } from '../state/slices/ui/slice';
 
 const footerOrder: IconDefinition[] = [
   faChessPawn,
