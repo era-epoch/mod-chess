@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
 import { uid } from 'react-uid';
@@ -8,17 +9,15 @@ import './Board.css';
 import Square from './Square';
 
 const Board = (): JSX.Element => {
-  // let gameState = initialGameState;
   const gameState = useSelector((state: RootState) => state.game.board);
+  // const socket = useSelector((state: RootState) => state.connection.socket);
   const dispatch = useDispatch();
 
   const handleMove = (row: number, col: number) => {
-    // console.log('Handling Move');
     dispatch(makeMove({ row: row, col: col }));
   };
 
   const handleSelect = (row: number, col: number) => {
-    // console.log('Square Selected');
     dispatch(selectSquare({ row: row, col: col }));
   };
 

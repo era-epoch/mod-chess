@@ -5,27 +5,26 @@ import { useSelector } from 'react-redux';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { uid } from 'react-uid';
 import './App.css';
-import Game from './Components/Game';
+import Base from './Components/Base';
 import { RootState } from './state/rootReducer';
 import { Alert, removeAlert } from './state/slices/ui/slice';
 import { useEffect } from 'react';
-import { connect, disconnect } from './state/slices/connection/slice';
+import { wsConnect, wsDisconnect } from './socket';
 
 const App = (): JSX.Element => {
   const alerts = useSelector((state: RootState) => state.ui.alerts);
-  const socket = useSelector((state: RootState) => state.connection.socket);
   const dispatch = useDispatch();
   useEffect(() => {
-    dispatch(connect(`http://${window.location.hostname}:5000`));
+    dispatch(wsConnect(`http://${window.location.hostname}:5000`));
     return () => {
-      dispatch(disconnect(`http://${window.location.hostname}:5000`));
+      dispatch(wsDisconnect(`http://${window.location.hostname}:5000`));
     };
   }, []);
   return (
     <div className="App">
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Game />} />
+          <Route path="/" element={<Base />} />
         </Routes>
       </BrowserRouter>
       <div className="alert-container">

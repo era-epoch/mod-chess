@@ -21,6 +21,7 @@ export interface Alert {
 
 export interface UIState {
   alerts: Alert[];
+  activeGame: boolean;
 }
 
 // const testAlerts = [
@@ -32,6 +33,7 @@ export interface UIState {
 
 const initialUIState = {
   alerts: [],
+  activeGame: false,
 };
 
 const UISlice = createSlice({
@@ -44,8 +46,11 @@ const UISlice = createSlice({
     removeAlert: (state: UIState, action: PayloadAction<Alert>) => {
       state.alerts = state.alerts.filter((a: Alert) => a.id !== action.payload.id);
     },
+    setActiveGame: (state: UIState, action: PayloadAction<boolean>) => {
+      state.activeGame = action.payload;
+    },
   },
 });
 
 export default UISlice.reducer;
-export const { addAlert, removeAlert } = UISlice.actions;
+export const { addAlert, removeAlert, setActiveGame } = UISlice.actions;

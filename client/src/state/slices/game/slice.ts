@@ -145,10 +145,6 @@ export interface GameState {
   winner: Player | null; // null = not finished, PLayer.neutral = Draw
 }
 
-// interface GameRecord {
-//   states: SquareContents[][][],
-// }
-
 const initialGameState: GameState = {
   board: initialBoard,
   turn: 0,

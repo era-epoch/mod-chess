@@ -35,6 +35,10 @@ io.on('connection', (socket) => {
   socket.on('disconnect', () => {
     console.log('user disconnected');
   });
+  socket.on('createGame', () => {
+    console.log('game created');
+    io.emit('createGame');
+  });
 });
 
 // Express server listening...
