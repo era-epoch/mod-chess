@@ -14,12 +14,12 @@ import { wsConnect, wsDisconnect } from './socket';
 const App = (): JSX.Element => {
   const alerts = useSelector((state: RootState) => state.ui.alerts);
   const dispatch = useDispatch();
-  useEffect(() => {
-    dispatch(wsConnect(`http://${window.location.hostname}:5000`));
-    return () => {
-      dispatch(wsDisconnect(`http://${window.location.hostname}:5000`));
-    };
-  }, []);
+  // useEffect(() => {
+  //   dispatch(wsConnect(`http://${window.location.hostname}:5000`));
+  //   return () => {
+  //     dispatch(wsDisconnect(`http://${window.location.hostname}:5000`));
+  //   };
+  // }, []);
   return (
     <div className="App">
       <BrowserRouter>

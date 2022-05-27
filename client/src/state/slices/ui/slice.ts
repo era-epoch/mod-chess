@@ -1,10 +1,17 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { GameCreatedEvent } from '../../../events';
 
 export enum AlertType {
   success = 'success',
   warning = 'warning',
   info = 'info',
   error = 'error',
+}
+
+export enum OnlineGameStatus {
+  NONE,
+  AWAITING,
+  SUCCESS,
 }
 
 let alertCount = 0;
@@ -22,6 +29,8 @@ export interface Alert {
 export interface UIState {
   alerts: Alert[];
   activeGame: boolean;
+  onlineGameStatus: OnlineGameStatus;
+  gameID: string;
 }
 
 // const testAlerts = [
@@ -34,6 +43,8 @@ export interface UIState {
 const initialUIState = {
   alerts: [],
   activeGame: false,
+  onlineGameStatus: OnlineGameStatus.NONE,
+  gameID: '',
 };
 
 const UISlice = createSlice({
@@ -49,8 +60,12 @@ const UISlice = createSlice({
     setActiveGame: (state: UIState, action: PayloadAction<boolean>) => {
       state.activeGame = action.payload;
     },
+    createdOnlineGame: (state: UIState, action: PayloadAction<GameCreatedEvent>) => {
+      state.onlineGameStatus = OnlineGameStatus.AWAITING;
+      state.gameID = action.payload.id;
+    },
   },
 });
 
 export default UISlice.reducer;
-export const { addAlert, removeAlert, setActiveGame } = UISlice.actions;
+export const { addAlert, removeAlert, setActiveGame, createdOnlineGame } = UISlice.actions;

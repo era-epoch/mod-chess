@@ -1,139 +1,8 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import {
-  setUpSquare,
-  EmptySquare,
-  RookBasic,
-  KnightBasic,
-  BishopBasic,
-  QueenBasic,
-  KingBasic,
-  PawnBasic,
-} from '../../../GameObjects/piecesBasic';
+import { EmptySquare } from '../../../GameObjects/piecesBasic';
 import { Graveyard, Move, MoveFlag, Player, SquareContents, SquareStatus } from '../../../types';
 import { removePieceAtLocation, movePiece, isGameover, handleGameover, selectedPieceCanMove } from './helpers';
-
-const initialBoard: SquareContents[][] = [
-  [
-    setUpSquare(EmptySquare(), 2, 2, false),
-    setUpSquare(EmptySquare(), 2, 2, false),
-    setUpSquare(EmptySquare(), 2, 2, false),
-    setUpSquare(EmptySquare(), 2, 2, false),
-    setUpSquare(EmptySquare(), 2, 2, false),
-    setUpSquare(EmptySquare(), 2, 2, false),
-    setUpSquare(EmptySquare(), 2, 2, false),
-    setUpSquare(EmptySquare(), 2, 2, false),
-    setUpSquare(EmptySquare(), 2, 2, false),
-    setUpSquare(EmptySquare(), 2, 2, false),
-  ],
-  [
-    setUpSquare(EmptySquare(), 2, 2, false),
-    setUpSquare(RookBasic(), 1, 0, true),
-    setUpSquare(KnightBasic(), 1, 0, true),
-    setUpSquare(BishopBasic(), 1, 0, true),
-    setUpSquare(QueenBasic(), 1, 0, true),
-    setUpSquare(KingBasic(), 1, 0, true),
-    setUpSquare(BishopBasic(), 1, 0, true),
-    setUpSquare(KnightBasic(), 1, 0, true),
-    setUpSquare(RookBasic(), 1, 0, true),
-    setUpSquare(EmptySquare(), 2, 2, false),
-  ],
-  [
-    setUpSquare(EmptySquare(), 2, 2, false),
-    setUpSquare(PawnBasic(), 1, 0, true),
-    setUpSquare(PawnBasic(), 1, 0, true),
-    setUpSquare(PawnBasic(), 1, 0, true),
-    setUpSquare(PawnBasic(), 1, 0, true),
-    setUpSquare(PawnBasic(), 1, 0, true),
-    setUpSquare(PawnBasic(), 1, 0, true),
-    setUpSquare(PawnBasic(), 1, 0, true),
-    setUpSquare(PawnBasic(), 1, 0, true),
-    setUpSquare(EmptySquare(), 2, 2, false),
-  ],
-  [
-    setUpSquare(EmptySquare(), 2, 2, false),
-    setUpSquare(EmptySquare(), 2, 2, true),
-    setUpSquare(EmptySquare(), 2, 2, true),
-    setUpSquare(EmptySquare(), 2, 2, true),
-    setUpSquare(EmptySquare(), 2, 2, true),
-    setUpSquare(EmptySquare(), 2, 2, true),
-    setUpSquare(EmptySquare(), 2, 2, true),
-    setUpSquare(EmptySquare(), 2, 2, true),
-    setUpSquare(EmptySquare(), 2, 2, true),
-    setUpSquare(EmptySquare(), 2, 2, false),
-  ],
-  [
-    setUpSquare(EmptySquare(), 2, 2, false),
-    setUpSquare(EmptySquare(), 2, 2, true),
-    setUpSquare(EmptySquare(), 2, 2, true),
-    setUpSquare(EmptySquare(), 2, 2, true),
-    setUpSquare(EmptySquare(), 2, 2, true),
-    setUpSquare(EmptySquare(), 2, 2, true),
-    setUpSquare(EmptySquare(), 2, 2, true),
-    setUpSquare(EmptySquare(), 2, 2, true),
-    setUpSquare(EmptySquare(), 2, 2, true),
-    setUpSquare(EmptySquare(), 2, 2, false),
-  ],
-  [
-    setUpSquare(EmptySquare(), 2, 2, false),
-    setUpSquare(EmptySquare(), 2, 2, true),
-    setUpSquare(EmptySquare(), 2, 2, true),
-    setUpSquare(EmptySquare(), 2, 2, true),
-    setUpSquare(EmptySquare(), 2, 2, true),
-    setUpSquare(EmptySquare(), 2, 2, true),
-    setUpSquare(EmptySquare(), 2, 2, true),
-    setUpSquare(EmptySquare(), 2, 2, true),
-    setUpSquare(EmptySquare(), 2, 2, true),
-    setUpSquare(EmptySquare(), 2, 2, false),
-  ],
-  [
-    setUpSquare(EmptySquare(), 2, 2, false),
-    setUpSquare(EmptySquare(), 2, 2, true),
-    setUpSquare(EmptySquare(), 2, 2, true),
-    setUpSquare(EmptySquare(), 2, 2, true),
-    setUpSquare(EmptySquare(), 2, 2, true),
-    setUpSquare(EmptySquare(), 2, 2, true),
-    setUpSquare(EmptySquare(), 2, 2, true),
-    setUpSquare(EmptySquare(), 2, 2, true),
-    setUpSquare(EmptySquare(), 2, 2, true),
-    setUpSquare(EmptySquare(), 2, 2, false),
-  ],
-  [
-    setUpSquare(EmptySquare(), 2, 2, false),
-    setUpSquare(PawnBasic(), 0, 1, true),
-    setUpSquare(PawnBasic(), 0, 1, true),
-    setUpSquare(PawnBasic(), 0, 1, true),
-    setUpSquare(PawnBasic(), 0, 1, true),
-    setUpSquare(PawnBasic(), 0, 1, true),
-    setUpSquare(PawnBasic(), 0, 1, true),
-    setUpSquare(PawnBasic(), 0, 1, true),
-    setUpSquare(PawnBasic(), 0, 1, true),
-    setUpSquare(EmptySquare(), 2, 2, false),
-  ],
-  [
-    setUpSquare(EmptySquare(), 2, 2, false),
-    setUpSquare(RookBasic(), 0, 1, true),
-    setUpSquare(KnightBasic(), 0, 1, true),
-    setUpSquare(BishopBasic(), 0, 1, true),
-    setUpSquare(QueenBasic(), 0, 1, true),
-    setUpSquare(KingBasic(), 0, 1, true),
-    setUpSquare(BishopBasic(), 0, 1, true),
-    setUpSquare(KnightBasic(), 0, 1, true),
-    setUpSquare(RookBasic(), 0, 1, true),
-    setUpSquare(EmptySquare(), 2, 2, false),
-  ],
-  [
-    setUpSquare(EmptySquare(), 2, 2, false),
-    setUpSquare(EmptySquare(), 2, 2, false),
-    setUpSquare(EmptySquare(), 2, 2, false),
-    setUpSquare(EmptySquare(), 2, 2, false),
-    setUpSquare(EmptySquare(), 2, 2, false),
-    setUpSquare(EmptySquare(), 2, 2, false),
-    setUpSquare(EmptySquare(), 2, 2, false),
-    setUpSquare(EmptySquare(), 2, 2, false),
-    setUpSquare(EmptySquare(), 2, 2, false),
-    setUpSquare(EmptySquare(), 2, 2, false),
-  ],
-];
+import emptyBoard from '../../../GameObjects/boards/emptyBoard';
 
 export interface GameState {
   board: SquareContents[][];
@@ -146,7 +15,7 @@ export interface GameState {
 }
 
 const initialGameState: GameState = {
-  board: initialBoard,
+  board: emptyBoard,
   turn: 0,
   selectedRow: null,
   selectedCol: null,
@@ -163,6 +32,9 @@ const gameSlice = createSlice({
   name: 'game',
   initialState: initialGameState,
   reducers: {
+    setBoard: (state: GameState, action: PayloadAction<SquareContents[][]>) => {
+      state.board = action.payload;
+    },
     makeMove: (state: GameState, action: PayloadAction<{ row: number; col: number }>) => {
       if (state.selectedRow === null || state.selectedCol === null) return;
       const pieceToMove = state.board[state.selectedRow][state.selectedCol].piece;
@@ -257,4 +129,4 @@ const gameSlice = createSlice({
   },
 });
 export default gameSlice.reducer;
-export const { makeMove, selectSquare } = gameSlice.actions;
+export const { makeMove, selectSquare, setBoard } = gameSlice.actions;

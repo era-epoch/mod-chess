@@ -2,9 +2,9 @@ import express, { Request, Response } from 'express';
 import bodyParser from 'body-parser';
 import path from 'path';
 import 'dotenv/config';
-import websockets from './websockets';
 import { Server } from 'socket.io';
 import { createServer } from 'http';
+import { GameCreatedEvent, JoinGameEvent } from './ws/events';
 
 const app = express();
 const server = createServer(app);
@@ -32,12 +32,23 @@ app.get('/*', (req: Request, res: Response) => {
 
 io.on('connection', (socket) => {
   console.log('a user connected');
+  // Disconnect
   socket.on('disconnect', () => {
     console.log('user disconnected');
   });
+
+  // Create Game
   socket.on('createGame', () => {
     console.log('game created');
-    io.emit('createGame');
+    socket.join('testroom');
+    io.emit('gameCreated', { id: 'testroom' } as GameCreatedEvent);
+  });
+
+  // Join Game
+  socket.on('joinGame', (game: JoinGameEvent) => {
+    socket.join(game.id);
+    console.log('User joined game', game.id);
+    io.emit('gameJoined');
   });
 });
 

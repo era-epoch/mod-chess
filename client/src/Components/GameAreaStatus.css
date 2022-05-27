@@ -20,7 +20,7 @@
   text-align: center;
   display: flex;
   flex-direction: column;
-  justify-content: end;
+  justify-content: flex-end;
 }
 
 .game-area-status-bottom {
