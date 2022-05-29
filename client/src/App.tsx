@@ -9,7 +9,7 @@ import Base from './Components/Base';
 import { RootState } from './state/rootReducer';
 import { Alert, removeAlert } from './state/slices/ui/slice';
 import { useEffect } from 'react';
-import { wsConnect, wsDisconnect } from './socket';
+import { wsConnect, wsDisconnect } from './socketMiddleware';
 
 const App = (): JSX.Element => {
   const alerts = useSelector((state: RootState) => state.ui.alerts);

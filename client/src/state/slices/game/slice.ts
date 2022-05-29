@@ -32,6 +32,9 @@ const gameSlice = createSlice({
   name: 'game',
   initialState: initialGameState,
   reducers: {
+    updateGameFromWebsocket: (state: GameState, action: PayloadAction<GameState>) => {
+      state = action.payload;
+    },
     setBoard: (state: GameState, action: PayloadAction<SquareContents[][]>) => {
       state.board = action.payload;
     },
@@ -56,10 +59,10 @@ const gameSlice = createSlice({
         let j = 0;
         for (const cell of row) {
           // TODO: Transfer cleanup to postMove function
-          state.board[i][j].squareStatuses.delete(SquareStatus.HL);
-          state.board[i][j].squareStatuses.delete(SquareStatus.SEL);
-          state.board[i][j].squareStatuses.delete(SquareStatus.HLC);
-          state.board[i][j].squareStatuses.delete(SquareStatus.HLK);
+          state.board[i][j].squareStatuses = state.board[i][j].squareStatuses.filter((s) => s !== SquareStatus.HL);
+          state.board[i][j].squareStatuses = state.board[i][j].squareStatuses.filter((s) => s !== SquareStatus.SEL);
+          state.board[i][j].squareStatuses = state.board[i][j].squareStatuses.filter((s) => s !== SquareStatus.HLC);
+          state.board[i][j].squareStatuses = state.board[i][j].squareStatuses.filter((s) => s !== SquareStatus.HLK);
           j++;
         }
         i++;
@@ -68,6 +71,8 @@ const gameSlice = createSlice({
       // if () .onRoundEnd()
       if (isGameover(state, pieceToMove.owner)) handleGameover(state, pieceToMove.owner);
       state.turn++;
+      // state.selectedRow = null;
+      // state.selectedCol = null;
     },
     selectSquare: (state: GameState, action: PayloadAction<{ row: number; col: number }>) => {
       const row = action.payload.row;
@@ -99,25 +104,25 @@ const gameSlice = createSlice({
           }
           if (match && !selectedSameSquare) {
             if (castle) {
-              state.board[i][j].squareStatuses.add(SquareStatus.HLC);
+              state.board[i][j].squareStatuses.push(SquareStatus.HLC);
             } else if (kill) {
-              state.board[i][j].squareStatuses.add(SquareStatus.HLK);
+              state.board[i][j].squareStatuses.push(SquareStatus.HLK);
             } else if (ept) {
-              state.board[i][j].squareStatuses.add(SquareStatus.HLK);
+              state.board[i][j].squareStatuses.push(SquareStatus.HLK);
             } else {
-              state.board[i][j].squareStatuses.add(SquareStatus.HL);
+              state.board[i][j].squareStatuses.push(SquareStatus.HL);
             }
           } else {
-            state.board[i][j].squareStatuses.delete(SquareStatus.HL);
-            state.board[i][j].squareStatuses.delete(SquareStatus.HLC);
-            state.board[i][j].squareStatuses.delete(SquareStatus.HLK);
+            state.board[i][j].squareStatuses = state.board[i][j].squareStatuses.filter((s) => s !== SquareStatus.HL);
+            state.board[i][j].squareStatuses = state.board[i][j].squareStatuses.filter((s) => s !== SquareStatus.HLC);
+            state.board[i][j].squareStatuses = state.board[i][j].squareStatuses.filter((s) => s !== SquareStatus.HLK);
           }
-          state.board[i][j].squareStatuses.delete(SquareStatus.SEL);
+          state.board[i][j].squareStatuses = state.board[i][j].squareStatuses.filter((s) => s !== SquareStatus.SEL);
           j++;
         }
         i++;
       }
-      if (!selectedSameSquare) state.board[row][col].squareStatuses.add(SquareStatus.SEL);
+      if (!selectedSameSquare) state.board[row][col].squareStatuses.push(SquareStatus.SEL);
       if (!selectedSameSquare) {
         state.selectedRow = row;
         state.selectedCol = col;
@@ -129,4 +134,4 @@ const gameSlice = createSlice({
   },
 });
 export default gameSlice.reducer;
-export const { makeMove, selectSquare, setBoard } = gameSlice.actions;
+export const { makeMove, selectSquare, setBoard, updateGameFromWebsocket } = gameSlice.actions;

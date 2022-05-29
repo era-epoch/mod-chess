@@ -55,7 +55,7 @@ export interface UserInfo {
 export interface SquareContents {
   inBounds: boolean;
   piece: Piece;
-  squareStatuses: Set<SquareStatus>;
+  squareStatuses: SquareStatus[];
   enPassantOrigin: Piece | null;
 }
 

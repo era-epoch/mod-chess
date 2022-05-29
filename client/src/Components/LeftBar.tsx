@@ -2,10 +2,10 @@ import './LeftBar.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBucket, faComputer, faLocationDot, faNetworkWired } from '@fortawesome/free-solid-svg-icons';
 import { useDispatch } from 'react-redux';
-import { setActiveGame } from '../state/slices/ui/slice';
+import { addChatItemToLog, ChatItem, ChatItemType, setActiveGame } from '../state/slices/ui/slice';
 import { setBoard } from '../state/slices/game/slice';
 import localBoard from '../GameObjects/boards/localBoard';
-import { wsCreateGame, wsJoinGame } from '../socket';
+import { wsCreateGame, wsJoinGame } from '../socketMiddleware';
 
 export const ws_url = `http://${window.location.hostname}:5000`;
 
@@ -14,6 +14,14 @@ const LeftBar = (): JSX.Element => {
   const startLocalGame = () => {
     dispatch(setActiveGame(true));
     dispatch(setBoard(localBoard));
+    dispatch(
+      addChatItemToLog({
+        content: "You've started a new local game!",
+        time: new Date(),
+        origin: '',
+        type: ChatItemType.GAME,
+      } as ChatItem),
+    );
   };
 
   const createOnlineGame = () => {

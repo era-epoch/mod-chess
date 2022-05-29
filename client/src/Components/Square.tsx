@@ -33,27 +33,27 @@ const Square = (props: Props): JSX.Element => {
             />
           </div>
         ) : null}
-        {props.content.squareStatuses.has(SquareStatus.HL) ? (
+        {props.content.squareStatuses.includes(SquareStatus.HL) ? (
           <div className="icon-wrapper square-highlighted">
             <FontAwesomeIcon icon={faCircle} />
           </div>
         ) : null}
-        {props.content.squareStatuses.has(SquareStatus.HLC) ? (
+        {props.content.squareStatuses.includes(SquareStatus.HLC) ? (
           <div className="icon-wrapper square-highlighted">
             <FontAwesomeIcon icon={faCrown} />
           </div>
         ) : null}
-        {props.content.squareStatuses.has(SquareStatus.HLK) ? (
+        {props.content.squareStatuses.includes(SquareStatus.HLK) ? (
           <div className="icon-wrapper square-highlighted-kill">
             <FontAwesomeIcon icon={faSkull} />
           </div>
         ) : null}
-        {props.content.squareStatuses.has(SquareStatus.EPV) ? (
+        {props.content.squareStatuses.includes(SquareStatus.EPV) ? (
           <div className={`icon-wrapper en-passant-vulnerable`}>
             <FontAwesomeIcon icon={faChessPawn} />
           </div>
         ) : null}
-        {props.content.inBounds && props.content.squareStatuses.has(SquareStatus.SEL) ? (
+        {props.content.inBounds && props.content.squareStatuses.includes(SquareStatus.SEL) ? (
           <div className="square-selected"></div>
         ) : null}
       </div>

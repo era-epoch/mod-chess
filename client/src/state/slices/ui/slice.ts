@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { GameCreatedEvent } from '../../../events';
+import { GameJoinedEvent, GameCreatedEvent } from '../../../../../ws/events';
 
 export enum AlertType {
   success = 'success',
@@ -26,11 +26,24 @@ export interface Alert {
   id: number;
 }
 
+export enum ChatItemType {
+  MESSAGE = 0,
+  GAME = 1,
+}
+
+export interface ChatItem {
+  content: string;
+  time: Date;
+  origin: string;
+  type: ChatItemType;
+}
+
 export interface UIState {
   alerts: Alert[];
   activeGame: boolean;
   onlineGameStatus: OnlineGameStatus;
   gameID: string;
+  chatlog: ChatItem[];
 }
 
 // const testAlerts = [
@@ -45,6 +58,7 @@ const initialUIState = {
   activeGame: false,
   onlineGameStatus: OnlineGameStatus.NONE,
   gameID: '',
+  chatlog: [],
 };
 
 const UISlice = createSlice({
@@ -62,10 +76,28 @@ const UISlice = createSlice({
     },
     createdOnlineGame: (state: UIState, action: PayloadAction<GameCreatedEvent>) => {
       state.onlineGameStatus = OnlineGameStatus.AWAITING;
-      state.gameID = action.payload.id;
+      state.gameID = action.payload.gameId;
+    },
+    joinedOnlineGame: (state: UIState, action: PayloadAction<GameJoinedEvent>) => {
+      state.onlineGameStatus = OnlineGameStatus.SUCCESS;
+      state.gameID = action.payload.gameId;
+    },
+    addChatItemToLog: (state: UIState, action: PayloadAction<ChatItem>) => {
+      state.chatlog.push(action.payload);
+    },
+    clearChatlog: (state: UIState, action: PayloadAction) => {
+      state.chatlog = [];
     },
   },
 });
 
 export default UISlice.reducer;
-export const { addAlert, removeAlert, setActiveGame, createdOnlineGame } = UISlice.actions;
+export const {
+  addAlert,
+  removeAlert,
+  setActiveGame,
+  createdOnlineGame,
+  addChatItemToLog,
+  clearChatlog,
+  joinedOnlineGame,
+} = UISlice.actions;

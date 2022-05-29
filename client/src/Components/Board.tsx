@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
 import { uid } from 'react-uid';
@@ -23,9 +22,9 @@ const Board = (): JSX.Element => {
 
   const handleSquareClick = (row: number, col: number) => {
     const madeMove =
-      gameState[row][col].squareStatuses.has(SquareStatus.HL) ||
-      gameState[row][col].squareStatuses.has(SquareStatus.HLC) ||
-      gameState[row][col].squareStatuses.has(SquareStatus.HLK);
+      gameState[row][col].squareStatuses.includes(SquareStatus.HL) ||
+      gameState[row][col].squareStatuses.includes(SquareStatus.HLC) ||
+      gameState[row][col].squareStatuses.includes(SquareStatus.HLK);
     if (madeMove) {
       handleMove(row, col);
     } else {

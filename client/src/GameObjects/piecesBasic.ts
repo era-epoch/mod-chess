@@ -75,7 +75,7 @@ export const setUpSquare = (
   const sc: SquareContents = {
     inBounds: inBounds,
     piece: piece,
-    squareStatuses: new Set<SquareStatus>(),
+    squareStatuses: [],
     enPassantOrigin: null,
   };
   return sc;
@@ -123,7 +123,7 @@ export const filterMoves = (
   // Add en passant targeted flag to moves that target an en passant square
   moves = moves.map((move: Move) => {
     if (
-      board[move.row][move.col].squareStatuses.has(SquareStatus.EPV) &&
+      board[move.row][move.col].squareStatuses.includes(SquareStatus.EPV) &&
       board[move.row][move.col].enPassantOrigin?.owner !== piece.owner
     ) {
       move.flags = new Set<MoveFlag>([MoveFlag.KILL]);
