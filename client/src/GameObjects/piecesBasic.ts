@@ -11,14 +11,6 @@ import {
   LifecycleF,
   PieceIdentifier,
 } from '../types';
-import {
-  faChessBishop,
-  faChessKing,
-  faChessKnight,
-  faChessPawn,
-  faChessQueen,
-  faChessRook,
-} from '@fortawesome/free-solid-svg-icons';
 import { GameState } from '../state/slices/game/slice';
 import produce from 'immer';
 import moveFunctionMap from './pieceFunctions';
