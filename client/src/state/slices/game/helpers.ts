@@ -1,5 +1,4 @@
-// const onTurnTaken();
-
+import moveFunctionMap from '../../../GameObjects/pieceFunctions';
 import { EmptySquare, kingInCheck } from '../../../GameObjects/piecesBasic';
 import { Piece, Move, MoveFlag, SquareStatus, PieceType, Graveyard, Player } from '../../../types';
 import { GameState } from './slice';
@@ -11,7 +10,7 @@ export const movePiece = (gameState: GameState, piece: Piece, move: Move) => {
     let kingPos = 0;
     // Look for the selected king *in this row*
     for (let i = 0; i < gameState.board[move.row].length; i++) {
-      if (gameState.board[move.row][i].squareStatuses.has(SquareStatus.SEL)) {
+      if (gameState.board[move.row][i].squareStatuses.includes(SquareStatus.SEL)) {
         kingPos = i;
         break;
       }
@@ -36,7 +35,7 @@ export const movePiece = (gameState: GameState, piece: Piece, move: Move) => {
   }
   // En passant capture logic
   if (
-    gameState.board[move.row][move.col].squareStatuses.has(SquareStatus.EPV) &&
+    gameState.board[move.row][move.col].squareStatuses.includes(SquareStatus.EPV) &&
     gameState.board[move.row][move.col].enPassantOrigin?.owner !== piece.owner
   ) {
     let i = 0;
@@ -57,7 +56,7 @@ export const movePiece = (gameState: GameState, piece: Piece, move: Move) => {
   for (const row of gameState.board) {
     let j = 0;
     for (const cell of row) {
-      gameState.board[i][j].squareStatuses.delete(SquareStatus.EPV);
+      gameState.board[i][j].squareStatuses = gameState.board[i][j].squareStatuses.filter((s) => s !== SquareStatus.EPV);
       gameState.board[i][j].enPassantOrigin = null;
       j++;
     }
@@ -68,18 +67,18 @@ export const movePiece = (gameState: GameState, piece: Piece, move: Move) => {
     let pawnPos = 0;
     // Look for the selected pawn *in this column*
     for (let i = 0; i < gameState.board.length; i++) {
-      if (gameState.board[i][move.col].squareStatuses.has(SquareStatus.SEL)) {
+      if (gameState.board[i][move.col].squareStatuses.includes(SquareStatus.SEL)) {
         pawnPos = i;
         break;
       }
     }
     if (pawnPos < move.row) {
       // En passant square is above
-      gameState.board[move.row - 1][move.col].squareStatuses.add(SquareStatus.EPV);
+      gameState.board[move.row - 1][move.col].squareStatuses.push(SquareStatus.EPV);
       gameState.board[move.row - 1][move.col].enPassantOrigin = piece;
     } else {
       // En passant square is below
-      gameState.board[move.row + 1][move.col].squareStatuses.add(SquareStatus.EPV);
+      gameState.board[move.row + 1][move.col].squareStatuses.push(SquareStatus.EPV);
       gameState.board[move.row + 1][move.col].enPassantOrigin = piece;
     }
   }
@@ -103,7 +102,8 @@ export const isGameover = (gameState: GameState, player: Player): boolean => {
   for (let i = 0; i < gameState.board.length; i++) {
     for (let j = 0; j < gameState.board[0].length; j++) {
       if (gameState.board[i][j].piece.owner === opponent) {
-        validMoves.push(...gameState.board[i][j].piece.moveF(gameState.board[i][j].piece, i, j, gameState, true));
+        const moveFunction = moveFunctionMap.get(gameState.board[i][j].piece.pieceIdentifier);
+        if (moveFunction) validMoves.push(...moveFunction(gameState.board[i][j].piece, i, j, gameState, true));
       }
     }
   }
@@ -113,10 +113,19 @@ export const isGameover = (gameState: GameState, player: Player): boolean => {
 export const handleGameover = (gameState: GameState, player: Player) => {
   const opponent: Player = (player + 1) % 2;
   if (kingInCheck(gameState, opponent)) {
-    // Checkmate
-    console.log('CHECKMATE');
+    // console.log('CHECKMATE');
+    gameState.winner = player;
   } else {
-    // Stalemate
-    console.log('STALEMATE');
+    // console.log('STALEMATE');
+    gameState.winner = Player.neutral;
+  }
+  gameState.completed = true;
+};
+
+export const selectedPieceCanMove = (gameState: GameState, row: number, col: number) => {
+  if (gameState.turn % 2 === 0) {
+    return gameState.board[row][col].piece.owner === Player.light;
+  } else {
+    return gameState.board[row][col].piece.owner === Player.dark;
   }
 };

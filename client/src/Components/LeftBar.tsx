@@ -1,28 +1,101 @@
-import { useEffect, useState } from 'react';
 import './LeftBar.css';
-import { IMessageEvent, w3cwebsocket } from 'websocket';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBucket, faComputer, faLocationDot, faNetworkWired } from '@fortawesome/free-solid-svg-icons';
+import { useDispatch } from 'react-redux';
+import { addChatItemToLog, ChatItem, ChatItemType, setActiveGame } from '../state/slices/ui/slice';
+import { fullGameStateUpdate, GameState } from '../state/slices/game/slice';
+import localBoard from '../GameObjects/boards/localBoard';
+import { wsCreateGame, wsJoinGame } from '../socketMiddleware';
+import { Player } from '../types';
 
-const client = new w3cwebsocket('ws://localhost:5000/websockets?userId=123');
+export const ws_url = `http://${window.location.hostname}:5000`;
 
 const LeftBar = (): JSX.Element => {
-  const [websocketConnected, setWebsocketConnected] = useState(false);
-  const [message, setMessage] = useState('Default');
+  const dispatch = useDispatch();
+  const startLocalGame = () => {
+    dispatch(setActiveGame(true));
+    dispatch(
+      fullGameStateUpdate({
+        board: localBoard,
+        turn: 0,
+        selectedRow: null,
+        selectedCol: null,
+        graveyards: [
+          { player: Player.light, contents: [] },
+          { player: Player.dark, contents: [] },
+        ],
+        completed: false,
+        winner: null,
+      } as GameState),
+    );
+    dispatch(
+      addChatItemToLog({
+        content: "You've started a new local game!",
+        time: new Date(),
+        origin: '',
+        type: ChatItemType.GAME,
+      } as ChatItem),
+    );
+  };
 
-  useEffect(() => {
-    client.onopen = () => {
-      console.log('Websocket Connection Open');
-      setWebsocketConnected(true);
-    };
-    client.onmessage = (message: IMessageEvent) => {
-      setMessage(JSON.parse(message.data.toString()).message);
-    };
-  }, []);
+  const createOnlineGame = () => {
+    dispatch(wsCreateGame(ws_url));
+  };
 
-  useEffect(() => {
-    if (websocketConnected) client.send(JSON.stringify({ msg: 'hi' }));
-  }, [websocketConnected]);
+  const joinOnlineGame = () => {
+    dispatch(wsJoinGame(ws_url));
+  };
 
-  return <div className="left-sidebar">{message}</div>;
+  return (
+    <div className="sidebar">
+      <div className="sidebar-header">
+        <p>mod-chess.com</p>
+      </div>
+      <div className="sidebar-body">
+        <div className="sidebar-menu-option">
+          <div className="accordion-title">
+            <FontAwesomeIcon icon={faComputer} />
+            <p>Play vs CPU</p>
+          </div>
+          <div className="accordion-underline"></div>
+          <div className="accordion-content"></div>
+        </div>
+        <div className="sidebar-menu-option" onClick={createOnlineGame}>
+          <div className="accordion-title">
+            <FontAwesomeIcon icon={faNetworkWired} />
+            <p>Create Online Game</p>
+          </div>
+          <div className="accordion-underline"></div>
+          <div className="accordion-content"></div>
+        </div>
+        <div className="sidebar-menu-option" onClick={joinOnlineGame}>
+          <div className="accordion-title">
+            <FontAwesomeIcon icon={faNetworkWired} />
+            <p>Join Online Game</p>
+          </div>
+          <div className="accordion-underline"></div>
+          <div className="accordion-content"></div>
+        </div>
+        <div className="sidebar-menu-option" onClick={startLocalGame}>
+          <div className="accordion-title">
+            <FontAwesomeIcon icon={faLocationDot} />
+            <p>Play Locally</p>
+          </div>
+          <div className="accordion-underline"></div>
+          <div className="accordion-content"></div>
+        </div>
+        <div className="sidebar-menu-option">
+          <div className="accordion-title">
+            <FontAwesomeIcon icon={faBucket} />
+            <p>Sandbox</p>
+          </div>
+          <div className="accordion-underline"></div>
+          <div className="accordion-content"></div>
+        </div>
+      </div>
+      <div className="sidebar-footer"></div>
+    </div>
+  );
 };
 
 export default LeftBar;

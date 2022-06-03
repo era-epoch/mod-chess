@@ -1,12 +1,14 @@
-import CenterGameArea from './CenterGameArea';
 import './GameArea.css';
-import RightGameArea from './RightGameArea';
+import GameAreaMain from './GameAreaMain';
+import GameAreaChat from './GameAreaChat';
+import GameAreaStatus from './GameAreaStatus';
 
 const GameArea = (): JSX.Element => {
   return (
     <div className="game-area">
-      <CenterGameArea />
-      <RightGameArea />
+      <GameAreaStatus />
+      <GameAreaMain />
+      <GameAreaChat />
     </div>
   );
 };

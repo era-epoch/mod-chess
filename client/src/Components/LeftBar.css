@@ -1,9 +1,62 @@
-.left-sidebar {
+.sidebar {
   box-sizing: border-box;
-  background-color: rgba(0, 0, 0, 0.5);
-  /* box-shadow: 0px 0px 10px #5f5f5f; */
-  width: 20vw;
+  box-shadow: 0px 0px 10px #5f5f5f;
   z-index: 3;
   padding: 1rem;
   /* border-right: 2px solid rgb(141, 23, 23); */
+  display: flex;
+  flex-direction: column;
+  width: 15rem;
+  font-size: 1.5rem;
+  justify-content: baseline;
+  gap: 1rem;
+}
+
+.sidebar-header {
+  font-weight: bold;
+  text-align: center;
+  padding-bottom: 5rem;
+}
+
+.sidebar-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: baseline;
+  gap: 1rem;
+  width: 100%;
+}
+
+.sidebar-menu-option {
+  width: 100%;
+}
+
+.sidebar-menu-option:hover {
+  cursor: pointer;
+  font-weight: bolder;
+}
+
+.sidebar-menu-option.active {
+  font-size: 1.8rem;
+}
+
+.accordion-title {
+  display: flex;
+  flex-direction: row;
+  justify-content: baseline;
+  align-items: baseline;
+  gap: 1rem;
+  padding: 0 1rem;
+}
+
+/* .accordion-underline {
+  border-bottom: 1px solid gray;
+} */
+
+.home-button {
+  font-size: 1rem;
+}
+
+.home-button:hover {
+  cursor: pointer;
 }
