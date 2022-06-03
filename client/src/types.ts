@@ -58,7 +58,8 @@ export interface Move {
 
 export interface UserInfo {
   name: string;
-  color: Player;
+  id: string;
+  colour: Player;
   elo?: number;
 }
 

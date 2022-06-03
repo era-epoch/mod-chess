@@ -8,18 +8,19 @@ const ChatBox = (): JSX.Element => {
   const chatlog = useSelector((state: RootState) => state.ui.chatlog);
   return (
     <div className="chat-box">
-      <div className="chat-box-main">
-        {chatlog.map((item: ChatItem) => {
-          return (
-            <div key={uid(item)} className="chat-item">
-              <div className="chat-time">{`${item.time.getHours()}:${item.time.getMinutes()}:${item.time.getSeconds()}`}</div>
-              <div className="chat-content">{item.content}</div>
-              <div className="chat-origin">{item.origin}</div>
-            </div>
-          );
-        })}
-      </div>
-      <div className="chat-box-input"></div>
+      {/* <div className="chat-box-main"> */}
+      {chatlog.map((item: ChatItem) => {
+        return (
+          <div key={uid(item)} className="chat-item">
+            <div className="chat-time">{`${('0' + item.time.getHours()).slice(-2)}:${(
+              '0' + item.time.getMinutes()
+            ).slice(-2)}:${('0' + item.time.getSeconds()).slice(-2)}`}</div>
+            <div className="chat-origin">{item.origin}</div>
+            <div className="chat-content">{item.content}</div>
+          </div>
+        );
+      })}
+      {/* </div> */}
     </div>
   );
 };

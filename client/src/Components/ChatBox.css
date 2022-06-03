@@ -1,21 +1,22 @@
 .chat-box {
-  /* border-radius: 1rem; */
-  /* border: 2px solid gray; */
-  height: 85vh;
-}
-
-.chat-box-main {
   flex: 1;
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
+  padding: 0.5rem;
 }
 
 .chat-item {
   display: flex;
   flex-direction: row;
-  gap: 1rem;
-  background-color: rgba(0, 0, 0, 0.25);
-  padding: 0 1rem;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
+.chat-time {
+  color: var(--primary);
+  font-weight: bold;
+  font-size: 0.8rem;
 }
 
 .chat-content {

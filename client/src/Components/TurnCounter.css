@@ -1,7 +1,8 @@
 .turn-counter {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  /* background-color: white; */
+  padding: 1rem;
 }
 
 .turn-number-label {

@@ -1,0 +1,8 @@
+.player-info {
+  display: flex;
+  flex-direction: row;
+  background-color: rgba(0, 0, 0, 0.3);
+  gap: 1rem;
+  padding: 0 1rem;
+  align-items: center;
+}

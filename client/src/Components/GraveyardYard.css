@@ -1,12 +1,11 @@
 .graveyard {
   /* border: 2px solid whitesmoke; */
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   font-size: 1rem;
   padding: 0.5rem;
   flex-wrap: wrap;
   /* box-shadow: 5px 5px 10px #5f5f5f; */
-  background-color: rgba(0, 0, 0, 0.3);
 }
 
 .graveyard .icon-wrapper {

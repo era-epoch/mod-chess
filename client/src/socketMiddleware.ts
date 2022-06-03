@@ -8,11 +8,14 @@ import {
   CreateGameEvent,
   MoveEvent,
   ConnectEvent,
+  PlayerJoinedGameEvent,
 } from '../../ws/events';
 import localBoard from './GameObjects/boards/localBoard';
 import { fullGameStateUpdate, GameState } from './state/slices/game/slice';
 import {
   addChatItemToLog,
+  addPlayer,
+  changePlayerId,
   ChatItem,
   ChatItemType,
   createdOnlineGame,
@@ -35,10 +38,10 @@ interface MoveAction {
 
 const socketMiddleware: Middleware = (api: MiddlewareAPI) => {
   let socket: Socket | null = null;
-  let playerId: string | null = null;
 
   const handleGameCreated = (event: GameCreatedEvent) => {
-    playerId = event.playerId;
+    api.dispatch(addPlayer(event.player));
+    api.dispatch(changePlayerId(event.player.id));
     api.dispatch(createdOnlineGame(event));
     api.dispatch(setActiveGame(true));
     api.dispatch(fullGameStateUpdate(event.game));
@@ -53,7 +56,12 @@ const socketMiddleware: Middleware = (api: MiddlewareAPI) => {
   };
 
   const handleGameJoined = (event: GameJoinedEvent) => {
-    playerId = event.playerId;
+    // TODO: better dispatch structure
+    api.dispatch(addPlayer(event.player));
+    api.dispatch(changePlayerId(event.player.id));
+    for (const player of event.otherPlayers) {
+      api.dispatch(addPlayer(player));
+    }
     api.dispatch(joinedOnlineGame(event));
     api.dispatch(setActiveGame(true));
     // TODO: Mirror/flip board
@@ -69,10 +77,23 @@ const socketMiddleware: Middleware = (api: MiddlewareAPI) => {
   };
 
   const handleMove = (event: MoveEvent) => {
+    const playerId = api.getState().ui.playerId;
     if (event.playerId !== playerId) {
       console.log('New state:', event.gameState);
       api.dispatch(fullGameStateUpdate(event.gameState));
     }
+  };
+
+  const handlePlayerJoinedGame = (event: PlayerJoinedGameEvent) => {
+    api.dispatch(addPlayer(event.player));
+    api.dispatch(
+      addChatItemToLog({
+        content: `Player ${event.player.name} has joined the game.`,
+        time: new Date(),
+        origin: '',
+        type: ChatItemType.GAME,
+      } as ChatItem),
+    );
   };
 
   const connect = (action: any) => {
@@ -80,23 +101,21 @@ const socketMiddleware: Middleware = (api: MiddlewareAPI) => {
       socket.close();
     }
     let connectAction = action as ConnectEvent;
-
     // Set up socket
     socket = io(connectAction.url);
     socket.connect();
-
     /* Socket events */
     socket.on('gameCreated', (event: GameCreatedEvent) => {
       handleGameCreated(event);
     });
-
     socket.on('gameJoined', (event: GameJoinedEvent) => {
       handleGameJoined(event);
     });
-
     socket.on('moveMade', (event: MoveEvent) => {
-      console.log('Recieving move');
       handleMove(event);
+    });
+    socket.on('playerJoinedGame', (event: PlayerJoinedGameEvent) => {
+      handlePlayerJoinedGame(event);
     });
   };
 
@@ -134,9 +153,15 @@ const socketMiddleware: Middleware = (api: MiddlewareAPI) => {
         if (socket !== null) socket.emit('joinGame', { id: 'testroom' } as JoinGameEvent);
         break;
       case 'WS_MOVE':
-        let moveAction = action as MoveAction;
+        const moveAction = action as MoveAction;
+        const state = api.getState().ui;
         console.log('Emitting move:', moveAction.state);
-        if (socket !== null) socket.emit('makeMove', { gameState: moveAction.state, playerId: playerId } as MoveEvent);
+        if (socket !== null)
+          socket.emit('makeMove', {
+            gameState: moveAction.state,
+            playerId: state.playerId,
+            gameId: state.gameId,
+          } as MoveEvent);
         break;
       default:
         return next(action);

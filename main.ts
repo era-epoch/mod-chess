@@ -4,8 +4,17 @@ import path from 'path';
 import 'dotenv/config';
 import { Server } from 'socket.io';
 import { createServer } from 'http';
-import { CreateGameEvent, GameCreatedEvent, GameJoinedEvent, JoinGameEvent, MoveEvent } from './ws/events';
+import {
+  CreateGameEvent,
+  GameCreatedEvent,
+  GameJoinedEvent,
+  JoinGameEvent,
+  MoveEvent,
+  PlayerJoinedGameEvent,
+} from './ws/events';
 import crypto from 'crypto';
+import { Player, UserInfo } from './client/src/types';
+import { GameState } from './client/src/state/slices/game/slice';
 
 const app = express();
 const server = createServer(app);
@@ -32,7 +41,8 @@ app.get('/*', (req: Request, res: Response) => {
 });
 
 // TEMPORARY, WILL USE DB
-const games = {};
+const games = {} as GameState[];
+const users = {} as UserInfo[];
 
 io.on('connection', (socket) => {
   console.log('a user connected');
@@ -47,10 +57,18 @@ io.on('connection', (socket) => {
     socket.join('testroom');
     // TODO: Database
     games['testroom'] = event.game;
+    const newPlayer = {
+      name: 'name',
+      id: crypto.randomBytes(8).toString('hex'),
+      colour: Player.light,
+    };
+
+    users['testroom'] = [newPlayer];
+
     socket.emit('gameCreated', {
       gameId: 'testroom',
       game: games['testroom'],
-      playerId: crypto.randomBytes(8).toString('hex'),
+      player: newPlayer,
     } as GameCreatedEvent);
   });
 
@@ -58,17 +76,30 @@ io.on('connection', (socket) => {
   socket.on('joinGame', (event: JoinGameEvent) => {
     socket.join(event.id);
     console.log('User joined game', event.id);
+
+    const newPlayer = {
+      name: 'name',
+      id: crypto.randomBytes(8).toString('hex'),
+      colour: Player.dark,
+    };
+
     socket.emit('gameJoined', {
       gameId: event.id,
       game: games[event.id],
-      playerId: crypto.randomBytes(8).toString('hex'),
+      player: newPlayer,
+      otherPlayers: users[event.id],
     } as GameJoinedEvent);
+
+    socket.to('testroom').emit('playerJoinedGame', {
+      player: newPlayer,
+    } as PlayerJoinedGameEvent);
   });
 
   // Move Made
   socket.on('makeMove', (event: MoveEvent) => {
     // TODO: replace testroom
-    console.log('Move made:', event.gameState.board[5][6]);
+    console.log('Move made in ', event);
+    games[event.gameId] = event.gameState;
     socket.to('testroom').emit('moveMade', event);
   });
 });

@@ -1,9 +1,11 @@
 body {
   margin: 0;
-  font-family: 'Titillium Web', sans-serif;
+  /* font-family: 'Titillium Web', sans-serif; */
+  font-family: 'EB Garamond', serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: whitesmoke;
+  --primary: rgb(141, 23, 23);
 }
 
 code {

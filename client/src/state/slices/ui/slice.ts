@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { GameJoinedEvent, GameCreatedEvent } from '../../../../../ws/events';
+import { UserInfo } from '../../../types';
 
 export enum AlertType {
   success = 'success',
@@ -42,8 +43,10 @@ export interface UIState {
   alerts: Alert[];
   activeGame: boolean;
   onlineGameStatus: OnlineGameStatus;
-  gameID: string;
+  gameId: string;
   chatlog: ChatItem[];
+  players: UserInfo[];
+  playerId: string;
 }
 
 // const testAlerts = [
@@ -57,14 +60,25 @@ const initialUIState = {
   alerts: [],
   activeGame: false,
   onlineGameStatus: OnlineGameStatus.NONE,
-  gameID: '',
+  gameId: '',
   chatlog: [],
+  players: [],
+  playerId: '',
 };
 
 const UISlice = createSlice({
   name: 'ui',
   initialState: initialUIState,
   reducers: {
+    addPlayer: (state: UIState, action: PayloadAction<UserInfo>) => {
+      state.players.push(action.payload);
+    },
+    removePlayer: (state: UIState, action: PayloadAction<UserInfo>) => {
+      state.players = state.players.filter((a: UserInfo) => a.id !== action.payload.id);
+    },
+    changePlayerId: (state: UIState, action: PayloadAction<string>) => {
+      state.playerId = action.payload;
+    },
     addAlert: (state: UIState, action: PayloadAction<Alert>) => {
       state.alerts.push(action.payload);
     },
@@ -76,11 +90,11 @@ const UISlice = createSlice({
     },
     createdOnlineGame: (state: UIState, action: PayloadAction<GameCreatedEvent>) => {
       state.onlineGameStatus = OnlineGameStatus.AWAITING;
-      state.gameID = action.payload.gameId;
+      state.gameId = action.payload.gameId;
     },
     joinedOnlineGame: (state: UIState, action: PayloadAction<GameJoinedEvent>) => {
       state.onlineGameStatus = OnlineGameStatus.SUCCESS;
-      state.gameID = action.payload.gameId;
+      state.gameId = action.payload.gameId;
     },
     addChatItemToLog: (state: UIState, action: PayloadAction<ChatItem>) => {
       state.chatlog.push(action.payload);
@@ -100,4 +114,7 @@ export const {
   addChatItemToLog,
   clearChatlog,
   joinedOnlineGame,
+  changePlayerId,
+  addPlayer,
+  removePlayer,
 } = UISlice.actions;
