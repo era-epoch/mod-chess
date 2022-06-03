@@ -38,6 +38,16 @@ export enum MoveFlag {
   EP = 'en-passant',
 }
 
+export enum PieceIdentifier {
+  'emptyBasic',
+  'pawnBasic',
+  'rookBasic',
+  'knightBasic',
+  'bishopBasic',
+  'queenBasic',
+  'kingBasic',
+}
+
 export interface Move {
   row: number;
   col: number;
@@ -63,22 +73,18 @@ export interface Piece {
   name: string;
   id: number;
   owner: Player;
+  pieceIdentifier: PieceIdentifier;
+  pieceType: PieceType;
   pieceStatuses: Set<PieceStatus>;
-  //TODO; not pass in Piece to moveF (bad OOP)
-  moveF: (piece: Piece, row: number, col: number, state: GameState, checkKing: boolean) => Move[];
-  icon: any;
   nMoves: number;
   orientation: Orientation;
-  pieceType: PieceType;
-  onDeath: (piece: Piece, state: GameState, row: number, col: number) => void;
   onDeathFs: LifecycleF[];
-  onTurnStart: (piece: Piece, state: GameState, row: number, col: number) => void;
   onTurnStartFs: LifecycleF[];
-  onTurnEnd: (piece: Piece, state: GameState, row: number, col: number) => void;
   onTurnEndFs: LifecycleF[];
-  onMoved: (piece: Piece, state: GameState, row: number, col: number) => void;
   onMovedFs: LifecycleF[];
 }
+
+export type MoveFunction = (piece: Piece, row: number, col: number, state: GameState, checkKing: boolean) => Move[];
 
 export interface LifecycleF {
   priority: number; // Higher == Earlier

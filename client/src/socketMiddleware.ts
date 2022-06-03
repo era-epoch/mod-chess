@@ -10,7 +10,7 @@ import {
   ConnectEvent,
 } from '../../ws/events';
 import localBoard from './GameObjects/boards/localBoard';
-import { GameState, setBoard, updateGameFromWebsocket } from './state/slices/game/slice';
+import { fullGameStateUpdate, GameState } from './state/slices/game/slice';
 import {
   addChatItemToLog,
   ChatItem,
@@ -19,7 +19,7 @@ import {
   joinedOnlineGame,
   setActiveGame,
 } from './state/slices/ui/slice';
-import { SquareContents } from './types';
+import { Player } from './types';
 
 export const wsConnect = (url: string) => ({ type: 'WS_CONNECT', url });
 export const wsConnected = (url: string) => ({ type: 'WS_CONNECTED', url });
@@ -27,7 +27,7 @@ export const wsDisconnect = (url: string) => ({ type: 'WS_DISCONNECT', url });
 export const wsDisconnected = (url: string) => ({ type: 'WS_DISCONNECTED', url });
 export const wsCreateGame = (url: string) => ({ type: 'WS_CREATE_GAME', url });
 export const wsJoinGame = (url: string) => ({ type: 'WS_JOIN_GAME', url });
-export const wsMove = (state: GameState) => ({ type: 'WS_MOVE', state });
+export const wsEmitMove = (state: GameState) => ({ type: 'WS_MOVE', state });
 
 interface MoveAction {
   state: GameState;
@@ -41,7 +41,7 @@ const socketMiddleware: Middleware = (api: MiddlewareAPI) => {
     playerId = event.playerId;
     api.dispatch(createdOnlineGame(event));
     api.dispatch(setActiveGame(true));
-    api.dispatch(setBoard(event.board));
+    api.dispatch(fullGameStateUpdate(event.game));
     api.dispatch(
       addChatItemToLog({
         content: `You've created an online game! The code to join your game is ${event.gameId}`,
@@ -56,8 +56,8 @@ const socketMiddleware: Middleware = (api: MiddlewareAPI) => {
     playerId = event.playerId;
     api.dispatch(joinedOnlineGame(event));
     api.dispatch(setActiveGame(true));
-    // TODO: Mirror/flip board + logic
-    api.dispatch(setBoard(event.board));
+    // TODO: Mirror/flip board
+    api.dispatch(fullGameStateUpdate(event.game));
     api.dispatch(
       addChatItemToLog({
         content: `You've joined an online game! Game: ${event.gameId}`,
@@ -69,7 +69,10 @@ const socketMiddleware: Middleware = (api: MiddlewareAPI) => {
   };
 
   const handleMove = (event: MoveEvent) => {
-    if (event.playerId !== playerId) api.dispatch(updateGameFromWebsocket(event.gameState));
+    if (event.playerId !== playerId) {
+      console.log('New state:', event.gameState);
+      api.dispatch(fullGameStateUpdate(event.gameState));
+    }
   };
 
   const connect = (action: any) => {
@@ -92,6 +95,7 @@ const socketMiddleware: Middleware = (api: MiddlewareAPI) => {
     });
 
     socket.on('moveMade', (event: MoveEvent) => {
+      console.log('Recieving move');
       handleMove(event);
     });
   };
@@ -109,7 +113,21 @@ const socketMiddleware: Middleware = (api: MiddlewareAPI) => {
         break;
       case 'WS_CREATE_GAME':
         if (socket === null) connect(action);
-        if (socket !== null) socket.emit('createGame', { board: produce(localBoard, () => {}) } as CreateGameEvent);
+        if (socket !== null)
+          socket.emit('createGame', {
+            game: {
+              board: produce(localBoard, () => {}),
+              turn: 0,
+              selectedRow: null,
+              selectedCol: null,
+              graveyards: [
+                { player: Player.light, contents: [] },
+                { player: Player.dark, contents: [] },
+              ],
+              completed: false,
+              winner: null,
+            },
+          } as CreateGameEvent);
         break;
       case 'WS_JOIN_GAME':
         if (socket === null) connect(action);
@@ -117,8 +135,8 @@ const socketMiddleware: Middleware = (api: MiddlewareAPI) => {
         break;
       case 'WS_MOVE':
         let moveAction = action as MoveAction;
-        if (socket !== null)
-          socket.emit('makeMove', JSON.stringify({ gameState: moveAction.state, playerId: playerId } as MoveEvent));
+        console.log('Emitting move:', moveAction.state);
+        if (socket !== null) socket.emit('makeMove', { gameState: moveAction.state, playerId: playerId } as MoveEvent);
         break;
       default:
         return next(action);

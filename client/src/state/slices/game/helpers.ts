@@ -1,3 +1,4 @@
+import moveFunctionMap from '../../../GameObjects/pieceFunctions';
 import { EmptySquare, kingInCheck } from '../../../GameObjects/piecesBasic';
 import { Piece, Move, MoveFlag, SquareStatus, PieceType, Graveyard, Player } from '../../../types';
 import { GameState } from './slice';
@@ -101,7 +102,8 @@ export const isGameover = (gameState: GameState, player: Player): boolean => {
   for (let i = 0; i < gameState.board.length; i++) {
     for (let j = 0; j < gameState.board[0].length; j++) {
       if (gameState.board[i][j].piece.owner === opponent) {
-        validMoves.push(...gameState.board[i][j].piece.moveF(gameState.board[i][j].piece, i, j, gameState, true));
+        const moveFunction = moveFunctionMap.get(gameState.board[i][j].piece.pieceIdentifier);
+        if (moveFunction) validMoves.push(...moveFunction(gameState.board[i][j].piece, i, j, gameState, true));
       }
     }
   }

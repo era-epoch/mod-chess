@@ -3,6 +3,7 @@ import { EmptySquare } from '../../../GameObjects/piecesBasic';
 import { Graveyard, Move, MoveFlag, Player, SquareContents, SquareStatus } from '../../../types';
 import { removePieceAtLocation, movePiece, isGameover, handleGameover, selectedPieceCanMove } from './helpers';
 import emptyBoard from '../../../GameObjects/boards/emptyBoard';
+import moveFunctionMap from '../../../GameObjects/pieceFunctions';
 
 export interface GameState {
   board: SquareContents[][];
@@ -32,18 +33,27 @@ const gameSlice = createSlice({
   name: 'game',
   initialState: initialGameState,
   reducers: {
-    updateGameFromWebsocket: (state: GameState, action: PayloadAction<GameState>) => {
-      state = action.payload;
-    },
-    setBoard: (state: GameState, action: PayloadAction<SquareContents[][]>) => {
-      state.board = action.payload;
+    fullGameStateUpdate: (state: GameState, action: PayloadAction<GameState>) => {
+      state.board = action.payload.board;
+      state.completed = action.payload.completed;
+      state.graveyards = action.payload.graveyards;
+      state.selectedCol = action.payload.selectedCol;
+      state.selectedRow = action.payload.selectedRow;
+      state.turn = action.payload.turn;
+      state.winner = action.payload.winner;
     },
     makeMove: (state: GameState, action: PayloadAction<{ row: number; col: number }>) => {
       if (state.selectedRow === null || state.selectedCol === null) return;
       const pieceToMove = state.board[state.selectedRow][state.selectedCol].piece;
-      const move = pieceToMove
-        .moveF(pieceToMove, state.selectedRow, state.selectedCol, state, true)
-        .find((move: Move) => move.row === action.payload.row && move.col === action.payload.col);
+      // TODO: Pass in the actual move to reducer
+      // const move = pieceToMove
+      //   .moveF(pieceToMove, state.selectedRow, state.selectedCol, state, true)
+      //   .find((move: Move) => move.row === action.payload.row && move.col === action.payload.col);
+      const moveFunction = moveFunctionMap.get(pieceToMove.pieceIdentifier);
+      if (!moveFunction) return;
+      const move = moveFunction(pieceToMove, state.selectedRow, state.selectedCol, state, true).find(
+        (move: Move) => move.row === action.payload.row && move.col === action.payload.col,
+      );
       if (!pieceToMove || !move) return;
       const originSquare = state.board[state.selectedRow][state.selectedCol];
       // PRE-MOVE
@@ -71,15 +81,16 @@ const gameSlice = createSlice({
       // if () .onRoundEnd()
       if (isGameover(state, pieceToMove.owner)) handleGameover(state, pieceToMove.owner);
       state.turn++;
-      // state.selectedRow = null;
-      // state.selectedCol = null;
+      state.selectedRow = null;
+      state.selectedCol = null;
     },
     selectSquare: (state: GameState, action: PayloadAction<{ row: number; col: number }>) => {
       const row = action.payload.row;
       const col = action.payload.col;
       const movesToHighlight: Move[] = [];
       if (selectedPieceCanMove(state, row, col)) {
-        movesToHighlight.push(...state.board[row][col].piece.moveF(state.board[row][col].piece, row, col, state, true));
+        const moveFunction = moveFunctionMap.get(state.board[row][col].piece.pieceIdentifier);
+        if (moveFunction) movesToHighlight.push(...moveFunction(state.board[row][col].piece, row, col, state, true));
       }
       const selectedSameSquare = state.selectedRow === row && state.selectedCol === col;
       let i = 0;
@@ -134,4 +145,4 @@ const gameSlice = createSlice({
   },
 });
 export default gameSlice.reducer;
-export const { makeMove, selectSquare, setBoard, updateGameFromWebsocket } = gameSlice.actions;
+export const { makeMove, selectSquare, fullGameStateUpdate } = gameSlice.actions;

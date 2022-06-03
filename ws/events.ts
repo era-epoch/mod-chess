@@ -10,19 +10,19 @@ export interface JoinGameEvent {
 }
 
 export interface CreateGameEvent {
-  board: SquareContents[][];
+  game: GameState;
 }
 
 export interface GameJoinedEvent {
   gameId: string;
   playerId: string;
-  board: SquareContents[][];
+  game: GameState;
 }
 
 export interface GameCreatedEvent {
-  board: SquareContents[][];
   gameId: string;
   playerId: string;
+  game: GameState;
 }
 
 export interface MoveEvent {

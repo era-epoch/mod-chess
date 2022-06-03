@@ -3,9 +3,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBucket, faComputer, faLocationDot, faNetworkWired } from '@fortawesome/free-solid-svg-icons';
 import { useDispatch } from 'react-redux';
 import { addChatItemToLog, ChatItem, ChatItemType, setActiveGame } from '../state/slices/ui/slice';
-import { setBoard } from '../state/slices/game/slice';
+import { fullGameStateUpdate, GameState } from '../state/slices/game/slice';
 import localBoard from '../GameObjects/boards/localBoard';
 import { wsCreateGame, wsJoinGame } from '../socketMiddleware';
+import { Player } from '../types';
 
 export const ws_url = `http://${window.location.hostname}:5000`;
 
@@ -13,7 +14,20 @@ const LeftBar = (): JSX.Element => {
   const dispatch = useDispatch();
   const startLocalGame = () => {
     dispatch(setActiveGame(true));
-    dispatch(setBoard(localBoard));
+    dispatch(
+      fullGameStateUpdate({
+        board: localBoard,
+        turn: 0,
+        selectedRow: null,
+        selectedCol: null,
+        graveyards: [
+          { player: Player.light, contents: [] },
+          { player: Player.dark, contents: [] },
+        ],
+        completed: false,
+        winner: null,
+      } as GameState),
+    );
     dispatch(
       addChatItemToLog({
         content: "You've started a new local game!",

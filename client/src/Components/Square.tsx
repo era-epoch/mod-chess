@@ -1,5 +1,6 @@
 import { faChessPawn, faCircle, faCrown, faSkull } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import pieceIconMap from '../GameObjects/pieceIcons';
 import { Player, SquareContents, SquareStatus } from '../types';
 import './Square.css';
 
@@ -16,6 +17,8 @@ const Square = (props: Props): JSX.Element => {
   //   statusClasses += s + ' ';
   // })
 
+  const icon = pieceIconMap.get(props.content.piece.pieceIdentifier);
+
   return (
     <div
       className={
@@ -25,10 +28,10 @@ const Square = (props: Props): JSX.Element => {
       onClick={() => props.clickHandler(props.row, props.col)}
     >
       <div className={`icon-stack`}>
-        {props.content && props.content.piece.icon ? (
+        {props.content && icon ? (
           <div className="icon-wrapper">
             <FontAwesomeIcon
-              icon={props.content.piece.icon}
+              icon={icon}
               className={props.content.piece.owner === Player.dark ? 'dark-piece' : 'light-piece'}
             />
           </div>

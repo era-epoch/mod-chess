@@ -45,12 +45,11 @@ io.on('connection', (socket) => {
   socket.on('createGame', (event: CreateGameEvent) => {
     console.log('game created');
     socket.join('testroom');
-    games['testroom'] = event.board;
-    // const board: SquareContents[][] = games['testroom'];
-    // console.log(board[0][0].squareStatuses);
+    // TODO: Database
+    games['testroom'] = event.game;
     socket.emit('gameCreated', {
       gameId: 'testroom',
-      board: games['testroom'],
+      game: games['testroom'],
       playerId: crypto.randomBytes(8).toString('hex'),
     } as GameCreatedEvent);
   });
@@ -61,7 +60,7 @@ io.on('connection', (socket) => {
     console.log('User joined game', event.id);
     socket.emit('gameJoined', {
       gameId: event.id,
-      board: games[event.id],
+      game: games[event.id],
       playerId: crypto.randomBytes(8).toString('hex'),
     } as GameJoinedEvent);
   });
@@ -69,7 +68,8 @@ io.on('connection', (socket) => {
   // Move Made
   socket.on('makeMove', (event: MoveEvent) => {
     // TODO: replace testroom
-    socket.to('testroom').emit('moveMade', event as MoveEvent);
+    console.log('Move made:', event.gameState.board[5][6]);
+    socket.to('testroom').emit('moveMade', event);
   });
 });
 
