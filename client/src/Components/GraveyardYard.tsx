@@ -1,6 +1,6 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { uid } from 'react-uid';
-import pieceIconMap from '../GameObjects/pieceIcons';
+import pieceIconMap from '../GameObjects/pieceIconMap';
 import { Graveyard, Piece, Player } from '../types';
 import './GraveyardYard.css';
 

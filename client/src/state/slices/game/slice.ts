@@ -1,9 +1,9 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { EmptySquare } from '../../../GameObjects/piecesBasic';
+import { EmptySquare } from '../../../GameObjects/basic/pieces';
 import { Graveyard, Move, MoveFlag, Player, SquareContents, SquareStatus } from '../../../types';
 import { removePieceAtLocation, movePiece, isGameover, handleGameover, selectedPieceCanMove } from './helpers';
 import emptyBoard from '../../../GameObjects/boards/emptyBoard';
-import moveFunctionMap from '../../../GameObjects/pieceFunctions';
+import moveFunctionMap from '../../../GameObjects/pieceMoveFunctionMap';
 
 export interface GameState {
   board: SquareContents[][];

@@ -1,12 +1,18 @@
-import { GameState } from '../state/slices/game/slice';
-import { Piece, Move, Orientation, PieceIdentifier, MoveFlag, MoveFunction, PieceType } from '../types';
-import { filterMoves, validateMoveWRTKing } from './piecesBasic';
+import { GameState } from '../../state/slices/game/slice';
+import { Piece, Move, Orientation, MoveFlag, PieceType } from '../../types';
+import { filterMoves, validateMoveWRTKing } from '../gameUtil';
 
-const emptyMoveF = (piece: Piece, row: number, col: number, state: GameState, checkKing: boolean = true): Move[] => {
+export const emptyMoveF = (
+  piece: Piece,
+  row: number,
+  col: number,
+  state: GameState,
+  checkKing: boolean = true,
+): Move[] => {
   return [];
 };
 
-const pawnBasicMoveF = (
+export const pawnBasicMoveF = (
   piece: Piece,
   row: number,
   col: number,
@@ -69,7 +75,7 @@ const pawnBasicMoveF = (
   return filterMoves(piece, row, col, state, moves, checkKing);
 };
 
-const rookBasicMoveF = (
+export const rookBasicMoveF = (
   piece: Piece,
   row: number,
   col: number,
@@ -113,7 +119,7 @@ const rookBasicMoveF = (
   return filterMoves(piece, row, col, state, moves, checkKing);
 };
 
-const bishopBasicMoveF = (
+export const bishopBasicMoveF = (
   piece: Piece,
   row: number,
   col: number,
@@ -161,7 +167,7 @@ const bishopBasicMoveF = (
   return filterMoves(piece, row, col, state, moves, checkKing);
 };
 
-const knightBasicMoveF = (
+export const knightBasicMoveF = (
   piece: Piece,
   row: number,
   col: number,
@@ -205,7 +211,7 @@ const knightBasicMoveF = (
   return filterMoves(piece, row, col, state, moves, checkKing);
 };
 
-const queenBasicMoveF = (
+export const queenBasicMoveF = (
   piece: Piece,
   row: number,
   col: number,
@@ -285,7 +291,7 @@ const queenBasicMoveF = (
   return filterMoves(piece, row, col, state, moves, checkKing);
 };
 
-const kingBasicMoveF = (
+export const kingBasicMoveF = (
   piece: Piece,
   row: number,
   col: number,
@@ -366,15 +372,3 @@ const kingBasicMoveF = (
   }
   return filterMoves(piece, row, col, state, moves, checkKing);
 };
-
-const moveFunctionMap = new Map<PieceIdentifier, MoveFunction>([
-  [PieceIdentifier.emptyBasic, emptyMoveF],
-  [PieceIdentifier.pawnBasic, pawnBasicMoveF],
-  [PieceIdentifier.rookBasic, rookBasicMoveF],
-  [PieceIdentifier.knightBasic, knightBasicMoveF],
-  [PieceIdentifier.bishopBasic, bishopBasicMoveF],
-  [PieceIdentifier.queenBasic, queenBasicMoveF],
-  [PieceIdentifier.kingBasic, kingBasicMoveF],
-]);
-
-export default moveFunctionMap;

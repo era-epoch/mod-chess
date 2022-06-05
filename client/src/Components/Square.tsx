@@ -1,6 +1,6 @@
 import { faChessPawn, faCircle, faCrown, faSkull } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import pieceIconMap from '../GameObjects/pieceIcons';
+import pieceIconMap from '../GameObjects/pieceIconMap';
 import { Player, SquareContents, SquareStatus } from '../types';
 import './Square.css';
 

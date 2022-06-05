@@ -8,7 +8,7 @@ import {
   QueenBasic,
   KingBasic,
   PawnBasic,
-} from '../piecesBasic';
+} from '../basic/pieces';
 
 const localBoard: SquareContents[][] = [
   [

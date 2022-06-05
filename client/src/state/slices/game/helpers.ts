@@ -1,5 +1,6 @@
-import moveFunctionMap from '../../../GameObjects/pieceFunctions';
-import { EmptySquare, kingInCheck } from '../../../GameObjects/piecesBasic';
+import { EmptySquare } from '../../../GameObjects/basic/pieces';
+import { kingInCheck } from '../../../GameObjects/gameUtil';
+import moveFunctionMap from '../../../GameObjects/pieceMoveFunctionMap';
 import { Piece, Move, MoveFlag, SquareStatus, PieceType, Graveyard, Player } from '../../../types';
 import { GameState } from './slice';
 
