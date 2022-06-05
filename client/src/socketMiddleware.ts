@@ -11,14 +11,16 @@ import {
   PlayerJoinedGameEvent,
 } from '../../ws/events';
 import localBoard from './GameObjects/boards/localBoard';
+import { RootState } from './state/rootReducer';
 import { fullGameStateUpdate, GameState } from './state/slices/game/slice';
 import {
   addChatItemToLog,
-  addPlayer,
-  changePlayerId,
+  addOtherPlayer,
+  updatePlayer,
   ChatItem,
   ChatItemType,
   createdOnlineGame,
+  invertBoard,
   joinedOnlineGame,
   setActiveGame,
 } from './state/slices/ui/slice';
@@ -40,8 +42,7 @@ const socketMiddleware: Middleware = (api: MiddlewareAPI) => {
   let socket: Socket | null = null;
 
   const handleGameCreated = (event: GameCreatedEvent) => {
-    api.dispatch(addPlayer(event.player));
-    api.dispatch(changePlayerId(event.player.id));
+    api.dispatch(updatePlayer(event.player));
     api.dispatch(createdOnlineGame(event));
     api.dispatch(setActiveGame(true));
     api.dispatch(fullGameStateUpdate(event.game));
@@ -57,13 +58,13 @@ const socketMiddleware: Middleware = (api: MiddlewareAPI) => {
 
   const handleGameJoined = (event: GameJoinedEvent) => {
     // TODO: better dispatch structure
-    api.dispatch(addPlayer(event.player));
-    api.dispatch(changePlayerId(event.player.id));
+    api.dispatch(updatePlayer(event.player));
     for (const player of event.otherPlayers) {
-      api.dispatch(addPlayer(player));
+      api.dispatch(addOtherPlayer(player));
     }
     api.dispatch(joinedOnlineGame(event));
     api.dispatch(setActiveGame(true));
+    api.dispatch(invertBoard(true));
     // TODO: Mirror/flip board
     api.dispatch(fullGameStateUpdate(event.game));
     api.dispatch(
@@ -77,15 +78,16 @@ const socketMiddleware: Middleware = (api: MiddlewareAPI) => {
   };
 
   const handleMove = (event: MoveEvent) => {
-    const playerId = api.getState().ui.playerId;
+    const state: RootState = api.getState();
+    const playerId = state.ui.player.id;
     if (event.playerId !== playerId) {
-      console.log('New state:', event.gameState);
+      console.log('Recieving move:', event.gameState);
       api.dispatch(fullGameStateUpdate(event.gameState));
     }
   };
 
   const handlePlayerJoinedGame = (event: PlayerJoinedGameEvent) => {
-    api.dispatch(addPlayer(event.player));
+    api.dispatch(addOtherPlayer(event.player));
     api.dispatch(
       addChatItemToLog({
         content: `Player ${event.player.name} has joined the game.`,
@@ -154,13 +156,13 @@ const socketMiddleware: Middleware = (api: MiddlewareAPI) => {
         break;
       case 'WS_MOVE':
         const moveAction = action as MoveAction;
-        const state = api.getState().ui;
+        const state: RootState = api.getState();
         console.log('Emitting move:', moveAction.state);
         if (socket !== null)
           socket.emit('makeMove', {
             gameState: moveAction.state,
-            playerId: state.playerId,
-            gameId: state.gameId,
+            playerId: state.ui.player.id,
+            gameId: state.ui.gameId,
           } as MoveEvent);
         break;
       default:

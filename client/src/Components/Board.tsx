@@ -6,12 +6,18 @@ import { RootState } from '../state/rootReducer';
 import { makeMove, selectSquare } from '../state/slices/game/slice';
 import { store } from '../state/store';
 import { SquareStatus } from '../types';
+import { isPlayersTurn } from '../util';
 import './Board.css';
 import Square from './Square';
 
 const Board = (): JSX.Element => {
-  const gameState = useSelector((state: RootState) => state.game);
   const dispatch = useDispatch();
+  const gameState = useSelector((state: RootState) => state.game);
+  const boardInversion = useSelector((state: RootState) => state.ui.boardInversion);
+  const player = useSelector((state: RootState) => state.ui.player);
+
+  const board = gameState.board.slice(0);
+  if (boardInversion) board.reverse();
 
   const handleMove = (row: number, col: number) => {
     dispatch(makeMove({ row: row, col: col }));
@@ -28,7 +34,7 @@ const Board = (): JSX.Element => {
       gameState.board[row][col].squareStatuses.includes(SquareStatus.HL) ||
       gameState.board[row][col].squareStatuses.includes(SquareStatus.HLC) ||
       gameState.board[row][col].squareStatuses.includes(SquareStatus.HLK);
-    if (madeMove) {
+    if (madeMove && isPlayersTurn(gameState.turn, player)) {
       handleMove(row, col);
     } else {
       handleSelect(row, col);
@@ -37,11 +43,13 @@ const Board = (): JSX.Element => {
 
   return (
     <div className="Board">
-      {gameState.board.map((row, rowN) => {
+      {board.map((row, rowN) => {
+        const Row = row.slice(0);
+        if (boardInversion) Row.reverse();
         return (
           <div key={uid(rowN)} className="row">
-            {row.map((val, colN) => {
-              return <Square key={uid(val)} row={rowN} col={colN} content={val} clickHandler={handleSquareClick} />;
+            {Row.map((val, colN) => {
+              return <Square key={uid(val)} content={val} clickHandler={handleSquareClick} />;
             })}
           </div>
         );

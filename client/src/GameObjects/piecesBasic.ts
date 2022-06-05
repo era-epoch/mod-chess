@@ -59,6 +59,8 @@ export const onMovedBasic = (piece: Piece, state: GameState, row: number, col: n
 };
 
 export const setUpSquare = (
+  row: number,
+  col: number,
   piece: Piece,
   owner: Player,
   orientation: Orientation,
@@ -71,6 +73,8 @@ export const setUpSquare = (
     piece: piece,
     squareStatuses: [],
     enPassantOrigin: null,
+    row: row,
+    col: col,
   };
   return sc;
 };

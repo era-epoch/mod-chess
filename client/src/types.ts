@@ -68,6 +68,8 @@ export interface SquareContents {
   piece: Piece;
   squareStatuses: SquareStatus[];
   enPassantOrigin: Piece | null;
+  row: number;
+  col: number;
 }
 
 export interface Piece {

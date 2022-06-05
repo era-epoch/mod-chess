@@ -8,7 +8,6 @@ const ChatBox = (): JSX.Element => {
   const chatlog = useSelector((state: RootState) => state.ui.chatlog);
   return (
     <div className="chat-box">
-      {/* <div className="chat-box-main"> */}
       {chatlog.map((item: ChatItem) => {
         return (
           <div key={uid(item)} className="chat-item">
@@ -20,7 +19,6 @@ const ChatBox = (): JSX.Element => {
           </div>
         );
       })}
-      {/* </div> */}
     </div>
   );
 };

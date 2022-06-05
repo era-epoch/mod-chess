@@ -98,7 +98,7 @@ io.on('connection', (socket) => {
   // Move Made
   socket.on('makeMove', (event: MoveEvent) => {
     // TODO: replace testroom
-    console.log('Move made in ', event);
+    console.log('Move made:', event);
     games[event.gameId] = event.gameState;
     socket.to('testroom').emit('moveMade', event);
   });

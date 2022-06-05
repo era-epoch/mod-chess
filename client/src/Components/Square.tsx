@@ -5,8 +5,6 @@ import { Player, SquareContents, SquareStatus } from '../types';
 import './Square.css';
 
 interface Props {
-  row: number;
-  col: number;
   content: SquareContents;
   clickHandler: Function;
 }
@@ -23,9 +21,9 @@ const Square = (props: Props): JSX.Element => {
     <div
       className={
         `square ${props.content.inBounds ? 'active-square' : 'inactive-square'}` +
-        `${(props.row + props.col) % 2 === 0 ? ' light-square' : ' dark-square'}`
+        `${(props.content.row + props.content.col) % 2 === 0 ? ' light-square' : ' dark-square'}`
       }
-      onClick={() => props.clickHandler(props.row, props.col)}
+      onClick={() => props.clickHandler(props.content.row, props.content.col)}
     >
       <div className={`icon-stack`}>
         {props.content && icon ? (

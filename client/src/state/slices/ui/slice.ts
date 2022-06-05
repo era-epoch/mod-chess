@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { GameJoinedEvent, GameCreatedEvent } from '../../../../../ws/events';
-import { UserInfo } from '../../../types';
+import { Orientation, Player, UserInfo } from '../../../types';
 
 export enum AlertType {
   success = 'success',
@@ -45,9 +45,16 @@ export interface UIState {
   onlineGameStatus: OnlineGameStatus;
   gameId: string;
   chatlog: ChatItem[];
-  players: UserInfo[];
-  playerId: string;
+  otherPlayers: UserInfo[];
+  player: UserInfo;
+  boardInversion: boolean;
 }
+
+const blankPlayer: UserInfo = {
+  colour: Player.neutral,
+  name: '',
+  id: '',
+};
 
 // const testAlerts = [
 //   { type: AlertType.success, content: 'successsssssssssssssssssssssssssssssssssssssssssssssssssssssss', id: -1 },
@@ -62,22 +69,26 @@ const initialUIState = {
   onlineGameStatus: OnlineGameStatus.NONE,
   gameId: '',
   chatlog: [],
-  players: [],
-  playerId: '',
+  otherPlayers: [],
+  player: blankPlayer,
+  boardInversion: false,
 };
 
 const UISlice = createSlice({
   name: 'ui',
   initialState: initialUIState,
   reducers: {
-    addPlayer: (state: UIState, action: PayloadAction<UserInfo>) => {
-      state.players.push(action.payload);
+    invertBoard: (state: UIState, action: PayloadAction<boolean>) => {
+      state.boardInversion = action.payload;
+    },
+    addOtherPlayer: (state: UIState, action: PayloadAction<UserInfo>) => {
+      state.otherPlayers.push(action.payload);
     },
     removePlayer: (state: UIState, action: PayloadAction<UserInfo>) => {
-      state.players = state.players.filter((a: UserInfo) => a.id !== action.payload.id);
+      state.otherPlayers = state.otherPlayers.filter((a: UserInfo) => a.id !== action.payload.id);
     },
-    changePlayerId: (state: UIState, action: PayloadAction<string>) => {
-      state.playerId = action.payload;
+    updatePlayer: (state: UIState, action: PayloadAction<UserInfo>) => {
+      state.player = action.payload;
     },
     addAlert: (state: UIState, action: PayloadAction<Alert>) => {
       state.alerts.push(action.payload);
@@ -114,7 +125,8 @@ export const {
   addChatItemToLog,
   clearChatlog,
   joinedOnlineGame,
-  changePlayerId,
-  addPlayer,
+  updatePlayer,
+  addOtherPlayer,
   removePlayer,
+  invertBoard,
 } = UISlice.actions;

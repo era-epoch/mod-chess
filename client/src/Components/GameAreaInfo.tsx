@@ -10,7 +10,8 @@ import PlayerInfo from './PlayerInfo';
 import TurnCounter from './TurnCounter';
 
 const GameAreaInfo = (): JSX.Element => {
-  const players = useSelector((state: RootState) => state.ui.players);
+  const player = useSelector((state: RootState) => state.ui.player);
+  const otherPlayers = useSelector((state: RootState) => state.ui.otherPlayers);
   return (
     <div className="game-area-info">
       <InfoTitle />
@@ -18,10 +19,13 @@ const GameAreaInfo = (): JSX.Element => {
       <ChatBox />
       <ChatBoxInput />
       <div className="player-infos">
-        {players.map((player: UserInfo) => {
+        <div>
+          <PlayerInfo user={player} />
+        </div>
+        {otherPlayers.map((p: UserInfo) => {
           return (
-            <div key={uid(player)}>
-              <PlayerInfo user={player} />
+            <div key={uid(p)}>
+              <PlayerInfo user={p} />
             </div>
           );
         })}
