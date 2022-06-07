@@ -1,9 +1,9 @@
 import { faChessPawn } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useSelector } from 'react-redux';
-import { RootState } from '../state/rootReducer';
-import { Graveyard, Player, UserInfo } from '../types';
-import GraveyardYard from './GraveyardYard';
+import { RootState } from '../../../../state/rootReducer';
+import { UserInfo, Graveyard, Player } from '../../../../types';
+import GraveyardYard from '../GraveyardYard/GraveyardYard';
 import './PlayerInfo.css';
 
 interface Props {

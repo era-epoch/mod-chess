@@ -1,13 +1,13 @@
 import { useSelector } from 'react-redux';
 import { uid } from 'react-uid';
-import { RootState } from '../state/rootReducer';
-import { UserInfo } from '../types';
-import ChatBox from './ChatBox';
-import ChatBoxInput from './ChatBoxInput';
+import { RootState } from '../../../state/rootReducer';
+import { UserInfo } from '../../../types';
+import ChatBox from './ChatBox/ChatBox';
+import ChatBoxInput from './ChatBoxInput/ChatBoxInput';
 import './GameAreaInfo.css';
-import InfoTitle from './InfoTitle';
-import PlayerInfo from './PlayerInfo';
-import TurnCounter from './TurnCounter';
+import InfoTitle from './InfoTitle/InfoTitle';
+import PlayerInfo from './PlayerInfo/PlayerInfo';
+import TurnCounter from './TurnCounter/TurnCounter';
 
 const GameAreaInfo = (): JSX.Element => {
   const player = useSelector((state: RootState) => state.ui.player);

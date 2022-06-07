@@ -1,14 +1,14 @@
 import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
 import { uid } from 'react-uid';
-import { wsEmitMove } from '../socketMiddleware';
-import { RootState } from '../state/rootReducer';
-import { makeMove, selectSquare } from '../state/slices/game/slice';
-import { store } from '../state/store';
-import { SquareStatus } from '../types';
-import { isPlayersTurn } from '../util';
+import { wsEmitMove } from '../../socketMiddleware';
+import { RootState } from '../../state/rootReducer';
+import { makeMove, selectSquare } from '../../state/slices/game/slice';
+import { store } from '../../state/store';
+import { SquareStatus } from '../../types';
+import { isPlayersTurn } from '../../util';
+import Square from '../Square/Square';
 import './Board.css';
-import Square from './Square';
 
 const Board = (): JSX.Element => {
   const dispatch = useDispatch();

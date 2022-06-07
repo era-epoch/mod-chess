@@ -1,11 +1,10 @@
 import './GameArea.css';
-import GameAreaMain from './GameAreaMain';
-import GameAreaInfo from './GameAreaInfo';
+import GameAreaInfo from './GameAreaInfo/GameAreaInfo';
+import GameAreaMain from './GameAreaMain/GameAreaMain';
 
 const GameArea = (): JSX.Element => {
   return (
     <div className="game-area">
-      {/* <GameAreaStatus /> */}
       <GameAreaMain />
       <GameAreaInfo />
     </div>

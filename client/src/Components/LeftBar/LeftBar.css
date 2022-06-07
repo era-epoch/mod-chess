@@ -15,16 +15,21 @@
 .sidebar-header {
   font-weight: bold;
   text-align: center;
-  padding-bottom: 5rem;
+  /* padding-bottom: 5rem; */
 }
 
 .sidebar-body {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: baseline;
+  justify-content: baseline;
   gap: 1rem;
   width: 100%;
+  flex: 1;
+}
+
+.sidebar-footer {
+  font-weight: bold;
+  padding: 0 1rem;
 }
 
 .sidebar-menu-option {
@@ -38,6 +43,11 @@
 
 .sidebar-menu-option.active {
   font-size: 1.8rem;
+}
+
+.sidebar-icon {
+  width: 2rem;
+  text-align: center;
 }
 
 .accordion-title {

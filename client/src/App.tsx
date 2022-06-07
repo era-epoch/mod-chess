@@ -5,11 +5,9 @@ import { useSelector } from 'react-redux';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { uid } from 'react-uid';
 import './App.css';
-import Base from './Components/Base';
+import Base from './Components/Base/Base';
 import { RootState } from './state/rootReducer';
 import { Alert, removeAlert } from './state/slices/ui/slice';
-import { useEffect } from 'react';
-import { wsConnect, wsDisconnect } from './socketMiddleware';
 
 const App = (): JSX.Element => {
   const alerts = useSelector((state: RootState) => state.ui.alerts);

@@ -22,7 +22,7 @@ import {
   createdOnlineGame,
   invertBoard,
   joinedOnlineGame,
-  setActiveGame,
+  toggleActiveGame,
 } from './state/slices/ui/slice';
 import { Player } from './types';
 
@@ -44,7 +44,7 @@ const socketMiddleware: Middleware = (api: MiddlewareAPI) => {
   const handleGameCreated = (event: GameCreatedEvent) => {
     api.dispatch(updatePlayer(event.player));
     api.dispatch(createdOnlineGame(event));
-    api.dispatch(setActiveGame(true));
+    api.dispatch(toggleActiveGame(true));
     api.dispatch(fullGameStateUpdate(event.game));
     api.dispatch(
       addChatItemToLog({
@@ -63,7 +63,7 @@ const socketMiddleware: Middleware = (api: MiddlewareAPI) => {
       api.dispatch(addOtherPlayer(player));
     }
     api.dispatch(joinedOnlineGame(event));
-    api.dispatch(setActiveGame(true));
+    api.dispatch(toggleActiveGame(true));
     api.dispatch(invertBoard(true));
     // TODO: Mirror/flip board
     api.dispatch(fullGameStateUpdate(event.game));

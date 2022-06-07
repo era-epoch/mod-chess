@@ -1,18 +1,4 @@
-import {
-  Move,
-  Player,
-  Piece,
-  Orientation,
-  PieceStatus,
-  SquareContents,
-  SquareStatus,
-  PieceType,
-  MoveFlag,
-  LifecycleF,
-  PieceIdentifier,
-} from '../../types';
-import { GameState } from '../../state/slices/game/slice';
-import produce from 'immer';
+import { Player, Piece, Orientation, PieceStatus, SquareContents, PieceType, PieceIdentifier } from '../../types';
 import { genPID } from '../gameUtil';
 
 export const setUpSquare = (

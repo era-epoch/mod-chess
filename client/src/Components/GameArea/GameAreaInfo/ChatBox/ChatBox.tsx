@@ -1,7 +1,7 @@
 import { useSelector } from 'react-redux';
 import { uid } from 'react-uid';
-import { RootState } from '../state/rootReducer';
-import { ChatItem } from '../state/slices/ui/slice';
+import { RootState } from '../../../../state/rootReducer';
+import { ChatItem } from '../../../../state/slices/ui/slice';
 import './ChatBox.css';
 
 const ChatBox = (): JSX.Element => {

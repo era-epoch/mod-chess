@@ -1,5 +1,5 @@
 import { useSelector } from 'react-redux';
-import { RootState } from '../state/rootReducer';
+import { RootState } from '../../../../state/rootReducer';
 import './TurnCounter.css';
 
 const TurnCounter = (): JSX.Element => {

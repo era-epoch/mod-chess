@@ -48,6 +48,9 @@ export interface UIState {
   otherPlayers: UserInfo[];
   player: UserInfo;
   boardInversion: boolean;
+  createGameMenuOpen: boolean;
+  joinGameMenuOpen: boolean;
+  createLocalGameMenuOpen: boolean;
 }
 
 const blankPlayer: UserInfo = {
@@ -63,7 +66,7 @@ const blankPlayer: UserInfo = {
 //   { type: AlertType.error, content: 'error', id: -4 },
 // ];
 
-const initialUIState = {
+const initialUIState: UIState = {
   alerts: [],
   activeGame: false,
   onlineGameStatus: OnlineGameStatus.NONE,
@@ -72,6 +75,9 @@ const initialUIState = {
   otherPlayers: [],
   player: blankPlayer,
   boardInversion: false,
+  createGameMenuOpen: false,
+  joinGameMenuOpen: false,
+  createLocalGameMenuOpen: false,
 };
 
 const UISlice = createSlice({
@@ -80,6 +86,15 @@ const UISlice = createSlice({
   reducers: {
     invertBoard: (state: UIState, action: PayloadAction<boolean>) => {
       state.boardInversion = action.payload;
+    },
+    toggleCreateLocalGameMenu: (state: UIState, action: PayloadAction<boolean>) => {
+      state.createLocalGameMenuOpen = action.payload;
+    },
+    toggleCreateGameMenu: (state: UIState, action: PayloadAction<boolean>) => {
+      state.createGameMenuOpen = action.payload;
+    },
+    toggleJoinGameMenu: (state: UIState, action: PayloadAction<boolean>) => {
+      state.joinGameMenuOpen = action.payload;
     },
     addOtherPlayer: (state: UIState, action: PayloadAction<UserInfo>) => {
       state.otherPlayers.push(action.payload);
@@ -96,7 +111,7 @@ const UISlice = createSlice({
     removeAlert: (state: UIState, action: PayloadAction<Alert>) => {
       state.alerts = state.alerts.filter((a: Alert) => a.id !== action.payload.id);
     },
-    setActiveGame: (state: UIState, action: PayloadAction<boolean>) => {
+    toggleActiveGame: (state: UIState, action: PayloadAction<boolean>) => {
       state.activeGame = action.payload;
     },
     createdOnlineGame: (state: UIState, action: PayloadAction<GameCreatedEvent>) => {
@@ -120,7 +135,7 @@ export default UISlice.reducer;
 export const {
   addAlert,
   removeAlert,
-  setActiveGame,
+  toggleActiveGame,
   createdOnlineGame,
   addChatItemToLog,
   clearChatlog,
@@ -129,4 +144,7 @@ export const {
   addOtherPlayer,
   removePlayer,
   invertBoard,
+  toggleCreateGameMenu,
+  toggleJoinGameMenu,
+  toggleCreateLocalGameMenu,
 } = UISlice.actions;
