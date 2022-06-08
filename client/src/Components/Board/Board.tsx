@@ -30,6 +30,7 @@ const Board = (): JSX.Element => {
   };
 
   const handleSquareClick = (row: number, col: number) => {
+    // TODO: universal 'HL' square status
     const madeMove =
       gameState.board[row][col].squareStatuses.includes(SquareStatus.HL) ||
       gameState.board[row][col].squareStatuses.includes(SquareStatus.HLC) ||

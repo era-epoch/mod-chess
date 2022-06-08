@@ -61,14 +61,6 @@ const LeftBar = (): JSX.Element => {
     );
   };
 
-  const createOnlineGame = () => {
-    dispatch(wsCreateGame(ws_url));
-  };
-
-  const joinOnlineGame = () => {
-    dispatch(wsJoinGame(ws_url));
-  };
-
   const handleHomeClicked = () => {
     dispatch(wsDisconnect(ws_url));
     dispatch(toggleActiveGame(false));

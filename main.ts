@@ -53,21 +53,22 @@ io.on('connection', (socket) => {
 
   // Create Game
   socket.on('createGame', (event: CreateGameEvent) => {
-    console.log('game created');
-    socket.join('testroom');
+    const newGameId = crypto.randomBytes(8).toString('hex');
+    console.log('Created game:', newGameId);
+    socket.join(newGameId);
     // TODO: Database
-    games['testroom'] = event.game;
+    games[newGameId] = event.game;
     const newPlayer = {
       name: 'name',
       id: crypto.randomBytes(8).toString('hex'),
       colour: Player.light,
     };
 
-    users['testroom'] = [newPlayer];
+    users[newGameId] = [newPlayer];
 
     socket.emit('gameCreated', {
-      gameId: 'testroom',
-      game: games['testroom'],
+      gameId: newGameId,
+      game: games[newGameId],
       player: newPlayer,
     } as GameCreatedEvent);
   });
@@ -75,7 +76,7 @@ io.on('connection', (socket) => {
   // Join Game
   socket.on('joinGame', (event: JoinGameEvent) => {
     socket.join(event.id);
-    console.log('User joined game', event.id);
+    console.log('User joined game:', event.id);
 
     const newPlayer = {
       name: 'name',
@@ -90,7 +91,7 @@ io.on('connection', (socket) => {
       otherPlayers: users[event.id],
     } as GameJoinedEvent);
 
-    socket.to('testroom').emit('playerJoinedGame', {
+    socket.to(event.id).emit('playerJoinedGame', {
       player: newPlayer,
     } as PlayerJoinedGameEvent);
   });
@@ -100,7 +101,7 @@ io.on('connection', (socket) => {
     // TODO: replace testroom
     console.log('Move made:', event);
     games[event.gameId] = event.gameState;
-    socket.to('testroom').emit('moveMade', event);
+    socket.to(event.gameId).emit('moveMade', event);
   });
 });
 

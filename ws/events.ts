@@ -1,5 +1,5 @@
 import { GameState } from '../client/src/state/slices/game/slice';
-import { SquareContents, UserInfo } from '../client/src/types';
+import { UserInfo } from '../client/src/types';
 
 export interface ConnectEvent {
   url: string;

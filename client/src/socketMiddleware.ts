@@ -26,16 +26,23 @@ import {
 } from './state/slices/ui/slice';
 import { Player } from './types';
 
+// TODO: handle URL better
 export const wsConnect = (url: string) => ({ type: 'WS_CONNECT', url });
 export const wsConnected = (url: string) => ({ type: 'WS_CONNECTED', url });
 export const wsDisconnect = (url: string) => ({ type: 'WS_DISCONNECT', url });
 export const wsDisconnected = (url: string) => ({ type: 'WS_DISCONNECTED', url });
 export const wsCreateGame = (url: string) => ({ type: 'WS_CREATE_GAME', url });
-export const wsJoinGame = (url: string) => ({ type: 'WS_JOIN_GAME', url });
-export const wsEmitMove = (state: GameState) => ({ type: 'WS_MOVE', state });
+export const wsJoinGame = (url: string, gameId: string) => ({ type: 'WS_JOIN_GAME', url, gameId } as JoinAction);
+export const wsEmitMove = (state: GameState) => ({ type: 'WS_MOVE', state } as MoveAction);
 
 interface MoveAction {
+  type: string;
   state: GameState;
+}
+
+interface JoinAction {
+  type: string;
+  gameId: string;
 }
 
 const socketMiddleware: Middleware = (api: MiddlewareAPI) => {
@@ -65,7 +72,6 @@ const socketMiddleware: Middleware = (api: MiddlewareAPI) => {
     api.dispatch(joinedOnlineGame(event));
     api.dispatch(toggleActiveGame(true));
     api.dispatch(invertBoard(true));
-    // TODO: Mirror/flip board
     api.dispatch(fullGameStateUpdate(event.game));
     api.dispatch(
       addChatItemToLog({
@@ -90,7 +96,7 @@ const socketMiddleware: Middleware = (api: MiddlewareAPI) => {
     api.dispatch(addOtherPlayer(event.player));
     api.dispatch(
       addChatItemToLog({
-        content: `Player ${event.player.name} has joined the game.`,
+        content: `A new player (${event.player.name}) has joined the game.`,
         time: new Date(),
         origin: '',
         type: ChatItemType.GAME,
@@ -151,8 +157,9 @@ const socketMiddleware: Middleware = (api: MiddlewareAPI) => {
           } as CreateGameEvent);
         break;
       case 'WS_JOIN_GAME':
+        const joinAction = action as JoinAction;
         if (socket === null) connect(action);
-        if (socket !== null) socket.emit('joinGame', { id: 'testroom' } as JoinGameEvent);
+        if (socket !== null) socket.emit('joinGame', { id: joinAction.gameId } as JoinGameEvent);
         break;
       case 'WS_MOVE':
         const moveAction = action as MoveAction;

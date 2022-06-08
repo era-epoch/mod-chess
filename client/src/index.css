@@ -17,3 +17,11 @@ code {
   margin: 0;
   padding: 0;
 }
+
+.ui-button {
+  text-align: center;
+}
+
+.ui-button:hover {
+  cursor: pointer;
+}
