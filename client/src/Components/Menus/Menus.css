@@ -22,3 +22,14 @@
 .major-button:hover {
   background-color: rgb(40, 40, 40);
 }
+
+.menu-section-title {
+  padding: 1rem;
+  font-weight: bold;
+  text-align: center;
+}
+
+.menu-row {
+  display: flex;
+  justify-content: space-between;
+}

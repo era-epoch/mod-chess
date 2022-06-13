@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { GameJoinedEvent, GameCreatedEvent } from '../../../../../ws/events';
-import { Orientation, Player, UserInfo } from '../../../types';
+import { GameJoinedEvent, GameCreatedEvent, PlayerJoinedGameEvent } from '../../../../../ws/events';
+import { PlayerColour, UserInfo } from '../../../types';
 
 export enum AlertType {
   success = 'success',
@@ -54,7 +54,7 @@ export interface UIState {
 }
 
 const blankPlayer: UserInfo = {
-  colour: Player.neutral,
+  colour: PlayerColour.neutral,
   name: '',
   id: '',
 };
@@ -96,9 +96,6 @@ const UISlice = createSlice({
     toggleJoinGameMenu: (state: UIState, action: PayloadAction<boolean>) => {
       state.joinGameMenuOpen = action.payload;
     },
-    addOtherPlayer: (state: UIState, action: PayloadAction<UserInfo>) => {
-      state.otherPlayers.push(action.payload);
-    },
     removePlayer: (state: UIState, action: PayloadAction<UserInfo>) => {
       state.otherPlayers = state.otherPlayers.filter((a: UserInfo) => a.id !== action.payload.id);
     },
@@ -118,9 +115,14 @@ const UISlice = createSlice({
       state.onlineGameStatus = OnlineGameStatus.AWAITING;
       state.gameId = action.payload.gameId;
     },
+    anotherPlayerJoinedGame: (state: UIState, action: PayloadAction<PlayerJoinedGameEvent>) => {
+      state.otherPlayers.push(action.payload.player);
+      state.onlineGameStatus = OnlineGameStatus.SUCCESS;
+    },
     joinedOnlineGame: (state: UIState, action: PayloadAction<GameJoinedEvent>) => {
       state.onlineGameStatus = OnlineGameStatus.SUCCESS;
       state.gameId = action.payload.gameId;
+      state.otherPlayers.push(...action.payload.otherPlayers);
     },
     addChatItemToLog: (state: UIState, action: PayloadAction<ChatItem>) => {
       state.chatlog.push(action.payload);
@@ -141,7 +143,7 @@ export const {
   clearChatlog,
   joinedOnlineGame,
   updatePlayer,
-  addOtherPlayer,
+  anotherPlayerJoinedGame,
   removePlayer,
   invertBoard,
   toggleCreateGameMenu,

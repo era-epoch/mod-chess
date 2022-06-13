@@ -1,6 +1,6 @@
 import { GameState } from './state/slices/game/slice';
 
-export enum Player {
+export enum PlayerColour {
   'light' = 0,
   'dark' = 1,
   'neutral' = 2,
@@ -48,6 +48,12 @@ export enum PieceIdentifier {
   'kingBasic',
 }
 
+export enum PlayerAtCreation {
+  'light' = 0,
+  'dark' = 1,
+  'random' = 2,
+}
+
 export interface Move {
   row: number;
   col: number;
@@ -59,7 +65,7 @@ export interface Move {
 export interface UserInfo {
   name: string;
   id: string;
-  colour: Player;
+  colour: PlayerColour;
   elo?: number;
 }
 
@@ -75,7 +81,7 @@ export interface SquareContents {
 export interface Piece {
   name: string;
   id: number;
-  owner: Player;
+  owner: PlayerColour;
   pieceIdentifier: PieceIdentifier;
   pieceType: PieceType;
   pieceStatuses: Set<PieceStatus>;
@@ -95,6 +101,6 @@ export interface LifecycleF {
 }
 
 export interface Graveyard {
-  player: Player;
+  player: PlayerColour;
   contents: Piece[];
 }

@@ -2,7 +2,7 @@ import { faChessPawn } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../../state/rootReducer';
-import { UserInfo, Graveyard, Player } from '../../../../types';
+import { UserInfo, Graveyard, PlayerColour } from '../../../../types';
 import GraveyardYard from '../GraveyardYard/GraveyardYard';
 import './PlayerInfo.css';
 
@@ -15,7 +15,7 @@ const PlayerInfo = (props: Props): JSX.Element => {
   const graveyard = graveyards.filter((g: Graveyard) => g.player === props.user.colour)[0];
   return (
     <div className="player-info">
-      <div style={{ color: props.user.colour === Player.light ? 'white' : 'black' }}>
+      <div style={{ color: props.user.colour === PlayerColour.light ? 'white' : 'black' }}>
         <FontAwesomeIcon icon={faChessPawn} />
       </div>
       <div className="player-name">{props.user.name}</div>

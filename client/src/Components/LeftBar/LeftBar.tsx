@@ -22,44 +22,44 @@ import {
 import { fullGameStateUpdate, GameState } from '../../state/slices/game/slice';
 import localBoard from '../../GameObjects/boards/localBoard';
 import { wsCreateGame, wsDisconnect, wsJoinGame } from '../../socketMiddleware';
-import { Player } from '../../types';
+import { PlayerColour } from '../../types';
 
 export const ws_url = `http://${window.location.hostname}:5000`;
 
 const LeftBar = (): JSX.Element => {
   const dispatch = useDispatch();
-  const startLocalGame = () => {
-    dispatch(toggleActiveGame(true));
-    dispatch(
-      updatePlayer({
-        colour: Player.light,
-        id: '',
-        name: '',
-      }),
-    );
-    dispatch(
-      fullGameStateUpdate({
-        board: localBoard,
-        turn: 0,
-        selectedRow: null,
-        selectedCol: null,
-        graveyards: [
-          { player: Player.light, contents: [] },
-          { player: Player.dark, contents: [] },
-        ],
-        completed: false,
-        winner: null,
-      } as GameState),
-    );
-    dispatch(
-      addChatItemToLog({
-        content: "You've started a new local game!",
-        time: new Date(),
-        origin: '',
-        type: ChatItemType.GAME,
-      } as ChatItem),
-    );
-  };
+  // const startLocalGame = () => {
+  //   dispatch(toggleActiveGame(true));
+  //   dispatch(
+  //     updatePlayer({
+  //       colour: Player.light,
+  //       id: '',
+  //       name: '',
+  //     }),
+  //   );
+  //   dispatch(
+  //     fullGameStateUpdate({
+  //       board: localBoard,
+  //       turn: 0,
+  //       selectedRow: null,
+  //       selectedCol: null,
+  //       graveyards: [
+  //         { player: Player.light, contents: [] },
+  //         { player: Player.dark, contents: [] },
+  //       ],
+  //       completed: false,
+  //       winner: null,
+  //     } as GameState),
+  //   );
+  //   dispatch(
+  //     addChatItemToLog({
+  //       content: "You've started a new local game!",
+  //       time: new Date(),
+  //       origin: '',
+  //       type: ChatItemType.GAME,
+  //     } as ChatItem),
+  //   );
+  // };
 
   const handleHomeClicked = () => {
     dispatch(wsDisconnect(ws_url));

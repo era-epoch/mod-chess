@@ -1,30 +1,9 @@
-import { Player, Piece, Orientation, PieceStatus, SquareContents, PieceType, PieceIdentifier } from '../../types';
+import { PlayerColour, Piece, Orientation, PieceStatus, PieceType, PieceIdentifier } from '../../types';
 import { genPID } from '../gameUtil';
-
-export const setUpSquare = (
-  row: number,
-  col: number,
-  piece: Piece,
-  owner: Player,
-  orientation: Orientation,
-  inBounds: boolean,
-): SquareContents => {
-  piece.owner = owner;
-  piece.orientation = orientation;
-  const sc: SquareContents = {
-    inBounds: inBounds,
-    piece: piece,
-    squareStatuses: [],
-    enPassantOrigin: null,
-    row: row,
-    col: col,
-  };
-  return sc;
-};
 
 export const EmptySquare = (): Piece => {
   const piece: Piece = {
-    owner: Player.neutral,
+    owner: PlayerColour.neutral,
     pieceIdentifier: PieceIdentifier.emptyBasic,
     nMoves: 0,
     orientation: Orientation.neutral,
@@ -42,7 +21,7 @@ export const EmptySquare = (): Piece => {
 
 export const PawnBasic = (): Piece => {
   const piece: Piece = {
-    owner: Player.neutral,
+    owner: PlayerColour.neutral,
     pieceIdentifier: PieceIdentifier.pawnBasic,
     nMoves: 0,
     orientation: Orientation.neutral,
@@ -60,7 +39,7 @@ export const PawnBasic = (): Piece => {
 
 export const RookBasic = (): Piece => {
   const piece: Piece = {
-    owner: Player.neutral,
+    owner: PlayerColour.neutral,
     nMoves: 0,
     orientation: Orientation.neutral,
     pieceStatuses: new Set<PieceStatus>(),
@@ -78,7 +57,7 @@ export const RookBasic = (): Piece => {
 
 export const BishopBasic = (): Piece => {
   const piece: Piece = {
-    owner: Player.neutral,
+    owner: PlayerColour.neutral,
     nMoves: 0,
     orientation: Orientation.neutral,
     pieceStatuses: new Set<PieceStatus>(),
@@ -96,7 +75,7 @@ export const BishopBasic = (): Piece => {
 
 export const KnightBasic = (): Piece => {
   const piece: Piece = {
-    owner: Player.neutral,
+    owner: PlayerColour.neutral,
     nMoves: 0,
     orientation: Orientation.neutral,
     pieceStatuses: new Set<PieceStatus>(),
@@ -114,7 +93,7 @@ export const KnightBasic = (): Piece => {
 
 export const QueenBasic = (): Piece => {
   const piece: Piece = {
-    owner: Player.neutral,
+    owner: PlayerColour.neutral,
     nMoves: 0,
     orientation: Orientation.neutral,
     pieceStatuses: new Set<PieceStatus>(),
@@ -132,7 +111,7 @@ export const QueenBasic = (): Piece => {
 
 export const KingBasic = (): Piece => {
   const piece: Piece = {
-    owner: Player.neutral,
+    owner: PlayerColour.neutral,
     nMoves: 0,
     orientation: Orientation.neutral,
     pieceStatuses: new Set<PieceStatus>(),

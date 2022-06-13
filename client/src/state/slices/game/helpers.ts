@@ -1,7 +1,7 @@
 import { EmptySquare } from '../../../GameObjects/basic/pieces';
 import { kingInCheck } from '../../../GameObjects/gameUtil';
 import moveFunctionMap from '../../../GameObjects/pieceMoveFunctionMap';
-import { Piece, Move, MoveFlag, SquareStatus, PieceType, Graveyard, Player } from '../../../types';
+import { Piece, Move, MoveFlag, SquareStatus, PieceType, Graveyard, PlayerColour } from '../../../types';
 import { GameState } from './slice';
 
 export const movePiece = (gameState: GameState, piece: Piece, move: Move) => {
@@ -97,8 +97,8 @@ export const removePieceAtLocation = (gameState: GameState, row: number, col: nu
   gameState.board[row][col].piece = EmptySquare();
 };
 
-export const isGameover = (gameState: GameState, player: Player): boolean => {
-  const opponent: Player = (player + 1) % 2;
+export const isGameover = (gameState: GameState, player: PlayerColour): boolean => {
+  const opponent: PlayerColour = (player + 1) % 2;
   const validMoves: Move[] = [];
   for (let i = 0; i < gameState.board.length; i++) {
     for (let j = 0; j < gameState.board[0].length; j++) {
@@ -111,22 +111,22 @@ export const isGameover = (gameState: GameState, player: Player): boolean => {
   return validMoves.length === 0;
 };
 
-export const handleGameover = (gameState: GameState, player: Player) => {
-  const opponent: Player = (player + 1) % 2;
+export const handleGameover = (gameState: GameState, player: PlayerColour) => {
+  const opponent: PlayerColour = (player + 1) % 2;
   if (kingInCheck(gameState, opponent)) {
     // console.log('CHECKMATE');
     gameState.winner = player;
   } else {
     // console.log('STALEMATE');
-    gameState.winner = Player.neutral;
+    gameState.winner = PlayerColour.neutral;
   }
   gameState.completed = true;
 };
 
 export const selectedPieceCanMove = (gameState: GameState, row: number, col: number) => {
   if (gameState.turn % 2 === 0) {
-    return gameState.board[row][col].piece.owner === Player.light;
+    return gameState.board[row][col].piece.owner === PlayerColour.light;
   } else {
-    return gameState.board[row][col].piece.owner === Player.dark;
+    return gameState.board[row][col].piece.owner === PlayerColour.dark;
   }
 };

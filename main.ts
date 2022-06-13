@@ -13,7 +13,7 @@ import {
   PlayerJoinedGameEvent,
 } from './ws/events';
 import crypto from 'crypto';
-import { Player, UserInfo } from './client/src/types';
+import { PlayerColour, PlayerAtCreation, UserInfo } from './client/src/types';
 import { GameState } from './client/src/state/slices/game/slice';
 
 const app = express();
@@ -57,15 +57,24 @@ io.on('connection', (socket) => {
     console.log('Created game:', newGameId);
     socket.join(newGameId);
     // TODO: Database
+    let newPlayerColour: PlayerColour;
+    if (event.game.creatorColour === PlayerAtCreation.random) {
+      if (Math.random() < 0.5) {
+        newPlayerColour = PlayerColour.light;
+      } else {
+        newPlayerColour = PlayerColour.dark;
+      }
+    } else {
+      if (event.game.creatorColour === PlayerAtCreation.dark) newPlayerColour = PlayerColour.dark;
+      if (event.game.creatorColour === PlayerAtCreation.light) newPlayerColour = PlayerColour.light;
+    }
     games[newGameId] = event.game;
     const newPlayer = {
       name: 'name',
       id: crypto.randomBytes(8).toString('hex'),
-      colour: Player.light,
+      colour: newPlayerColour,
     };
-
     users[newGameId] = [newPlayer];
-
     socket.emit('gameCreated', {
       gameId: newGameId,
       game: games[newGameId],
@@ -78,10 +87,18 @@ io.on('connection', (socket) => {
     socket.join(event.id);
     console.log('User joined game:', event.id);
 
+    const user: UserInfo = users[event.id][0];
+    let newColour: PlayerColour;
+    if (user.colour === PlayerColour.dark) {
+      newColour = PlayerColour.light;
+    } else {
+      newColour = PlayerColour.dark;
+    }
+
     const newPlayer = {
       name: 'name',
       id: crypto.randomBytes(8).toString('hex'),
-      colour: Player.dark,
+      colour: newColour,
     };
 
     socket.emit('gameJoined', {
@@ -111,5 +128,3 @@ const port = process.env.PORT || 5000;
 server.listen(port, () => {
   console.log(`Listening on port ${port}...`);
 });
-
-// websockets(httpServer);

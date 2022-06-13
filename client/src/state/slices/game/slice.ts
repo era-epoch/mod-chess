@@ -1,6 +1,14 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { EmptySquare } from '../../../GameObjects/basic/pieces';
-import { Graveyard, Move, MoveFlag, Player, SquareContents, SquareStatus } from '../../../types';
+import {
+  Graveyard,
+  Move,
+  MoveFlag,
+  PlayerColour,
+  PlayerAtCreation,
+  SquareContents,
+  SquareStatus,
+} from '../../../types';
 import { removePieceAtLocation, movePiece, isGameover, handleGameover, selectedPieceCanMove } from './helpers';
 import emptyBoard from '../../../GameObjects/boards/emptyBoard';
 import moveFunctionMap from '../../../GameObjects/pieceMoveFunctionMap';
@@ -12,7 +20,11 @@ export interface GameState {
   selectedCol: number | null;
   graveyards: Graveyard[];
   completed: boolean;
-  winner: Player | null; // null = not finished, PLayer.neutral = Draw
+  winner: PlayerColour | null; // null = not finished, PLayer.neutral = Draw
+  creatorColour: PlayerAtCreation | null;
+  timedGame: boolean;
+  gameTime: number;
+  turnTimeBack: number;
 }
 
 const initialGameState: GameState = {
@@ -21,11 +33,15 @@ const initialGameState: GameState = {
   selectedRow: null,
   selectedCol: null,
   graveyards: [
-    { player: Player.light, contents: [] },
-    { player: Player.dark, contents: [] },
+    { player: PlayerColour.light, contents: [] },
+    { player: PlayerColour.dark, contents: [] },
   ],
   completed: false,
   winner: null,
+  creatorColour: null,
+  timedGame: false,
+  gameTime: 10,
+  turnTimeBack: 1,
 };
 
 // Reducer
@@ -64,18 +80,14 @@ const gameSlice = createSlice({
       // ENTERING & EFFECTS
       movePiece(state, pieceToMove, move);
       // CLEANUP
-      let i = 0;
-      for (const row of state.board) {
-        let j = 0;
-        for (const cell of row) {
+      for (let i = 0; i < state.board.length; i++) {
+        for (let j = 0; j < state.board[i].length; j++) {
           // TODO: Transfer cleanup to postMove function
           state.board[i][j].squareStatuses = state.board[i][j].squareStatuses.filter((s) => s !== SquareStatus.HL);
           state.board[i][j].squareStatuses = state.board[i][j].squareStatuses.filter((s) => s !== SquareStatus.SEL);
           state.board[i][j].squareStatuses = state.board[i][j].squareStatuses.filter((s) => s !== SquareStatus.HLC);
           state.board[i][j].squareStatuses = state.board[i][j].squareStatuses.filter((s) => s !== SquareStatus.HLK);
-          j++;
         }
-        i++;
       }
       //.onTurnEnd()
       // if () .onRoundEnd()
@@ -92,11 +104,10 @@ const gameSlice = createSlice({
         const moveFunction = moveFunctionMap.get(state.board[row][col].piece.pieceIdentifier);
         if (moveFunction) movesToHighlight.push(...moveFunction(state.board[row][col].piece, row, col, state, true));
       }
+
       const selectedSameSquare = state.selectedRow === row && state.selectedCol === col;
-      let i = 0;
-      for (const row of state.board) {
-        let j = 0;
-        for (const cell of row) {
+      for (let i = 0; i < state.board.length; i++) {
+        for (let j = 0; j < state.board[i].length; j++) {
           let match = false;
           let castle = false;
           let kill = false;
@@ -129,9 +140,7 @@ const gameSlice = createSlice({
             state.board[i][j].squareStatuses = state.board[i][j].squareStatuses.filter((s) => s !== SquareStatus.HLK);
           }
           state.board[i][j].squareStatuses = state.board[i][j].squareStatuses.filter((s) => s !== SquareStatus.SEL);
-          j++;
         }
-        i++;
       }
       if (!selectedSameSquare) state.board[row][col].squareStatuses.push(SquareStatus.SEL);
       if (!selectedSameSquare) {

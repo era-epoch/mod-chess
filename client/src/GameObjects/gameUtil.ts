@@ -1,14 +1,35 @@
 import produce from 'immer';
 import { GameState } from '../state/slices/game/slice';
-import { Piece, Move, SquareStatus, MoveFlag, Player, PieceType } from '../types';
+import { Piece, Move, SquareStatus, MoveFlag, PlayerColour, PieceType, Orientation, SquareContents } from '../types';
 import { EmptySquare } from './basic/pieces';
 import moveFunctionMap from './pieceMoveFunctionMap';
 
-// TODO: ensure PID sync between users
+// ensure PID sync between users (update: should be okay with board coming from host?)
 let PID = 0;
 export const genPID = (): number => {
   PID++;
   return PID;
+};
+
+export const setUpSquare = (
+  row: number,
+  col: number,
+  piece: Piece,
+  owner: PlayerColour,
+  orientation: Orientation,
+  inBounds: boolean,
+): SquareContents => {
+  piece.owner = owner;
+  piece.orientation = orientation;
+  const sc: SquareContents = {
+    inBounds: inBounds,
+    piece: piece,
+    squareStatuses: [],
+    enPassantOrigin: null,
+    row: row,
+    col: col,
+  };
+  return sc;
 };
 
 export const filterMoves = (
@@ -36,7 +57,7 @@ export const filterMoves = (
   return moves;
 };
 
-export const kingInCheck = (gameState: GameState, player: Player): boolean => {
+export const kingInCheck = (gameState: GameState, player: PlayerColour): boolean => {
   const board = gameState.board;
   const kingPositions: Move[] = [];
   const threatenedPositions: Move[] = [];

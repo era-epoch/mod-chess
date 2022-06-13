@@ -1,7 +1,7 @@
 import { faChessPawn, faCircle, faCrown, faSkull } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import pieceIconMap from '../../GameObjects/pieceIconMap';
-import { Player, SquareContents, SquareStatus } from '../../types';
+import { PlayerColour, SquareContents, SquareStatus } from '../../types';
 import './Square.css';
 
 interface Props {
@@ -30,7 +30,7 @@ const Square = (props: Props): JSX.Element => {
           <div className="icon-wrapper">
             <FontAwesomeIcon
               icon={icon}
-              className={props.content.piece.owner === Player.dark ? 'dark-piece' : 'light-piece'}
+              className={props.content.piece.owner === PlayerColour.dark ? 'dark-piece' : 'light-piece'}
             />
           </div>
         ) : null}

@@ -1,5 +1,4 @@
 import { AnyAction, Dispatch, Middleware, MiddlewareAPI } from '@reduxjs/toolkit';
-import produce from 'immer';
 import { io, Socket } from 'socket.io-client';
 import {
   GameJoinedEvent,
@@ -10,12 +9,10 @@ import {
   ConnectEvent,
   PlayerJoinedGameEvent,
 } from '../../ws/events';
-import localBoard from './GameObjects/boards/localBoard';
 import { RootState } from './state/rootReducer';
 import { fullGameStateUpdate, GameState } from './state/slices/game/slice';
 import {
   addChatItemToLog,
-  addOtherPlayer,
   updatePlayer,
   ChatItem,
   ChatItemType,
@@ -23,15 +20,17 @@ import {
   invertBoard,
   joinedOnlineGame,
   toggleActiveGame,
+  anotherPlayerJoinedGame,
 } from './state/slices/ui/slice';
-import { Player } from './types';
+import { PlayerColour } from './types';
 
 // TODO: handle URL better
 export const wsConnect = (url: string) => ({ type: 'WS_CONNECT', url });
 export const wsConnected = (url: string) => ({ type: 'WS_CONNECTED', url });
 export const wsDisconnect = (url: string) => ({ type: 'WS_DISCONNECT', url });
 export const wsDisconnected = (url: string) => ({ type: 'WS_DISCONNECTED', url });
-export const wsCreateGame = (url: string) => ({ type: 'WS_CREATE_GAME', url });
+export const wsCreateGame = (url: string, ops: CreateGameEvent) =>
+  ({ type: 'WS_CREATE_GAME', url, ops } as CreateGameAction);
 export const wsJoinGame = (url: string, gameId: string) => ({ type: 'WS_JOIN_GAME', url, gameId } as JoinAction);
 export const wsEmitMove = (state: GameState) => ({ type: 'WS_MOVE', state } as MoveAction);
 
@@ -45,12 +44,20 @@ interface JoinAction {
   gameId: string;
 }
 
+interface CreateGameAction {
+  type: string;
+  ops: CreateGameEvent;
+}
+
 const socketMiddleware: Middleware = (api: MiddlewareAPI) => {
   let socket: Socket | null = null;
 
   const handleGameCreated = (event: GameCreatedEvent) => {
     api.dispatch(updatePlayer(event.player));
     api.dispatch(createdOnlineGame(event));
+    if (event.player.colour === PlayerColour.dark) {
+      api.dispatch(invertBoard(true));
+    }
     api.dispatch(toggleActiveGame(true));
     api.dispatch(fullGameStateUpdate(event.game));
     api.dispatch(
@@ -66,12 +73,11 @@ const socketMiddleware: Middleware = (api: MiddlewareAPI) => {
   const handleGameJoined = (event: GameJoinedEvent) => {
     // TODO: better dispatch structure
     api.dispatch(updatePlayer(event.player));
-    for (const player of event.otherPlayers) {
-      api.dispatch(addOtherPlayer(player));
-    }
     api.dispatch(joinedOnlineGame(event));
     api.dispatch(toggleActiveGame(true));
-    api.dispatch(invertBoard(true));
+    if (event.player.colour === PlayerColour.dark) {
+      api.dispatch(invertBoard(true));
+    }
     api.dispatch(fullGameStateUpdate(event.game));
     api.dispatch(
       addChatItemToLog({
@@ -93,10 +99,10 @@ const socketMiddleware: Middleware = (api: MiddlewareAPI) => {
   };
 
   const handlePlayerJoinedGame = (event: PlayerJoinedGameEvent) => {
-    api.dispatch(addOtherPlayer(event.player));
+    api.dispatch(anotherPlayerJoinedGame(event));
     api.dispatch(
       addChatItemToLog({
-        content: `A new player (${event.player.name}) has joined the game.`,
+        content: `A new player, ${event.player.name} has joined the game.`,
         time: new Date(),
         origin: '',
         type: ChatItemType.GAME,
@@ -139,22 +145,9 @@ const socketMiddleware: Middleware = (api: MiddlewareAPI) => {
         socket = null;
         break;
       case 'WS_CREATE_GAME':
+        const createAction = action as CreateGameAction;
         if (socket === null) connect(action);
-        if (socket !== null)
-          socket.emit('createGame', {
-            game: {
-              board: produce(localBoard, () => {}),
-              turn: 0,
-              selectedRow: null,
-              selectedCol: null,
-              graveyards: [
-                { player: Player.light, contents: [] },
-                { player: Player.dark, contents: [] },
-              ],
-              completed: false,
-              winner: null,
-            },
-          } as CreateGameEvent);
+        if (socket !== null) socket.emit('createGame', createAction.ops as CreateGameEvent);
         break;
       case 'WS_JOIN_GAME':
         const joinAction = action as JoinAction;
