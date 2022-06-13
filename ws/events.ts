@@ -7,10 +7,12 @@ export interface ConnectEvent {
 
 export interface JoinGameEvent {
   id: string;
+  playerName: string;
 }
 
 export interface CreateGameEvent {
   game: GameState;
+  playerName: string;
 }
 
 export interface GameJoinedEvent {

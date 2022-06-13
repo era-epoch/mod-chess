@@ -31,7 +31,7 @@ export const wsDisconnect = (url: string) => ({ type: 'WS_DISCONNECT', url });
 export const wsDisconnected = (url: string) => ({ type: 'WS_DISCONNECTED', url });
 export const wsCreateGame = (url: string, ops: CreateGameEvent) =>
   ({ type: 'WS_CREATE_GAME', url, ops } as CreateGameAction);
-export const wsJoinGame = (url: string, gameId: string) => ({ type: 'WS_JOIN_GAME', url, gameId } as JoinAction);
+export const wsJoinGame = (url: string, ops: JoinGameEvent) => ({ type: 'WS_JOIN_GAME', url, ops } as JoinAction);
 export const wsEmitMove = (state: GameState) => ({ type: 'WS_MOVE', state } as MoveAction);
 
 interface MoveAction {
@@ -41,7 +41,7 @@ interface MoveAction {
 
 interface JoinAction {
   type: string;
-  gameId: string;
+  ops: JoinGameEvent;
 }
 
 interface CreateGameAction {
@@ -62,7 +62,7 @@ const socketMiddleware: Middleware = (api: MiddlewareAPI) => {
     api.dispatch(fullGameStateUpdate(event.game));
     api.dispatch(
       addChatItemToLog({
-        content: `You've created an online game! The code to join your game is ${event.gameId}`,
+        content: `Welcome, ${event.player.name}. You've created an online game! The code to join your game is ${event.gameId}`,
         time: new Date(),
         origin: '',
         type: ChatItemType.GAME,
@@ -81,7 +81,7 @@ const socketMiddleware: Middleware = (api: MiddlewareAPI) => {
     api.dispatch(fullGameStateUpdate(event.game));
     api.dispatch(
       addChatItemToLog({
-        content: `You've joined an online game! Game: ${event.gameId}`,
+        content: `You've joined ${event.otherPlayers[0].name}'s online game!`,
         time: new Date(),
         origin: '',
         type: ChatItemType.GAME,
@@ -102,7 +102,7 @@ const socketMiddleware: Middleware = (api: MiddlewareAPI) => {
     api.dispatch(anotherPlayerJoinedGame(event));
     api.dispatch(
       addChatItemToLog({
-        content: `A new player, ${event.player.name} has joined the game.`,
+        content: `${event.player.name} has joined the game.`,
         time: new Date(),
         origin: '',
         type: ChatItemType.GAME,
@@ -152,7 +152,7 @@ const socketMiddleware: Middleware = (api: MiddlewareAPI) => {
       case 'WS_JOIN_GAME':
         const joinAction = action as JoinAction;
         if (socket === null) connect(action);
-        if (socket !== null) socket.emit('joinGame', { id: joinAction.gameId } as JoinGameEvent);
+        if (socket !== null) socket.emit('joinGame', joinAction.ops as JoinGameEvent);
         break;
       case 'WS_MOVE':
         const moveAction = action as MoveAction;

@@ -20,9 +20,15 @@ const Board = (): JSX.Element => {
   if (boardInversion) board.reverse();
 
   const handleMove = (row: number, col: number) => {
-    dispatch(makeMove({ row: row, col: col }));
-    const newGameState = store.getState().game;
-    dispatch(wsEmitMove(newGameState));
+    if (gameState.selectedRow !== null && gameState.selectedCol !== null) {
+      if (gameState.board[gameState.selectedRow][gameState.selectedCol].piece.owner === player.colour) {
+        dispatch(makeMove({ row: row, col: col }));
+        const newGameState = store.getState().game;
+        dispatch(wsEmitMove(newGameState));
+      } else {
+        dispatch(selectSquare({ row: row, col: col }));
+      }
+    }
   };
 
   const handleSelect = (row: number, col: number) => {

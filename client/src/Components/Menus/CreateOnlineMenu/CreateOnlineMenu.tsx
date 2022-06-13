@@ -13,6 +13,7 @@ const CreateOnlineMenu = (): JSX.Element => {
   const [creatorColour, setCreatorColour] = useState<PlayerAtCreation>(PlayerAtCreation.random);
   const [timedGame, setTimedGame] = useState(false);
   const [gameTime, setGameTime] = useState(10);
+  const [playerName, setPlayerName] = useState('Player' + Math.random().toString().slice(-4, -1));
   const dispatch = useDispatch();
 
   const createOnlineGame = () => {
@@ -34,6 +35,7 @@ const CreateOnlineMenu = (): JSX.Element => {
           gameTime: gameTime,
           turnTimeBack: 1,
         },
+        playerName: playerName,
       } as CreateGameEvent),
     );
     dispatch(toggleCreateGameMenu(false));
@@ -76,9 +78,17 @@ const CreateOnlineMenu = (): JSX.Element => {
     }
   };
 
+  const handlePlayerNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setPlayerName(event.target.value);
+  };
+
   return (
     <div className="menu-wrapper">
       <p>CREATE ONLINE GAME</p>
+      <div className="menu-section player-name-select">
+        <div className="menu-section-title">Your Name</div>
+        <input type="text" value={playerName} onChange={handlePlayerNameChange} />
+      </div>
       <div className="menu-section creator-player-select" onChange={handleCreatorColourChange}>
         <div className="menu-section-title">Your Colour</div>
         <div className="menu-row">

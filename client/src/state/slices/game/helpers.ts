@@ -39,29 +39,21 @@ export const movePiece = (gameState: GameState, piece: Piece, move: Move) => {
     gameState.board[move.row][move.col].squareStatuses.includes(SquareStatus.EPV) &&
     gameState.board[move.row][move.col].enPassantOrigin?.owner !== piece.owner
   ) {
-    let i = 0;
-    for (const row of gameState.board) {
-      let j = 0;
-      for (const cell of row) {
+    for (let i = 0; i < gameState.board.length; i++) {
+      for (let j = 0; j < gameState.board[i].length; j++) {
         if (gameState.board[i][j].piece.id === gameState.board[move.row][move.col].enPassantOrigin?.id) {
           // gameState.board[i][j].piece.onDeath()
           removePieceAtLocation(gameState, i, j);
         }
-        j++;
       }
-      i++;
     }
   }
   // Post EP cleanup
-  let i = 0;
-  for (const row of gameState.board) {
-    let j = 0;
-    for (const cell of row) {
+  for (let i = 0; i < gameState.board.length; i++) {
+    for (let j = 0; j < gameState.board[i].length; j++) {
       gameState.board[i][j].squareStatuses = gameState.board[i][j].squareStatuses.filter((s) => s !== SquareStatus.EPV);
       gameState.board[i][j].enPassantOrigin = null;
-      j++;
     }
-    i++;
   }
   // En passant logic
   if (move.flags?.has(MoveFlag.EP)) {

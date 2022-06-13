@@ -70,7 +70,7 @@ io.on('connection', (socket) => {
     }
     games[newGameId] = event.game;
     const newPlayer = {
-      name: 'name',
+      name: event.playerName,
       id: crypto.randomBytes(8).toString('hex'),
       colour: newPlayerColour,
     };
@@ -96,7 +96,7 @@ io.on('connection', (socket) => {
     }
 
     const newPlayer = {
-      name: 'name',
+      name: event.playerName,
       id: crypto.randomBytes(8).toString('hex'),
       colour: newColour,
     };

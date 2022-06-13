@@ -9,7 +9,7 @@ import {
   SquareContents,
   SquareStatus,
 } from '../../../types';
-import { removePieceAtLocation, movePiece, isGameover, handleGameover, selectedPieceCanMove } from './helpers';
+import { removePieceAtLocation, movePiece, isGameover, handleGameover } from './helpers';
 import emptyBoard from '../../../GameObjects/boards/emptyBoard';
 import moveFunctionMap from '../../../GameObjects/pieceMoveFunctionMap';
 
@@ -100,10 +100,10 @@ const gameSlice = createSlice({
       const row = action.payload.row;
       const col = action.payload.col;
       const movesToHighlight: Move[] = [];
-      if (selectedPieceCanMove(state, row, col)) {
-        const moveFunction = moveFunctionMap.get(state.board[row][col].piece.pieceIdentifier);
-        if (moveFunction) movesToHighlight.push(...moveFunction(state.board[row][col].piece, row, col, state, true));
-      }
+      // if (selectedPieceCanMove(state, row, col)) {
+      const moveFunction = moveFunctionMap.get(state.board[row][col].piece.pieceIdentifier);
+      if (moveFunction) movesToHighlight.push(...moveFunction(state.board[row][col].piece, row, col, state, true));
+      // }
 
       const selectedSameSquare = state.selectedRow === row && state.selectedCol === col;
       for (let i = 0; i < state.board.length; i++) {
