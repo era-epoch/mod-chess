@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { wsJoinGame } from '../../../socketMiddleware';
-import { toggleJoinGameMenu } from '../../../state/slices/ui/slice';
 import { ws_url } from '../../LeftBar/LeftBar';
 import './JoinMenu.css';
 
@@ -17,7 +16,6 @@ const JoinMenu = (): JSX.Element => {
         playerName: playerName,
       }),
     );
-    dispatch(toggleJoinGameMenu(false));
   };
 
   const handlePlayerNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -27,12 +25,15 @@ const JoinMenu = (): JSX.Element => {
   return (
     <div className="menu-wrapper">
       <p>JOIN</p>
-      <input
-        className="game-name"
-        type="text"
-        value={gameId}
-        onChange={(event) => setGameId(event.target.value)}
-      ></input>
+      <div className="menu-section game-id-select">
+        <div className="menu-section-title">Game Join ID</div>
+        <input
+          className="game-name"
+          type="text"
+          value={gameId}
+          onChange={(event) => setGameId(event.target.value)}
+        ></input>
+      </div>
       <div className="menu-section player-name-select">
         <div className="menu-section-title">Your Name</div>
         <input type="text" value={playerName} onChange={handlePlayerNameChange} />

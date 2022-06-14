@@ -47,7 +47,6 @@ const LeftBar = (): JSX.Element => {
   //         { player: Player.light, contents: [] },
   //         { player: Player.dark, contents: [] },
   //       ],
-  //       completed: false,
   //       winner: null,
   //     } as GameState),
   //   );

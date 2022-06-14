@@ -32,6 +32,16 @@ export enum PieceType {
   'king' = 6,
 }
 
+export const pieceTypeAlgebriacNotationMap = new Map<PieceType, string>([
+  [PieceType.empty, ''],
+  [PieceType.pawn, ''],
+  [PieceType.rook, 'R'],
+  [PieceType.knight, 'N'],
+  [PieceType.bishop, 'B'],
+  [PieceType.king, 'K'],
+  [PieceType.queen, 'Q'],
+]);
+
 export enum MoveFlag {
   CSTL = 'castle',
   KILL = 'kill',
@@ -59,7 +69,7 @@ export interface Move {
   col: number;
   oRow?: number;
   oCol?: number;
-  flags?: Set<MoveFlag>;
+  flags: MoveFlag[];
 }
 
 export interface UserInfo {

@@ -50,7 +50,7 @@ export const filterMoves = (
       board[move.row][move.col].squareStatuses.includes(SquareStatus.EPV) &&
       board[move.row][move.col].enPassantOrigin?.owner !== piece.owner
     ) {
-      move.flags = new Set<MoveFlag>([MoveFlag.KILL]);
+      move.flags.push(MoveFlag.KILL);
     }
     return move;
   });
@@ -64,7 +64,7 @@ export const kingInCheck = (gameState: GameState, player: PlayerColour): boolean
   for (let i = 0; i < board.length; i++) {
     for (let j = 0; j < board[0].length; j++) {
       if (board[i][j].piece.owner === player && board[i][j].piece.pieceType === PieceType.king) {
-        kingPositions.push({ row: i, col: j });
+        kingPositions.push({ row: i, col: j, flags: [] });
       }
       if (board[i][j].piece.owner !== player) {
         // threatenedPositions.push(...board[i][j].piece.moveF(board[i][j].piece, i, j, gameState, false));

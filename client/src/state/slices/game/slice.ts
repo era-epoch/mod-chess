@@ -9,9 +9,10 @@ import {
   SquareContents,
   SquareStatus,
 } from '../../../types';
-import { removePieceAtLocation, movePiece, isGameover, handleGameover } from './helpers';
+import { removePieceAtLocation, movePiece, isGameover, handleGameover, denoteMove } from './helpers';
 import emptyBoard from '../../../GameObjects/boards/emptyBoard';
 import moveFunctionMap from '../../../GameObjects/pieceMoveFunctionMap';
+import { ChatItem } from '../ui/slice';
 
 export interface GameState {
   board: SquareContents[][];
@@ -19,12 +20,12 @@ export interface GameState {
   selectedRow: number | null;
   selectedCol: number | null;
   graveyards: Graveyard[];
-  completed: boolean;
   winner: PlayerColour | null; // null = not finished, PLayer.neutral = Draw
   creatorColour: PlayerAtCreation | null;
   timedGame: boolean;
   gameTime: number;
   turnTimeBack: number;
+  moveHistory: ChatItem[];
 }
 
 const initialGameState: GameState = {
@@ -36,12 +37,12 @@ const initialGameState: GameState = {
     { player: PlayerColour.light, contents: [] },
     { player: PlayerColour.dark, contents: [] },
   ],
-  completed: false,
   winner: null,
   creatorColour: null,
   timedGame: false,
   gameTime: 10,
   turnTimeBack: 1,
+  moveHistory: [],
 };
 
 // Reducer
@@ -51,12 +52,16 @@ const gameSlice = createSlice({
   reducers: {
     fullGameStateUpdate: (state: GameState, action: PayloadAction<GameState>) => {
       state.board = action.payload.board;
-      state.completed = action.payload.completed;
       state.graveyards = action.payload.graveyards;
       state.selectedCol = action.payload.selectedCol;
       state.selectedRow = action.payload.selectedRow;
       state.turn = action.payload.turn;
       state.winner = action.payload.winner;
+      state.creatorColour = action.payload.creatorColour;
+      state.timedGame = action.payload.timedGame;
+      state.gameTime = action.payload.gameTime;
+      state.turnTimeBack = action.payload.turnTimeBack;
+      state.moveHistory = action.payload.moveHistory;
     },
     makeMove: (state: GameState, action: PayloadAction<{ row: number; col: number }>) => {
       if (state.selectedRow === null || state.selectedCol === null) return;
@@ -91,6 +96,9 @@ const gameSlice = createSlice({
       }
       //.onTurnEnd()
       // if () .onRoundEnd()
+      // Write an algebraic representation of the move to the history
+      denoteMove(state, pieceToMove, move);
+
       if (isGameover(state, pieceToMove.owner)) handleGameover(state, pieceToMove.owner);
       state.turn++;
       state.selectedRow = null;
@@ -115,10 +123,10 @@ const gameSlice = createSlice({
           for (const move of movesToHighlight) {
             if (move.row === i && move.col === j) {
               match = true;
-              if (move.flags?.has(MoveFlag.CSTL)) {
+              if (move.flags.includes(MoveFlag.CSTL)) {
                 castle = true;
               }
-              if (move.flags?.has(MoveFlag.KILL)) {
+              if (move.flags.includes(MoveFlag.KILL)) {
                 kill = true;
               }
               break;

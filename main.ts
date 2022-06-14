@@ -84,6 +84,11 @@ io.on('connection', (socket) => {
 
   // Join Game
   socket.on('joinGame', (event: JoinGameEvent) => {
+    if (games[event.id] === undefined) {
+      socket.emit('joinGameFailed');
+      return;
+    }
+
     socket.join(event.id);
     console.log('User joined game:', event.id);
 
@@ -116,7 +121,7 @@ io.on('connection', (socket) => {
   // Move Made
   socket.on('makeMove', (event: MoveEvent) => {
     // TODO: replace testroom
-    console.log('Move made:', event);
+    console.log('Move made:', event.gameState.moveHistory);
     games[event.gameId] = event.gameState;
     socket.to(event.gameId).emit('moveMade', event);
   });

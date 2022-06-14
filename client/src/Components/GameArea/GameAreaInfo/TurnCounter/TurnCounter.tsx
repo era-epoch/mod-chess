@@ -4,7 +4,6 @@ import './TurnCounter.css';
 
 const TurnCounter = (): JSX.Element => {
   const turn = useSelector((state: RootState) => state.game.turn);
-  const finished = useSelector((state: RootState) => state.game.completed);
   const winner = useSelector((state: RootState) => state.game.winner);
   const playAgain = () => {
     // TODO: Refresh board without page reload
@@ -14,7 +13,7 @@ const TurnCounter = (): JSX.Element => {
   return (
     <div className="turn-counter">
       <div className="turn-number-label">Turn {turn}</div>
-      {finished ? (
+      {winner !== null ? (
         <>
           <div className="turn-player-label">
             {winner === 0 ? 'White Wins!' : winner === 1 ? 'Black Wins!' : 'Draw'}

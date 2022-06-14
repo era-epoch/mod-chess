@@ -1,13 +1,62 @@
 import { EmptySquare } from '../../../GameObjects/basic/pieces';
 import { kingInCheck } from '../../../GameObjects/gameUtil';
 import moveFunctionMap from '../../../GameObjects/pieceMoveFunctionMap';
-import { Piece, Move, MoveFlag, SquareStatus, PieceType, Graveyard, PlayerColour } from '../../../types';
+import {
+  Piece,
+  Move,
+  MoveFlag,
+  SquareStatus,
+  PieceType,
+  Graveyard,
+  PlayerColour,
+  pieceTypeAlgebriacNotationMap,
+} from '../../../types';
+import { ChatItem, ChatItemType } from '../ui/slice';
 import { GameState } from './slice';
+
+export const colNumToLetterMap = new Map<number, string>([
+  [0, 's'],
+  [1, 'a'],
+  [2, 'b'],
+  [3, 'c'],
+  [4, 'd'],
+  [5, 'e'],
+  [6, 'f'],
+  [7, 'g'],
+  [8, 'h'],
+  [9, 'i'],
+]);
+
+// Pushes an algebraic notation representation of a move to the game history
+export const denoteMove = (state: GameState, piece: Piece, move: Move) => {
+  let notation = '';
+  // TODO: kingside vs queenside castle
+  if (move.flags.includes(MoveFlag.CSTL)) {
+    notation += 'O-O';
+  } else {
+    notation += pieceTypeAlgebriacNotationMap.get(piece.pieceType);
+    // Is this a capture?
+    if (move.flags.includes(MoveFlag.KILL)) notation += 'x';
+    const col = colNumToLetterMap.get(move.col);
+    const row = (9 - move.row).toString();
+    notation += col + row;
+    // Does this move put the other king in Check?
+    if (kingInCheck(state, (piece.owner + 1) % 2)) {
+      notation += '+';
+    }
+  }
+  state.moveHistory.push({
+    content: notation,
+    time: new Date(),
+    origin: '',
+    type: ChatItemType.GAME,
+  } as ChatItem);
+};
 
 export const movePiece = (gameState: GameState, piece: Piece, move: Move) => {
   // piece.onMove();
   // Castle Logic
-  if (move.flags?.has(MoveFlag.CSTL)) {
+  if (move.flags.includes(MoveFlag.CSTL)) {
     let kingPos = 0;
     // Look for the selected king *in this row*
     for (let i = 0; i < gameState.board[move.row].length; i++) {
@@ -56,7 +105,7 @@ export const movePiece = (gameState: GameState, piece: Piece, move: Move) => {
     }
   }
   // En passant logic
-  if (move.flags?.has(MoveFlag.EP)) {
+  if (move.flags.includes(MoveFlag.EP)) {
     let pawnPos = 0;
     // Look for the selected pawn *in this column*
     for (let i = 0; i < gameState.board.length; i++) {
@@ -112,7 +161,6 @@ export const handleGameover = (gameState: GameState, player: PlayerColour) => {
     // console.log('STALEMATE');
     gameState.winner = PlayerColour.neutral;
   }
-  gameState.completed = true;
 };
 
 export const selectedPieceCanMove = (gameState: GameState, row: number, col: number) => {

@@ -21,6 +21,12 @@ import {
   joinedOnlineGame,
   toggleActiveGame,
   anotherPlayerJoinedGame,
+  addAlert,
+  Alert,
+  AlertType,
+  getAlertID,
+  removeAlert,
+  toggleJoinGameMenu,
 } from './state/slices/ui/slice';
 import { PlayerColour } from './types';
 
@@ -72,6 +78,7 @@ const socketMiddleware: Middleware = (api: MiddlewareAPI) => {
 
   const handleGameJoined = (event: GameJoinedEvent) => {
     // TODO: better dispatch structure
+    api.dispatch(toggleJoinGameMenu(false));
     api.dispatch(updatePlayer(event.player));
     api.dispatch(joinedOnlineGame(event));
     api.dispatch(toggleActiveGame(true));
@@ -110,6 +117,18 @@ const socketMiddleware: Middleware = (api: MiddlewareAPI) => {
     );
   };
 
+  const handleJoinGameFailed = () => {
+    const alert: Alert = {
+      type: AlertType.error,
+      content: 'That game does not exist.',
+      id: getAlertID(),
+    };
+    api.dispatch(addAlert(alert));
+    setTimeout(() => {
+      api.dispatch(removeAlert(alert));
+    }, 5000);
+  };
+
   const connect = (action: any) => {
     if (socket !== null) {
       socket.close();
@@ -121,6 +140,9 @@ const socketMiddleware: Middleware = (api: MiddlewareAPI) => {
     /* Socket events */
     socket.on('gameCreated', (event: GameCreatedEvent) => {
       handleGameCreated(event);
+    });
+    socket.on('joinGameFailed', () => {
+      handleJoinGameFailed();
     });
     socket.on('gameJoined', (event: GameJoinedEvent) => {
       handleGameJoined(event);
