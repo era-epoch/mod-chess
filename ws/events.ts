@@ -16,7 +16,7 @@ export interface CreateGameEvent {
 }
 
 export interface GameJoinedEvent {
-  gameId: string;
+  roomId: string;
   player: UserInfo;
   game: GameState;
   otherPlayers: UserInfo[];
@@ -35,5 +35,16 @@ export interface PlayerJoinedGameEvent {
 export interface MoveEvent {
   gameState: GameState;
   playerId: string;
-  gameId: string;
+  roomId: string;
+}
+
+export interface CreateGameInExistingRoomEvent {
+  gameState: GameState;
+  player: UserInfo;
+  roomId: string;
+}
+
+export interface GameCreatedInExistingRoomEvent {
+  gameState: GameState;
+  player: UserInfo;
 }

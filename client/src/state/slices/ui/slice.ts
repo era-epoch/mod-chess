@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { GameJoinedEvent, GameCreatedEvent, PlayerJoinedGameEvent } from '../../../../../ws/events';
 import { PlayerColour, UserInfo } from '../../../types';
+import { GameState } from '../game/slice';
 
 export enum AlertType {
   success = 'success',
@@ -43,7 +44,7 @@ export interface UIState {
   alerts: Alert[];
   activeGame: boolean;
   onlineGameStatus: OnlineGameStatus;
-  gameId: string;
+  roomId: string;
   chatlog: ChatItem[];
   otherPlayers: UserInfo[];
   player: UserInfo;
@@ -51,6 +52,7 @@ export interface UIState {
   createGameMenuOpen: boolean;
   joinGameMenuOpen: boolean;
   createLocalGameMenuOpen: boolean;
+  gameStartState: GameState | null;
 }
 
 const blankPlayer: UserInfo = {
@@ -70,7 +72,7 @@ const initialUIState: UIState = {
   alerts: [],
   activeGame: false,
   onlineGameStatus: OnlineGameStatus.NONE,
-  gameId: '',
+  roomId: '',
   chatlog: [],
   otherPlayers: [],
   player: blankPlayer,
@@ -78,6 +80,7 @@ const initialUIState: UIState = {
   createGameMenuOpen: false,
   joinGameMenuOpen: false,
   createLocalGameMenuOpen: false,
+  gameStartState: null,
 };
 
 const UISlice = createSlice({
@@ -113,7 +116,7 @@ const UISlice = createSlice({
     },
     createdOnlineGame: (state: UIState, action: PayloadAction<GameCreatedEvent>) => {
       state.onlineGameStatus = OnlineGameStatus.AWAITING;
-      state.gameId = action.payload.gameId;
+      state.roomId = action.payload.gameId;
     },
     anotherPlayerJoinedGame: (state: UIState, action: PayloadAction<PlayerJoinedGameEvent>) => {
       state.otherPlayers.push(action.payload.player);
@@ -121,7 +124,7 @@ const UISlice = createSlice({
     },
     joinedOnlineGame: (state: UIState, action: PayloadAction<GameJoinedEvent>) => {
       state.onlineGameStatus = OnlineGameStatus.SUCCESS;
-      state.gameId = action.payload.gameId;
+      state.roomId = action.payload.roomId;
       state.otherPlayers.push(...action.payload.otherPlayers);
     },
     addChatItemToLog: (state: UIState, action: PayloadAction<ChatItem>) => {
@@ -129,6 +132,9 @@ const UISlice = createSlice({
     },
     clearChatlog: (state: UIState, action: PayloadAction) => {
       state.chatlog = [];
+    },
+    updateGameStartState: (state: UIState, action: PayloadAction<GameState>) => {
+      state.gameStartState = action.payload;
     },
   },
 });
@@ -149,4 +155,5 @@ export const {
   toggleCreateGameMenu,
   toggleJoinGameMenu,
   toggleCreateLocalGameMenu,
+  updateGameStartState,
 } = UISlice.actions;

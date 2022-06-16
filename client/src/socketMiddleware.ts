@@ -1,4 +1,5 @@
 import { AnyAction, Dispatch, Middleware, MiddlewareAPI } from '@reduxjs/toolkit';
+import produce from 'immer';
 import { io, Socket } from 'socket.io-client';
 import {
   GameJoinedEvent,
@@ -8,6 +9,8 @@ import {
   MoveEvent,
   ConnectEvent,
   PlayerJoinedGameEvent,
+  CreateGameInExistingRoomEvent,
+  GameCreatedInExistingRoomEvent,
 } from '../../ws/events';
 import { RootState } from './state/rootReducer';
 import { fullGameStateUpdate, GameState } from './state/slices/game/slice';
@@ -27,6 +30,7 @@ import {
   getAlertID,
   removeAlert,
   toggleJoinGameMenu,
+  updateGameStartState,
 } from './state/slices/ui/slice';
 import { PlayerColour } from './types';
 
@@ -39,6 +43,7 @@ export const wsCreateGame = (url: string, ops: CreateGameEvent) =>
   ({ type: 'WS_CREATE_GAME', url, ops } as CreateGameAction);
 export const wsJoinGame = (url: string, ops: JoinGameEvent) => ({ type: 'WS_JOIN_GAME', url, ops } as JoinAction);
 export const wsEmitMove = (state: GameState) => ({ type: 'WS_MOVE', state } as MoveAction);
+export const wsCreateGameInExistingRoom = (state: GameState) => ({ type: 'WS_CREATE_GAME_IN_EXISTING_ROOM', state });
 
 interface MoveAction {
   type: string;
@@ -55,12 +60,18 @@ interface CreateGameAction {
   ops: CreateGameEvent;
 }
 
+interface CreateGameInExistingRoomAction {
+  type: string;
+  state: GameState;
+}
+
 const socketMiddleware: Middleware = (api: MiddlewareAPI) => {
   let socket: Socket | null = null;
 
   const handleGameCreated = (event: GameCreatedEvent) => {
     api.dispatch(updatePlayer(event.player));
     api.dispatch(createdOnlineGame(event));
+    api.dispatch(updateGameStartState(produce(event.game, () => {})));
     if (event.player.colour === PlayerColour.dark) {
       api.dispatch(invertBoard(true));
     }
@@ -72,7 +83,7 @@ const socketMiddleware: Middleware = (api: MiddlewareAPI) => {
         time: new Date(),
         origin: '',
         type: ChatItemType.GAME,
-      } as ChatItem),
+      }),
     );
   };
 
@@ -81,6 +92,7 @@ const socketMiddleware: Middleware = (api: MiddlewareAPI) => {
     api.dispatch(toggleJoinGameMenu(false));
     api.dispatch(updatePlayer(event.player));
     api.dispatch(joinedOnlineGame(event));
+    api.dispatch(updateGameStartState(produce(event.game, () => {})));
     api.dispatch(toggleActiveGame(true));
     if (event.player.colour === PlayerColour.dark) {
       api.dispatch(invertBoard(true));
@@ -92,7 +104,7 @@ const socketMiddleware: Middleware = (api: MiddlewareAPI) => {
         time: new Date(),
         origin: '',
         type: ChatItemType.GAME,
-      } as ChatItem),
+      }),
     );
   };
 
@@ -113,7 +125,7 @@ const socketMiddleware: Middleware = (api: MiddlewareAPI) => {
         time: new Date(),
         origin: '',
         type: ChatItemType.GAME,
-      } as ChatItem),
+      }),
     );
   };
 
@@ -127,6 +139,18 @@ const socketMiddleware: Middleware = (api: MiddlewareAPI) => {
     setTimeout(() => {
       api.dispatch(removeAlert(alert));
     }, 5000);
+  };
+
+  const handleGameCreatedInExistingRoom = (event: GameCreatedInExistingRoomEvent) => {
+    api.dispatch(fullGameStateUpdate(event.gameState));
+    api.dispatch(
+      addChatItemToLog({
+        content: `${event.player.name} started a new game.`,
+        time: new Date(),
+        origin: '',
+        type: ChatItemType.GAME,
+      }),
+    );
   };
 
   const connect = (action: any) => {
@@ -153,6 +177,9 @@ const socketMiddleware: Middleware = (api: MiddlewareAPI) => {
     socket.on('playerJoinedGame', (event: PlayerJoinedGameEvent) => {
       handlePlayerJoinedGame(event);
     });
+    socket.on('gameCreatedInExistingRoom', (event: GameCreatedInExistingRoomEvent) => {
+      handleGameCreatedInExistingRoom(event);
+    });
   };
 
   return (next: Dispatch<AnyAction>) => (action: any) => {
@@ -171,6 +198,17 @@ const socketMiddleware: Middleware = (api: MiddlewareAPI) => {
         if (socket === null) connect(action);
         if (socket !== null) socket.emit('createGame', createAction.ops as CreateGameEvent);
         break;
+      case 'WS_CREATE_GAME_IN_EXISTING_ROOM':
+        // TODO: Use handler functions here that take in the event to free up namespace
+        const createExistingAction = action as CreateGameInExistingRoomAction;
+        const stateInExisting: RootState = api.getState();
+        if (socket !== null)
+          socket.emit('createGameInExistingRoom', {
+            gameState: createExistingAction.state,
+            roomId: stateInExisting.ui.roomId,
+            player: stateInExisting.ui.player,
+          } as CreateGameInExistingRoomEvent);
+        break;
       case 'WS_JOIN_GAME':
         const joinAction = action as JoinAction;
         if (socket === null) connect(action);
@@ -184,7 +222,7 @@ const socketMiddleware: Middleware = (api: MiddlewareAPI) => {
           socket.emit('makeMove', {
             gameState: moveAction.state,
             playerId: state.ui.player.id,
-            gameId: state.ui.gameId,
+            roomId: state.ui.roomId,
           } as MoveEvent);
         break;
       default:

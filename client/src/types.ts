@@ -4,6 +4,7 @@ export enum PlayerColour {
   'light' = 0,
   'dark' = 1,
   'neutral' = 2,
+  'random' = 3,
 }
 
 export enum Orientation {
@@ -56,12 +57,6 @@ export enum PieceIdentifier {
   'bishopBasic',
   'queenBasic',
   'kingBasic',
-}
-
-export enum PlayerAtCreation {
-  'light' = 0,
-  'dark' = 1,
-  'random' = 2,
 }
 
 export interface Move {

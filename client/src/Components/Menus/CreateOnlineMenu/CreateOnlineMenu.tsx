@@ -5,12 +5,12 @@ import { CreateGameEvent } from '../../../../../ws/events';
 import localBoard from '../../../GameObjects/boards/localBoard';
 import { wsCreateGame } from '../../../socketMiddleware';
 import { toggleCreateGameMenu } from '../../../state/slices/ui/slice';
-import { PlayerColour, PlayerAtCreation } from '../../../types';
+import { PlayerColour } from '../../../types';
 import { ws_url } from '../../LeftBar/LeftBar';
 import './CreateOnlineMenu.css';
 
 const CreateOnlineMenu = (): JSX.Element => {
-  const [creatorColour, setCreatorColour] = useState<PlayerAtCreation>(PlayerAtCreation.random);
+  const [creatorColour, setCreatorColour] = useState<PlayerColour>(PlayerColour.random);
   const [timedGame, setTimedGame] = useState(false);
   const [gameTime, setGameTime] = useState(10);
   const [playerName, setPlayerName] = useState('Player' + Math.random().toString().slice(-4, -1));
@@ -44,13 +44,13 @@ const CreateOnlineMenu = (): JSX.Element => {
   const handleCreatorColourChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     switch (event.target.value) {
       case 'light':
-        setCreatorColour(PlayerAtCreation.light);
+        setCreatorColour(PlayerColour.light);
         break;
       case 'dark':
-        setCreatorColour(PlayerAtCreation.dark);
+        setCreatorColour(PlayerColour.dark);
         break;
       default:
-        setCreatorColour(PlayerAtCreation.random);
+        setCreatorColour(PlayerColour.random);
     }
   };
 

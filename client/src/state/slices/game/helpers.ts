@@ -45,6 +45,7 @@ export const denoteMove = (state: GameState, piece: Piece, move: Move) => {
       notation += '+';
     }
   }
+  // TODO: disambiguate pieces if necessary
   state.moveHistory.push({
     content: notation,
     time: new Date(),

@@ -1,14 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { EmptySquare } from '../../../GameObjects/basic/pieces';
-import {
-  Graveyard,
-  Move,
-  MoveFlag,
-  PlayerColour,
-  PlayerAtCreation,
-  SquareContents,
-  SquareStatus,
-} from '../../../types';
+import { Graveyard, Move, MoveFlag, PlayerColour, SquareContents, SquareStatus } from '../../../types';
 import { removePieceAtLocation, movePiece, isGameover, handleGameover, denoteMove } from './helpers';
 import emptyBoard from '../../../GameObjects/boards/emptyBoard';
 import moveFunctionMap from '../../../GameObjects/pieceMoveFunctionMap';
@@ -21,7 +13,7 @@ export interface GameState {
   selectedCol: number | null;
   graveyards: Graveyard[];
   winner: PlayerColour | null; // null = not finished, PLayer.neutral = Draw
-  creatorColour: PlayerAtCreation | null;
+  creatorColour: PlayerColour | null;
   timedGame: boolean;
   gameTime: number;
   turnTimeBack: number;

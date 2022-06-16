@@ -6,14 +6,16 @@ import { Server } from 'socket.io';
 import { createServer } from 'http';
 import {
   CreateGameEvent,
+  CreateGameInExistingRoomEvent,
   GameCreatedEvent,
+  GameCreatedInExistingRoomEvent,
   GameJoinedEvent,
   JoinGameEvent,
   MoveEvent,
   PlayerJoinedGameEvent,
 } from './ws/events';
 import crypto from 'crypto';
-import { PlayerColour, PlayerAtCreation, UserInfo } from './client/src/types';
+import { PlayerColour, UserInfo } from './client/src/types';
 import { GameState } from './client/src/state/slices/game/slice';
 
 const app = express();
@@ -54,19 +56,19 @@ io.on('connection', (socket) => {
   // Create Game
   socket.on('createGame', (event: CreateGameEvent) => {
     const newGameId = crypto.randomBytes(8).toString('hex');
+    // TODO: Database query
     console.log('Created game:', newGameId);
     socket.join(newGameId);
-    // TODO: Database
+    // Set up the creator player
     let newPlayerColour: PlayerColour;
-    if (event.game.creatorColour === PlayerAtCreation.random) {
+    if (event.game.creatorColour === PlayerColour.random) {
       if (Math.random() < 0.5) {
         newPlayerColour = PlayerColour.light;
       } else {
         newPlayerColour = PlayerColour.dark;
       }
     } else {
-      if (event.game.creatorColour === PlayerAtCreation.dark) newPlayerColour = PlayerColour.dark;
-      if (event.game.creatorColour === PlayerAtCreation.light) newPlayerColour = PlayerColour.light;
+      newPlayerColour = event.game.creatorColour;
     }
     games[newGameId] = event.game;
     const newPlayer = {
@@ -107,7 +109,7 @@ io.on('connection', (socket) => {
     };
 
     socket.emit('gameJoined', {
-      gameId: event.id,
+      roomId: event.id,
       game: games[event.id],
       player: newPlayer,
       otherPlayers: users[event.id],
@@ -122,8 +124,16 @@ io.on('connection', (socket) => {
   socket.on('makeMove', (event: MoveEvent) => {
     // TODO: replace testroom
     console.log('Move made:', event.gameState.moveHistory);
-    games[event.gameId] = event.gameState;
-    socket.to(event.gameId).emit('moveMade', event);
+    games[event.roomId] = event.gameState;
+    socket.to(event.roomId).emit('moveMade', event);
+  });
+  // TODO: merge CreateGame events in same handler
+  socket.on('createGameInExistingRoom', (event: CreateGameInExistingRoomEvent) => {
+    games[event.roomId] = event.gameState;
+    socket.to(event.roomId).emit('gameCreatedInExistingRoom', {
+      gameState: event.gameState,
+      player: event.player,
+    } as GameCreatedInExistingRoomEvent);
   });
 });
 

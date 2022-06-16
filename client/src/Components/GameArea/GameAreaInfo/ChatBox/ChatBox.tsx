@@ -1,16 +1,39 @@
+import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
 import { uid } from 'react-uid';
+import { wsCreateGameInExistingRoom } from '../../../../socketMiddleware';
 import { RootState } from '../../../../state/rootReducer';
-import { ChatItem } from '../../../../state/slices/ui/slice';
+import { fullGameStateUpdate } from '../../../../state/slices/game/slice';
+import { addChatItemToLog, ChatItem, ChatItemType } from '../../../../state/slices/ui/slice';
 import './ChatBox.css';
 
 const ChatBox = (): JSX.Element => {
+  const dispatch = useDispatch();
   const chatlog = useSelector((state: RootState) => state.ui.chatlog);
   const moveHistory = useSelector((state: RootState) => state.game.moveHistory);
+  const winner = useSelector((state: RootState) => state.game.winner);
+  const gameStartState = useSelector((state: RootState) => state.ui.gameStartState);
+
   const allChat: ChatItem[] = [];
   allChat.push(...chatlog);
   allChat.push(...moveHistory);
   allChat.sort((a, b) => (a.time < b.time ? -1 : b.time < a.time ? 1 : 0));
+
+  const handlePlayAgain = () => {
+    if (gameStartState) {
+      dispatch(wsCreateGameInExistingRoom(gameStartState));
+      dispatch(fullGameStateUpdate(gameStartState));
+      dispatch(
+        addChatItemToLog({
+          content: `You've started a new game.`,
+          time: new Date(),
+          origin: '',
+          type: ChatItemType.GAME,
+        }),
+      );
+    }
+  };
+
   return (
     <div className="chat-box">
       {allChat.map((item: ChatItem) => {
@@ -26,6 +49,17 @@ const ChatBox = (): JSX.Element => {
           </div>
         );
       })}
+      {winner !== null ? (
+        <div className="chat-prompt">
+          <div className="chat-prompt-content">
+            <div className="chat-button play-again" onClick={handlePlayAgain}>
+              Play Again
+            </div>
+            <div className="chat-button swap-sides">Swap Sides</div>
+            {/* <div className="chat-button change-game-settings">Change Game Settings</div> */}
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 };
