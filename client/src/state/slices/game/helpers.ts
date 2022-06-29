@@ -1,6 +1,6 @@
 import { EmptySquare } from '../../../GameObjects/basic/pieces';
 import { kingInCheck } from '../../../GameObjects/gameUtil';
-import moveFunctionMap from '../../../GameObjects/pieceMoveFunctionMap';
+import moveFunctionMap from '../../../GameObjects/pieceFunctionMaps';
 import {
   Piece,
   Move,

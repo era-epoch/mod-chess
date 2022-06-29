@@ -3,7 +3,7 @@ import { EmptySquare } from '../../../GameObjects/basic/pieces';
 import { Graveyard, Move, MoveFlag, PlayerColour, SquareContents, SquareStatus } from '../../../types';
 import { removePieceAtLocation, movePiece, isGameover, handleGameover, denoteMove } from './helpers';
 import emptyBoard from '../../../GameObjects/boards/emptyBoard';
-import moveFunctionMap from '../../../GameObjects/pieceMoveFunctionMap';
+import moveFunctionMap from '../../../GameObjects/pieceFunctionMaps';
 import { ChatItem } from '../ui/slice';
 
 export interface GameState {

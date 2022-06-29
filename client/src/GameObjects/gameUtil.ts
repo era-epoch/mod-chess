@@ -2,7 +2,7 @@ import produce from 'immer';
 import { GameState } from '../state/slices/game/slice';
 import { Piece, Move, SquareStatus, MoveFlag, PlayerColour, PieceType, Orientation, SquareContents } from '../types';
 import { EmptySquare } from './basic/pieces';
-import moveFunctionMap from './pieceMoveFunctionMap';
+import moveFunctionMap from './pieceFunctionMaps';
 
 // ensure PID sync between users (update: should be okay with board coming from host?)
 let PID = 0;

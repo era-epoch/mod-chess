@@ -8,8 +8,10 @@ import {
   queenBasicMoveF,
   kingBasicMoveF,
 } from './basic/moveFunctions';
+import { crimsonPawnMoveF } from './crimson/functions';
+import { scourgePawnMoveF } from './scourge/functions';
 
-const moveFunctionMap = new Map<PieceIdentifier, MoveFunction>([
+export const moveFunctionMap = new Map<PieceIdentifier, MoveFunction>([
   [PieceIdentifier.emptyBasic, emptyMoveF],
   [PieceIdentifier.pawnBasic, pawnBasicMoveF],
   [PieceIdentifier.rookBasic, rookBasicMoveF],
@@ -17,6 +19,8 @@ const moveFunctionMap = new Map<PieceIdentifier, MoveFunction>([
   [PieceIdentifier.bishopBasic, bishopBasicMoveF],
   [PieceIdentifier.queenBasic, queenBasicMoveF],
   [PieceIdentifier.kingBasic, kingBasicMoveF],
+  [PieceIdentifier.scourgePawn, scourgePawnMoveF],
+  [PieceIdentifier.crimsonPawn, crimsonPawnMoveF],
 ]);
 
 export default moveFunctionMap;
