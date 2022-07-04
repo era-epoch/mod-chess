@@ -12,10 +12,6 @@ export const CrimsonPawn = (): Piece => {
     origin: PieceOrigin.crimson,
     id: genPID(),
     name: 'Thrall',
-    onDeathFs: [],
-    onTurnStartFs: [],
-    onTurnEndFs: [],
-    onMovedFs: [],
   };
   return piece;
 };

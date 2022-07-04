@@ -1,0 +1,15 @@
+.light-piece.basic {
+  color: var(--basic-light);
+}
+
+.dark-piece.basic {
+  color: var(--basic-dark);
+}
+
+.light-piece.scourge {
+  color: var(--scourge-light);
+}
+
+.dark-piece.scourge {
+  color: var(--scourge-dark);
+}

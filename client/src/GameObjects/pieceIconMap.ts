@@ -16,6 +16,12 @@ const pieceIconMap = new Map<PieceIdentifier, any>([
   [PieceIdentifier.basicBishop, faChessBishop],
   [PieceIdentifier.basicQueen, faChessQueen],
   [PieceIdentifier.basicKing, faChessKing],
+  [PieceIdentifier.scourgePawn, faChessPawn],
+  [PieceIdentifier.scourgeRook, faChessRook],
+  [PieceIdentifier.scourgeKnight, faChessKnight],
+  [PieceIdentifier.scourgeBishop, faChessBishop],
+  [PieceIdentifier.scourgeQueen, faChessQueen],
+  [PieceIdentifier.scourgeKing, faChessKing],
 ]);
 
 export default pieceIconMap;

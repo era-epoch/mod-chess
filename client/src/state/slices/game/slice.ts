@@ -59,9 +59,6 @@ const gameSlice = createSlice({
       if (state.selectedRow === null || state.selectedCol === null) return;
       const pieceToMove = state.board[state.selectedRow][state.selectedCol].piece;
       // TODO: Pass in the actual move to reducer
-      // const move = pieceToMove
-      //   .moveF(pieceToMove, state.selectedRow, state.selectedCol, state, true)
-      //   .find((move: Move) => move.row === action.payload.row && move.col === action.payload.col);
       const moveFunction = moveFunctionMap.get(pieceToMove.identifier);
       if (!moveFunction) return;
       const move = moveFunction(pieceToMove, state.selectedRow, state.selectedCol, state, true).find(
@@ -100,10 +97,8 @@ const gameSlice = createSlice({
       const row = action.payload.row;
       const col = action.payload.col;
       const movesToHighlight: Move[] = [];
-      // if (selectedPieceCanMove(state, row, col)) {
       const moveFunction = moveFunctionMap.get(state.board[row][col].piece.identifier);
       if (moveFunction) movesToHighlight.push(...moveFunction(state.board[row][col].piece, row, col, state, true));
-      // }
 
       const selectedSameSquare = state.selectedRow === row && state.selectedCol === col;
       for (let i = 0; i < state.board.length; i++) {

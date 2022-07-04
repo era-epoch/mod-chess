@@ -19,6 +19,7 @@ export enum SquareStatus {
   HLK = 'square-highlighted-kill',
   SEL = 'square-selected',
   EPV = 'en-passant-vulnerable',
+  RUNE = 'rune',
 }
 
 export enum PieceStatus {}
@@ -123,18 +124,11 @@ export interface Piece {
   statuses: PieceStatus[];
   nMoves: number;
   orientation: Orientation;
-  onDeathFs: LifecycleF[];
-  onTurnStartFs: LifecycleF[];
-  onTurnEndFs: LifecycleF[];
-  onMovedFs: LifecycleF[];
 }
 
 export type MoveFunction = (piece: Piece, row: number, col: number, state: GameState, checkKing: boolean) => Move[];
 
-export interface LifecycleF {
-  priority: number; // Higher == Earlier
-  function: (piece: Piece, state: GameState, row: number, col: number) => void;
-}
+export type LifecycleFunction = (piece: Piece, row: number, col: number, state: GameState) => void;
 
 export interface Graveyard {
   player: PlayerColour;

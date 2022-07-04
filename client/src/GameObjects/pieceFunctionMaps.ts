@@ -1,4 +1,5 @@
-import { PieceIdentifier, MoveFunction } from '../types';
+import { PieceIdentifier, MoveFunction, LifecycleFunction } from '../types';
+import { standardOnDeathF } from './basic/lifecycleFunctions';
 import {
   emptyMoveF,
   basicPawnMoveF,
@@ -21,6 +22,18 @@ export const moveFunctionMap = new Map<PieceIdentifier, MoveFunction>([
   [PieceIdentifier.basicKing, basicKingMoveF],
   [PieceIdentifier.scourgePawn, scourgePawnMoveF],
   [PieceIdentifier.crimsonPawn, crimsonPawnMoveF],
+]);
+
+export const onDeathFunctionMap = new Map<PieceIdentifier, LifecycleFunction>([
+  [PieceIdentifier.empty, standardOnDeathF],
+  [PieceIdentifier.basicPawn, standardOnDeathF],
+  [PieceIdentifier.basicRook, standardOnDeathF],
+  [PieceIdentifier.basicKnight, standardOnDeathF],
+  [PieceIdentifier.basicBishop, standardOnDeathF],
+  [PieceIdentifier.basicQueen, standardOnDeathF],
+  [PieceIdentifier.basicKing, standardOnDeathF],
+  [PieceIdentifier.scourgePawn, standardOnDeathF],
+  [PieceIdentifier.crimsonPawn, standardOnDeathF],
 ]);
 
 export default moveFunctionMap;

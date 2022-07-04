@@ -1,7 +1,6 @@
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { uid } from 'react-uid';
-import pieceIconMap from '../../../../GameObjects/pieceIconMap';
-import { Graveyard, Piece, PlayerColour } from '../../../../types';
+import { Graveyard, Piece } from '../../../../types';
+import BoardPiece from '../../../Piece/Piece';
 import './GraveyardYard.css';
 
 interface Props {
@@ -15,15 +14,7 @@ const GraveyardYard = (props: Props): JSX.Element => {
         <p>No captures</p>
       ) : (
         props.graveyard.contents.map((piece: Piece) => {
-          const icon = pieceIconMap.get(piece.identifier);
-          return (
-            <div key={uid(piece)} className="icon-wrapper">
-              <FontAwesomeIcon
-                icon={icon}
-                className={piece.owner === PlayerColour.dark ? 'dark-piece' : 'light-piece'}
-              />
-            </div>
-          );
+          return <BoardPiece key={uid(piece)} piece={piece} />;
         })
       )}
     </div>

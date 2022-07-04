@@ -8,6 +8,11 @@ body {
   --primary: rgb(141, 23, 23);
   --sidebar-width: 15vw;
   --gamearea-width: 85vw;
+  /* Piece Colours */
+  --basic-light: whitesmoke;
+  --basic-dark: black;
+  --scourge-light: lightgreen;
+  --scourge-dark: darkgreen;
 }
 
 code {

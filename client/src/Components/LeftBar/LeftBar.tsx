@@ -17,21 +17,21 @@ import {
   closeAllMenus,
   toggleActiveGame,
   toggleCreateGameMenu,
-  toggleCreateLocalGameMenu,
   toggleJoinGameMenu,
   updatePlayer,
 } from '../../state/slices/ui/slice';
 import { fullGameStateUpdate, GameState } from '../../state/slices/game/slice';
-import localBoard from '../../GameObjects/boards/localBoard';
-import { wsCreateGame, wsDisconnect, wsJoinGame } from '../../socketMiddleware';
+import testBoard from '../../GameObjects/boards/testBoard';
+import { wsDisconnect } from '../../socketMiddleware';
 import { PlayerColour } from '../../types';
 import produce from 'immer';
+import { useCallback, useEffect } from 'react';
 
 export const ws_url = `http://${window.location.hostname}:5000`;
 
 const LeftBar = (): JSX.Element => {
   const dispatch = useDispatch();
-  const startLocalGame = () => {
+  const startLocalGame = useCallback(() => {
     dispatch(toggleActiveGame(true));
     dispatch(
       updatePlayer({
@@ -49,7 +49,7 @@ const LeftBar = (): JSX.Element => {
     );
     dispatch(
       fullGameStateUpdate({
-        board: produce(localBoard, () => {}),
+        board: produce(testBoard, () => {}),
         turn: 0,
         selectedRow: null,
         selectedCol: null,
@@ -73,7 +73,7 @@ const LeftBar = (): JSX.Element => {
         type: ChatItemType.GAME,
       } as ChatItem),
     );
-  };
+  }, [dispatch]);
 
   const handleHomeClicked = () => {
     dispatch(wsDisconnect(ws_url));
@@ -94,6 +94,10 @@ const LeftBar = (): JSX.Element => {
     // dispatch(toggleCreateLocalGameMenu());
     startLocalGame();
   };
+
+  useEffect(() => {
+    startLocalGame();
+  }, [startLocalGame]);
 
   return (
     <div className="sidebar">

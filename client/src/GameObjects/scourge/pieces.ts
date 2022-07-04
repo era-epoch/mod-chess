@@ -11,11 +11,7 @@ export const ScourgePawn = (): Piece => {
     identifier: PieceIdentifier.scourgePawn,
     origin: PieceOrigin.scourge,
     id: genPID(),
-    name: 'Plague Rat',
-    onDeathFs: [],
-    onTurnStartFs: [],
-    onTurnEndFs: [],
-    onMovedFs: [],
+    name: 'Infected Rat',
   };
   return piece;
 };
@@ -31,10 +27,6 @@ export const ScourgeBishop = (): Piece => {
     origin: PieceOrigin.scourge,
     id: genPID(),
     name: 'Plague Doctor',
-    onDeathFs: [],
-    onTurnStartFs: [],
-    onTurnEndFs: [],
-    onMovedFs: [],
   };
   return piece;
 };

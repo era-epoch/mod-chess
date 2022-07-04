@@ -1,6 +1,7 @@
 import { SquareContents } from '../../types';
 import { EmptySquare, BasicRook, BasicKnight, BasicBishop, BasicQueen, BasicKing, BasicPawn } from '../basic/pieces';
 import { setUpSquare } from '../gameUtil';
+import { ScourgePawn } from '../scourge/pieces';
 
 const testBoard: SquareContents[][] = [
   [
@@ -29,14 +30,14 @@ const testBoard: SquareContents[][] = [
   ],
   [
     setUpSquare(2, 0, EmptySquare(), 2, 2, false),
-    setUpSquare(2, 1, BasicPawn(), 1, 0, true),
-    setUpSquare(2, 2, BasicPawn(), 1, 0, true),
-    setUpSquare(2, 3, BasicPawn(), 1, 0, true),
-    setUpSquare(2, 4, BasicPawn(), 1, 0, true),
-    setUpSquare(2, 5, BasicPawn(), 1, 0, true),
-    setUpSquare(2, 6, BasicPawn(), 1, 0, true),
-    setUpSquare(2, 7, BasicPawn(), 1, 0, true),
-    setUpSquare(2, 8, BasicPawn(), 1, 0, true),
+    setUpSquare(2, 1, ScourgePawn(), 1, 0, true),
+    setUpSquare(2, 2, ScourgePawn(), 1, 0, true),
+    setUpSquare(2, 3, ScourgePawn(), 1, 0, true),
+    setUpSquare(2, 4, ScourgePawn(), 1, 0, true),
+    setUpSquare(2, 5, ScourgePawn(), 1, 0, true),
+    setUpSquare(2, 6, ScourgePawn(), 1, 0, true),
+    setUpSquare(2, 7, ScourgePawn(), 1, 0, true),
+    setUpSquare(2, 8, ScourgePawn(), 1, 0, true),
     setUpSquare(2, 9, EmptySquare(), 2, 2, false),
   ],
   [
@@ -92,11 +93,11 @@ const testBoard: SquareContents[][] = [
     setUpSquare(7, 1, BasicPawn(), 0, 1, true),
     setUpSquare(7, 2, BasicPawn(), 0, 1, true),
     setUpSquare(7, 3, BasicPawn(), 0, 1, true),
-    setUpSquare(7, 4, BasicPawn(), 0, 1, true),
+    setUpSquare(7, 4, ScourgePawn(), 0, 1, true),
     setUpSquare(7, 5, BasicPawn(), 0, 1, true),
-    setUpSquare(7, 6, BasicPawn(), 0, 1, true),
+    setUpSquare(7, 6, ScourgePawn(), 0, 1, true),
     setUpSquare(7, 7, BasicPawn(), 0, 1, true),
-    setUpSquare(7, 8, BasicPawn(), 0, 1, true),
+    setUpSquare(7, 8, ScourgePawn(), 0, 1, true),
     setUpSquare(7, 9, EmptySquare(), 2, 2, false),
   ],
   [

@@ -4,7 +4,7 @@ import { uid } from 'react-uid';
 import { wsEmitMove } from '../../socketMiddleware';
 import { RootState } from '../../state/rootReducer';
 import { makeMove, selectSquare } from '../../state/slices/game/slice';
-import { OnlineGameStatus, swapLocalPlayer, toggleBoardInversion } from '../../state/slices/ui/slice';
+import { OnlineGameStatus, swapLocalPlayer } from '../../state/slices/ui/slice';
 import { store } from '../../state/store';
 import { SquareStatus } from '../../types';
 import { isPlayersTurn } from '../../util';
@@ -17,9 +17,7 @@ const Board = (): JSX.Element => {
   const boardInversion = useSelector((state: RootState) => state.ui.boardInversion);
   const onlineGame = useSelector((state: RootState) => state.ui.onlineGameStatus);
   const player = useSelector((state: RootState) => state.ui.player);
-
   const board = gameState.board.slice(0);
-  if (boardInversion) board.reverse();
 
   const handleMove = (row: number, col: number) => {
     if (gameState.selectedRow !== null && gameState.selectedCol !== null) {
@@ -55,6 +53,7 @@ const Board = (): JSX.Element => {
     }
   };
 
+  if (boardInversion) board.reverse();
   return (
     <div className="Board">
       {board.map((row, rowN) => {

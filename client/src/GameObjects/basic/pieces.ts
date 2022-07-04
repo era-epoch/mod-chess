@@ -12,10 +12,6 @@ export const EmptySquare = (): Piece => {
     type: PieceType.empty,
     id: genPID(),
     name: '',
-    onDeathFs: [],
-    onTurnStartFs: [],
-    onTurnEndFs: [],
-    onMovedFs: [],
   };
   return piece;
 };
@@ -31,10 +27,6 @@ export const BasicPawn = (): Piece => {
     type: PieceType.pawn,
     id: genPID(),
     name: 'Pawn',
-    onDeathFs: [],
-    onTurnStartFs: [],
-    onTurnEndFs: [],
-    onMovedFs: [],
   };
   return piece;
 };
@@ -50,10 +42,6 @@ export const BasicRook = (): Piece => {
     origin: PieceOrigin.basic,
     id: genPID(),
     name: 'Rook',
-    onDeathFs: [],
-    onTurnStartFs: [],
-    onTurnEndFs: [],
-    onMovedFs: [],
   };
   return piece;
 };
@@ -69,10 +57,6 @@ export const BasicBishop = (): Piece => {
     origin: PieceOrigin.basic,
     id: genPID(),
     name: 'Bishop',
-    onDeathFs: [],
-    onTurnStartFs: [],
-    onTurnEndFs: [],
-    onMovedFs: [],
   };
   return piece;
 };
@@ -88,10 +72,6 @@ export const BasicKnight = (): Piece => {
     origin: PieceOrigin.basic,
     id: genPID(),
     name: 'Knight',
-    onDeathFs: [],
-    onTurnStartFs: [],
-    onTurnEndFs: [],
-    onMovedFs: [],
   };
   return piece;
 };
@@ -107,10 +87,6 @@ export const BasicQueen = (): Piece => {
     origin: PieceOrigin.basic,
     id: genPID(),
     name: 'Queen',
-    onDeathFs: [],
-    onTurnStartFs: [],
-    onTurnEndFs: [],
-    onMovedFs: [],
   };
   return piece;
 };
@@ -126,10 +102,6 @@ export const BasicKing = (): Piece => {
     origin: PieceOrigin.basic,
     id: genPID(),
     name: 'King',
-    onDeathFs: [],
-    onTurnStartFs: [],
-    onTurnEndFs: [],
-    onMovedFs: [],
   };
   return piece;
 };
