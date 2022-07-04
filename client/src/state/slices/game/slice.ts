@@ -62,7 +62,7 @@ const gameSlice = createSlice({
       // const move = pieceToMove
       //   .moveF(pieceToMove, state.selectedRow, state.selectedCol, state, true)
       //   .find((move: Move) => move.row === action.payload.row && move.col === action.payload.col);
-      const moveFunction = moveFunctionMap.get(pieceToMove.pieceIdentifier);
+      const moveFunction = moveFunctionMap.get(pieceToMove.identifier);
       if (!moveFunction) return;
       const move = moveFunction(pieceToMove, state.selectedRow, state.selectedCol, state, true).find(
         (move: Move) => move.row === action.payload.row && move.col === action.payload.col,
@@ -101,7 +101,7 @@ const gameSlice = createSlice({
       const col = action.payload.col;
       const movesToHighlight: Move[] = [];
       // if (selectedPieceCanMove(state, row, col)) {
-      const moveFunction = moveFunctionMap.get(state.board[row][col].piece.pieceIdentifier);
+      const moveFunction = moveFunctionMap.get(state.board[row][col].piece.identifier);
       if (moveFunction) movesToHighlight.push(...moveFunction(state.board[row][col].piece, row, col, state, true));
       // }
 

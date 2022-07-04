@@ -1,4 +1,4 @@
-import { Piece, PlayerColour, Orientation, PieceStatus, PieceType, PieceIdentifier } from '../../types';
+import { Piece, PlayerColour, Orientation, PieceType, PieceIdentifier, PieceOrigin } from '../../types';
 import { genPID } from '../gameUtil';
 
 export const ScourgePawn = (): Piece => {
@@ -6,10 +6,10 @@ export const ScourgePawn = (): Piece => {
     owner: PlayerColour.neutral,
     nMoves: 0,
     orientation: Orientation.neutral,
-    // TODO: get rid of piecestatus as Set
-    pieceStatuses: new Set<PieceStatus>(),
-    pieceType: PieceType.pawn,
-    pieceIdentifier: PieceIdentifier.scourgePawn,
+    statuses: [],
+    type: PieceType.pawn,
+    identifier: PieceIdentifier.scourgePawn,
+    origin: PieceOrigin.scourge,
     id: genPID(),
     name: 'Plague Rat',
     onDeathFs: [],
@@ -25,10 +25,10 @@ export const ScourgeBishop = (): Piece => {
     owner: PlayerColour.neutral,
     nMoves: 0,
     orientation: Orientation.neutral,
-    // TODO: get rid of piecestatus as Set
-    pieceStatuses: new Set<PieceStatus>(),
-    pieceType: PieceType.bishop,
-    pieceIdentifier: PieceIdentifier.scourgeBishop,
+    statuses: [],
+    type: PieceType.bishop,
+    identifier: PieceIdentifier.scourgeBishop,
+    origin: PieceOrigin.scourge,
     id: genPID(),
     name: 'Plague Doctor',
     onDeathFs: [],

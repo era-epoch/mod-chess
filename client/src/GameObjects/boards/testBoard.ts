@@ -2,7 +2,7 @@ import { SquareContents } from '../../types';
 import { EmptySquare, BasicRook, BasicKnight, BasicBishop, BasicQueen, BasicKing, BasicPawn } from '../basic/pieces';
 import { setUpSquare } from '../gameUtil';
 
-const localBoard: SquareContents[][] = [
+const testBoard: SquareContents[][] = [
   [
     setUpSquare(0, 0, EmptySquare(), 2, 2, false),
     setUpSquare(0, 1, EmptySquare(), 2, 2, false),
@@ -125,4 +125,4 @@ const localBoard: SquareContents[][] = [
   ],
 ];
 
-export default localBoard;
+export default testBoard;

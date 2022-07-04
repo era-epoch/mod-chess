@@ -15,7 +15,7 @@ const GraveyardYard = (props: Props): JSX.Element => {
         <p>No captures</p>
       ) : (
         props.graveyard.contents.map((piece: Piece) => {
-          const icon = pieceIconMap.get(piece.pieceIdentifier);
+          const icon = pieceIconMap.get(piece.identifier);
           return (
             <div key={uid(piece)} className="icon-wrapper">
               <FontAwesomeIcon

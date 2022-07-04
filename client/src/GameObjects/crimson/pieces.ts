@@ -1,4 +1,4 @@
-import { Piece, PlayerColour, PieceIdentifier, Orientation, PieceStatus, PieceType } from '../../types';
+import { Piece, PlayerColour, PieceIdentifier, Orientation, PieceType, PieceOrigin } from '../../types';
 import { genPID } from '../gameUtil';
 
 export const CrimsonPawn = (): Piece => {
@@ -6,10 +6,10 @@ export const CrimsonPawn = (): Piece => {
     owner: PlayerColour.neutral,
     nMoves: 0,
     orientation: Orientation.neutral,
-    // TODO: get rid of piecestatus as Set
-    pieceStatuses: new Set<PieceStatus>(),
-    pieceType: PieceType.pawn,
-    pieceIdentifier: PieceIdentifier.crimsonPawn,
+    statuses: [],
+    type: PieceType.pawn,
+    identifier: PieceIdentifier.crimsonPawn,
+    origin: PieceOrigin.crimson,
     id: genPID(),
     name: 'Thrall',
     onDeathFs: [],

@@ -9,7 +9,7 @@ import {
   PieceType,
   Graveyard,
   PlayerColour,
-  pieceTypeAlgebriacNotationMap,
+  typeAlgebriacNotationMap,
 } from '../../../types';
 import { ChatItem, ChatItemType } from '../ui/slice';
 import { GameState } from './slice';
@@ -34,7 +34,7 @@ export const denoteMove = (state: GameState, piece: Piece, move: Move) => {
   if (move.flags.includes(MoveFlag.CSTL)) {
     notation += 'O-O';
   } else {
-    notation += pieceTypeAlgebriacNotationMap.get(piece.pieceType);
+    notation += typeAlgebriacNotationMap.get(piece.type);
     // Is this a capture?
     if (move.flags.includes(MoveFlag.KILL)) notation += 'x';
     const col = colNumToLetterMap.get(move.col);
@@ -69,7 +69,7 @@ export const movePiece = (gameState: GameState, piece: Piece, move: Move) => {
     if (move.col < kingPos) {
       // Castling to the left
       let i = 1;
-      while (gameState.board[move.row][move.col - i].piece.pieceType !== PieceType.rook) {
+      while (gameState.board[move.row][move.col - i].piece.type !== PieceType.rook) {
         i++;
       }
       gameState.board[move.row][move.col + 1].piece = gameState.board[move.row][move.col - i].piece;
@@ -77,7 +77,7 @@ export const movePiece = (gameState: GameState, piece: Piece, move: Move) => {
     } else {
       // Castling to the right
       let i = 1;
-      while (gameState.board[move.row][move.col + i].piece.pieceType !== PieceType.rook) {
+      while (gameState.board[move.row][move.col + i].piece.type !== PieceType.rook) {
         i++;
       }
       gameState.board[move.row][move.col - 1].piece = gameState.board[move.row][move.col + i].piece;
@@ -133,7 +133,7 @@ export const removePieceAtLocation = (gameState: GameState, row: number, col: nu
   // .onDeath();
   const player = gameState.board[row][col].piece.owner;
   const graveyard = gameState.graveyards.find((g: Graveyard) => g.player === (player + 1) % 2);
-  if (gameState.board[row][col].piece.pieceType !== PieceType.empty) {
+  if (gameState.board[row][col].piece.type !== PieceType.empty) {
     graveyard?.contents.push(gameState.board[row][col].piece);
   }
   gameState.board[row][col].piece = EmptySquare();
@@ -145,7 +145,7 @@ export const isGameover = (gameState: GameState, player: PlayerColour): boolean 
   for (let i = 0; i < gameState.board.length; i++) {
     for (let j = 0; j < gameState.board[0].length; j++) {
       if (gameState.board[i][j].piece.owner === opponent) {
-        const moveFunction = moveFunctionMap.get(gameState.board[i][j].piece.pieceIdentifier);
+        const moveFunction = moveFunctionMap.get(gameState.board[i][j].piece.identifier);
         if (moveFunction) validMoves.push(...moveFunction(gameState.board[i][j].piece, i, j, gameState, true));
       }
     }

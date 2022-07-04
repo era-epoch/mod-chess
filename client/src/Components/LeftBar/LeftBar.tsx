@@ -11,8 +11,10 @@ import {
 import { useDispatch } from 'react-redux';
 import {
   addChatItemToLog,
+  addPlayer,
   ChatItem,
   ChatItemType,
+  closeAllMenus,
   toggleActiveGame,
   toggleCreateGameMenu,
   toggleCreateLocalGameMenu,
@@ -23,69 +25,74 @@ import { fullGameStateUpdate, GameState } from '../../state/slices/game/slice';
 import localBoard from '../../GameObjects/boards/localBoard';
 import { wsCreateGame, wsDisconnect, wsJoinGame } from '../../socketMiddleware';
 import { PlayerColour } from '../../types';
+import produce from 'immer';
 
 export const ws_url = `http://${window.location.hostname}:5000`;
 
 const LeftBar = (): JSX.Element => {
   const dispatch = useDispatch();
-  // const startLocalGame = () => {
-  //   dispatch(toggleActiveGame(true));
-  //   dispatch(
-  //     updatePlayer({
-  //       colour: Player.light,
-  //       id: '',
-  //       name: '',
-  //     }),
-  //   );
-  //   dispatch(
-  //     fullGameStateUpdate({
-  //       board: localBoard,
-  //       turn: 0,
-  //       selectedRow: null,
-  //       selectedCol: null,
-  //       graveyards: [
-  //         { player: Player.light, contents: [] },
-  //         { player: Player.dark, contents: [] },
-  //       ],
-  //       winner: null,
-  //     } as GameState),
-  //   );
-  //   dispatch(
-  //     addChatItemToLog({
-  //       content: "You've started a new local game!",
-  //       time: new Date(),
-  //       origin: '',
-  //       type: ChatItemType.GAME,
-  //     } as ChatItem),
-  //   );
-  // };
+  const startLocalGame = () => {
+    dispatch(toggleActiveGame(true));
+    dispatch(
+      updatePlayer({
+        colour: PlayerColour.light,
+        id: 'light',
+        name: 'Light',
+      }),
+    );
+    dispatch(
+      addPlayer({
+        colour: PlayerColour.dark,
+        id: 'dark',
+        name: 'Dark',
+      }),
+    );
+    dispatch(
+      fullGameStateUpdate({
+        board: produce(localBoard, () => {}),
+        turn: 0,
+        selectedRow: null,
+        selectedCol: null,
+        graveyards: [
+          { player: PlayerColour.light, contents: [] },
+          { player: PlayerColour.dark, contents: [] },
+        ],
+        winner: null,
+        creatorColour: null,
+        timedGame: false,
+        gameTime: 0,
+        turnTimeBack: 0,
+        moveHistory: [],
+      } as GameState),
+    );
+    dispatch(
+      addChatItemToLog({
+        content: "You've started a new local game!",
+        time: new Date(),
+        origin: '',
+        type: ChatItemType.GAME,
+      } as ChatItem),
+    );
+  };
 
   const handleHomeClicked = () => {
     dispatch(wsDisconnect(ws_url));
-    dispatch(toggleActiveGame(false));
-    dispatch(toggleCreateGameMenu(false));
-    dispatch(toggleJoinGameMenu(false));
-    dispatch(toggleCreateLocalGameMenu(false));
+    dispatch(closeAllMenus());
   };
 
   const handleCPUClicked = () => {};
 
   const handleCreateOnlineClicked = () => {
-    dispatch(toggleCreateLocalGameMenu(false));
-    dispatch(toggleJoinGameMenu(false));
-    dispatch(toggleCreateGameMenu(true));
+    dispatch(toggleCreateGameMenu());
   };
 
   const handleJoinOnlineClicked = () => {
-    dispatch(toggleCreateLocalGameMenu(false));
-    dispatch(toggleCreateGameMenu(false));
-    dispatch(toggleJoinGameMenu(true));
+    dispatch(toggleJoinGameMenu());
   };
 
   const handleCreateLocalClicked = () => {
-    dispatch(toggleJoinGameMenu(false));
-    dispatch(toggleCreateGameMenu(false));
-    dispatch(toggleCreateLocalGameMenu(true));
+    // dispatch(toggleCreateLocalGameMenu());
+    startLocalGame();
   };
 
   return (

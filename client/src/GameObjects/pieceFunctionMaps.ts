@@ -1,24 +1,24 @@
 import { PieceIdentifier, MoveFunction } from '../types';
 import {
   emptyMoveF,
-  pawnBasicMoveF,
-  rookBasicMoveF,
-  knightBasicMoveF,
-  bishopBasicMoveF,
-  queenBasicMoveF,
-  kingBasicMoveF,
+  basicPawnMoveF,
+  basicRookMoveF,
+  basicKnightMoveF,
+  basicBishopMoveF,
+  basicQueenMoveF,
+  basicKingMoveF,
 } from './basic/moveFunctions';
 import { crimsonPawnMoveF } from './crimson/functions';
 import { scourgePawnMoveF } from './scourge/functions';
 
 export const moveFunctionMap = new Map<PieceIdentifier, MoveFunction>([
-  [PieceIdentifier.emptyBasic, emptyMoveF],
-  [PieceIdentifier.pawnBasic, pawnBasicMoveF],
-  [PieceIdentifier.rookBasic, rookBasicMoveF],
-  [PieceIdentifier.knightBasic, knightBasicMoveF],
-  [PieceIdentifier.bishopBasic, bishopBasicMoveF],
-  [PieceIdentifier.queenBasic, queenBasicMoveF],
-  [PieceIdentifier.kingBasic, kingBasicMoveF],
+  [PieceIdentifier.empty, emptyMoveF],
+  [PieceIdentifier.basicPawn, basicPawnMoveF],
+  [PieceIdentifier.basicRook, basicRookMoveF],
+  [PieceIdentifier.basicKnight, basicKnightMoveF],
+  [PieceIdentifier.basicBishop, basicBishopMoveF],
+  [PieceIdentifier.basicQueen, basicQueenMoveF],
+  [PieceIdentifier.basicKing, basicKingMoveF],
   [PieceIdentifier.scourgePawn, scourgePawnMoveF],
   [PieceIdentifier.crimsonPawn, crimsonPawnMoveF],
 ]);

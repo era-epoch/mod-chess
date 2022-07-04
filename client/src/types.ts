@@ -33,7 +33,7 @@ export enum PieceType {
   'king' = 6,
 }
 
-export const pieceTypeAlgebriacNotationMap = new Map<PieceType, string>([
+export const typeAlgebriacNotationMap = new Map<PieceType, string>([
   [PieceType.empty, ''],
   [PieceType.pawn, ''],
   [PieceType.rook, 'R'],
@@ -49,14 +49,20 @@ export enum MoveFlag {
   EP = 'en-passant',
 }
 
+export enum PieceOrigin {
+  basic = 'basic',
+  scourge = 'scourge',
+  crimson = 'crimson',
+}
+
 export enum PieceIdentifier {
-  'emptyBasic',
-  'pawnBasic',
-  'rookBasic',
-  'knightBasic',
-  'bishopBasic',
-  'queenBasic',
-  'kingBasic',
+  'empty',
+  'basicPawn',
+  'basicRook',
+  'basicKnight',
+  'basicBishop',
+  'basicQueen',
+  'basicKing',
   'scourgePawn',
   'scourgeBishop',
   'scourgeKnight',
@@ -111,9 +117,10 @@ export interface Piece {
   name: string;
   id: number;
   owner: PlayerColour;
-  pieceIdentifier: PieceIdentifier;
-  pieceType: PieceType;
-  pieceStatuses: Set<PieceStatus>;
+  identifier: PieceIdentifier;
+  type: PieceType;
+  origin: PieceOrigin;
+  statuses: PieceStatus[];
   nMoves: number;
   orientation: Orientation;
   onDeathFs: LifecycleF[];

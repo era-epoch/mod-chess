@@ -38,12 +38,20 @@
   background-color: rgba(0, 0, 0, 0.6);
 }
 
-.light-piece {
+.light-piece.basic {
   color: whitesmoke;
 }
 
-.dark-piece {
+.dark-piece.basic {
   color: black;
+}
+
+.light-piece.scourge {
+  color: greenyellow;
+}
+
+.dark-piece.scourge {
+  color: darkgreen;
 }
 
 .square-highlighted {

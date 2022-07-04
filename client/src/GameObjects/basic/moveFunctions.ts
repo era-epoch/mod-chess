@@ -12,7 +12,7 @@ export const emptyMoveF = (
   return [];
 };
 
-export const pawnBasicMoveF = (
+export const basicPawnMoveF = (
   piece: Piece,
   row: number,
   col: number,
@@ -22,13 +22,13 @@ export const pawnBasicMoveF = (
   const board = state.board;
   let moves: Move[] = [];
   if (piece.orientation === Orientation.bottom) {
-    if (board[row - 1][col].piece.pieceType === PieceType.empty) {
+    if (board[row - 1][col].piece.type === PieceType.empty) {
       moves.push({ row: row - 1, col: col, oRow: row, oCol: col, flags: [] });
     }
     if (
       piece.nMoves === 0 &&
-      board[row - 2][col].piece.pieceType === PieceType.empty &&
-      board[row - 1][col].piece.pieceType === PieceType.empty
+      board[row - 2][col].piece.type === PieceType.empty &&
+      board[row - 1][col].piece.type === PieceType.empty
     ) {
       moves.push({ row: row - 2, col: col, flags: [MoveFlag.EP], oRow: row, oCol: col });
     }
@@ -47,13 +47,13 @@ export const pawnBasicMoveF = (
       moves.push({ row: row - 1, col: col + 1, flags: [MoveFlag.KILL], oRow: row, oCol: col });
     }
   } else if (piece.orientation === Orientation.top) {
-    if (board[row + 1][col].piece.pieceType === PieceType.empty) {
+    if (board[row + 1][col].piece.type === PieceType.empty) {
       moves.push({ row: row + 1, col: col, oRow: row, oCol: col, flags: [] });
     }
     if (
       piece.nMoves === 0 &&
-      board[row + 2][col].piece.pieceType === PieceType.empty &&
-      board[row + 1][col].piece.pieceType === PieceType.empty
+      board[row + 2][col].piece.type === PieceType.empty &&
+      board[row + 1][col].piece.type === PieceType.empty
     ) {
       moves.push({ row: row + 2, col: col, flags: [MoveFlag.EP], oRow: row, oCol: col });
     }
@@ -75,7 +75,7 @@ export const pawnBasicMoveF = (
   return filterMoves(piece, row, col, state, moves, checkKing);
 };
 
-export const rookBasicMoveF = (
+export const basicRookMoveF = (
   piece: Piece,
   row: number,
   col: number,
@@ -85,7 +85,7 @@ export const rookBasicMoveF = (
   const board = state.board;
   let moves: Move[] = [];
   let i = 1;
-  while (row + i < board.length && board[row + i][col].piece.pieceType === PieceType.empty) {
+  while (row + i < board.length && board[row + i][col].piece.type === PieceType.empty) {
     moves.push({ row: row + i, col: col, oRow: row, oCol: col, flags: [] });
     i++;
   }
@@ -93,7 +93,7 @@ export const rookBasicMoveF = (
     moves.push({ row: row + i, col: col, flags: [MoveFlag.KILL], oRow: row, oCol: col });
   }
   i = 1;
-  while (row - i >= 0 && board[row - i][col].piece.pieceType === PieceType.empty) {
+  while (row - i >= 0 && board[row - i][col].piece.type === PieceType.empty) {
     moves.push({ row: row - i, col: col, oRow: row, oCol: col, flags: [] });
     i++;
   }
@@ -101,7 +101,7 @@ export const rookBasicMoveF = (
     moves.push({ row: row - i, col: col, flags: [MoveFlag.KILL], oRow: row, oCol: col });
   }
   i = 1;
-  while (col + i < board[0].length && board[row][col + i].piece.pieceType === PieceType.empty) {
+  while (col + i < board[0].length && board[row][col + i].piece.type === PieceType.empty) {
     moves.push({ row: row, col: col + i, oRow: row, oCol: col, flags: [] });
     i++;
   }
@@ -109,7 +109,7 @@ export const rookBasicMoveF = (
     moves.push({ row: row, col: col + i, flags: [MoveFlag.KILL], oRow: row, oCol: col });
   }
   i = 1;
-  while (col - i >= 0 && board[row][col - i].piece.pieceType === PieceType.empty) {
+  while (col - i >= 0 && board[row][col - i].piece.type === PieceType.empty) {
     moves.push({ row: row, col: col - i, oRow: row, oCol: col, flags: [] });
     i++;
   }
@@ -119,7 +119,7 @@ export const rookBasicMoveF = (
   return filterMoves(piece, row, col, state, moves, checkKing);
 };
 
-export const bishopBasicMoveF = (
+export const basicBishopMoveF = (
   piece: Piece,
   row: number,
   col: number,
@@ -132,7 +132,7 @@ export const bishopBasicMoveF = (
   while (
     row + i < board.length &&
     col + i < board[0].length &&
-    board[row + i][col + i].piece.pieceType === PieceType.empty
+    board[row + i][col + i].piece.type === PieceType.empty
   ) {
     moves.push({ row: row + i, col: col + i, oRow: row, oCol: col, flags: [] });
     i++;
@@ -141,7 +141,7 @@ export const bishopBasicMoveF = (
     moves.push({ row: row + i, col: col + i, flags: [MoveFlag.KILL], oRow: row, oCol: col });
   }
   i = 1;
-  while (row + i < board.length && col - i >= 0 && board[row + i][col - i].piece.pieceType === PieceType.empty) {
+  while (row + i < board.length && col - i >= 0 && board[row + i][col - i].piece.type === PieceType.empty) {
     moves.push({ row: row + i, col: col - i, oRow: row, oCol: col, flags: [] });
     i++;
   }
@@ -149,7 +149,7 @@ export const bishopBasicMoveF = (
     moves.push({ row: row + i, col: col - i, flags: [MoveFlag.KILL], oRow: row, oCol: col });
   }
   i = 1;
-  while (row - i >= 0 && col - i >= 0 && board[row - i][col - i].piece.pieceType === PieceType.empty) {
+  while (row - i >= 0 && col - i >= 0 && board[row - i][col - i].piece.type === PieceType.empty) {
     moves.push({ row: row - i, col: col - i, oRow: row, oCol: col, flags: [] });
     i++;
   }
@@ -157,7 +157,7 @@ export const bishopBasicMoveF = (
     moves.push({ row: row - i, col: col - i, flags: [MoveFlag.KILL], oRow: row, oCol: col });
   }
   i = 1;
-  while (row - i >= 0 && col + i < board[0].length && board[row - i][col + i].piece.pieceType === PieceType.empty) {
+  while (row - i >= 0 && col + i < board[0].length && board[row - i][col + i].piece.type === PieceType.empty) {
     moves.push({ row: row - i, col: col + i, oRow: row, oCol: col, flags: [] });
     i++;
   }
@@ -167,7 +167,7 @@ export const bishopBasicMoveF = (
   return filterMoves(piece, row, col, state, moves, checkKing);
 };
 
-export const knightBasicMoveF = (
+export const basicKnightMoveF = (
   piece: Piece,
   row: number,
   col: number,
@@ -192,7 +192,7 @@ export const knightBasicMoveF = (
       row + option[0] < board.length &&
       col + option[1] >= 0 &&
       col + option[1] < board[0].length &&
-      (board[row + option[0]][col + option[1]].piece.pieceType === PieceType.empty ||
+      (board[row + option[0]][col + option[1]].piece.type === PieceType.empty ||
         board[row + option[0]][col + option[1]].piece.owner !== piece.owner)
     ) {
       if (board[row + option[0]][col + option[1]].piece.owner === (piece.owner + 1) % 2) {
@@ -211,7 +211,7 @@ export const knightBasicMoveF = (
   return filterMoves(piece, row, col, state, moves, checkKing);
 };
 
-export const queenBasicMoveF = (
+export const basicQueenMoveF = (
   piece: Piece,
   row: number,
   col: number,
@@ -221,7 +221,7 @@ export const queenBasicMoveF = (
   const board = state.board;
   let moves: Move[] = [];
   let i = 1;
-  while (row + i < board.length && board[row + i][col].piece.pieceType === PieceType.empty) {
+  while (row + i < board.length && board[row + i][col].piece.type === PieceType.empty) {
     moves.push({ row: row + i, col: col, oRow: row, oCol: col, flags: [] });
     i++;
   }
@@ -229,7 +229,7 @@ export const queenBasicMoveF = (
     moves.push({ row: row + i, col: col, flags: [MoveFlag.KILL], oRow: row, oCol: col });
   }
   i = 1;
-  while (row - i >= 0 && board[row - i][col].piece.pieceType === PieceType.empty) {
+  while (row - i >= 0 && board[row - i][col].piece.type === PieceType.empty) {
     moves.push({ row: row - i, col: col, oRow: row, oCol: col, flags: [] });
     i++;
   }
@@ -237,7 +237,7 @@ export const queenBasicMoveF = (
     moves.push({ row: row - i, col: col, flags: [MoveFlag.KILL], oRow: row, oCol: col });
   }
   i = 1;
-  while (col + i < board[0].length && board[row][col + i].piece.pieceType === PieceType.empty) {
+  while (col + i < board[0].length && board[row][col + i].piece.type === PieceType.empty) {
     moves.push({ row: row, col: col + i, oRow: row, oCol: col, flags: [] });
     i++;
   }
@@ -245,7 +245,7 @@ export const queenBasicMoveF = (
     moves.push({ row: row, col: col + i, flags: [MoveFlag.KILL], oRow: row, oCol: col });
   }
   i = 1;
-  while (col - i >= 0 && board[row][col - i].piece.pieceType === PieceType.empty) {
+  while (col - i >= 0 && board[row][col - i].piece.type === PieceType.empty) {
     moves.push({ row: row, col: col - i, oRow: row, oCol: col, flags: [] });
     i++;
   }
@@ -256,7 +256,7 @@ export const queenBasicMoveF = (
   while (
     row + i < board.length &&
     col + i < board[0].length &&
-    board[row + i][col + i].piece.pieceType === PieceType.empty
+    board[row + i][col + i].piece.type === PieceType.empty
   ) {
     moves.push({ row: row + i, col: col + i, oRow: row, oCol: col, flags: [] });
     i++;
@@ -265,7 +265,7 @@ export const queenBasicMoveF = (
     moves.push({ row: row + i, col: col + i, flags: [MoveFlag.KILL], oRow: row, oCol: col });
   }
   i = 1;
-  while (row + i < board.length && col - i >= 0 && board[row + i][col - i].piece.pieceType === PieceType.empty) {
+  while (row + i < board.length && col - i >= 0 && board[row + i][col - i].piece.type === PieceType.empty) {
     moves.push({ row: row + i, col: col - i, oRow: row, oCol: col, flags: [] });
     i++;
   }
@@ -273,7 +273,7 @@ export const queenBasicMoveF = (
     moves.push({ row: row + i, col: col - i, flags: [MoveFlag.KILL], oRow: row, oCol: col });
   }
   i = 1;
-  while (row - i >= 0 && col - i >= 0 && board[row - i][col - i].piece.pieceType === PieceType.empty) {
+  while (row - i >= 0 && col - i >= 0 && board[row - i][col - i].piece.type === PieceType.empty) {
     moves.push({ row: row - i, col: col - i, oRow: row, oCol: col, flags: [] });
     i++;
   }
@@ -281,7 +281,7 @@ export const queenBasicMoveF = (
     moves.push({ row: row - i, col: col - i, flags: [MoveFlag.KILL], oRow: row, oCol: col });
   }
   i = 1;
-  while (row - i >= 0 && col + i < board[0].length && board[row - i][col + i].piece.pieceType === PieceType.empty) {
+  while (row - i >= 0 && col + i < board[0].length && board[row - i][col + i].piece.type === PieceType.empty) {
     moves.push({ row: row - i, col: col + i, oRow: row, oCol: col, flags: [] });
     i++;
   }
@@ -291,7 +291,7 @@ export const queenBasicMoveF = (
   return filterMoves(piece, row, col, state, moves, checkKing);
 };
 
-export const kingBasicMoveF = (
+export const basicKingMoveF = (
   piece: Piece,
   row: number,
   col: number,
@@ -316,7 +316,7 @@ export const kingBasicMoveF = (
       row + option[0] < board.length &&
       col + option[1] >= 0 &&
       col + option[1] < board[0].length &&
-      (board[row + option[0]][col + option[1]].piece.pieceType === PieceType.empty ||
+      (board[row + option[0]][col + option[1]].piece.type === PieceType.empty ||
         board[row + option[0]][col + option[1]].piece.owner !== piece.owner)
     ) {
       if (board[row + option[0]][col + option[1]].piece.owner === (piece.owner + 1) % 2) {
@@ -335,8 +335,8 @@ export const kingBasicMoveF = (
   if (piece.nMoves === 0) {
     let blockedRight = false;
     let i = 1;
-    while (col + i < board[0].length && board[row][col + i].piece.pieceType !== PieceType.rook) {
-      if (board[row][col + i].piece.pieceType !== PieceType.empty) {
+    while (col + i < board[0].length && board[row][col + i].piece.type !== PieceType.rook) {
+      if (board[row][col + i].piece.type !== PieceType.empty) {
         blockedRight = true;
       }
       i++;
@@ -344,7 +344,7 @@ export const kingBasicMoveF = (
     if (
       !blockedRight &&
       col + i < board[0].length &&
-      board[row][col + i].piece.pieceType === PieceType.rook &&
+      board[row][col + i].piece.type === PieceType.rook &&
       board[row][col + i].piece.owner === piece.owner &&
       board[row][col + i].piece.nMoves === 0 &&
       (checkKing
@@ -355,8 +355,8 @@ export const kingBasicMoveF = (
     }
     let blockedLeft = false;
     i = 1;
-    while (col - i >= 0 && board[row][col - i].piece.pieceType !== PieceType.rook) {
-      if (board[row][col - i].piece.pieceType !== PieceType.empty) {
+    while (col - i >= 0 && board[row][col - i].piece.type !== PieceType.rook) {
+      if (board[row][col - i].piece.type !== PieceType.empty) {
         blockedLeft = true;
       }
       i++;
@@ -364,7 +364,7 @@ export const kingBasicMoveF = (
     if (
       !blockedLeft &&
       col - i >= 0 &&
-      board[row][col - i].piece.pieceType === PieceType.rook &&
+      board[row][col - i].piece.type === PieceType.rook &&
       board[row][col - i].piece.owner === piece.owner &&
       board[row][col - i].piece.nMoves === 0 &&
       (checkKing

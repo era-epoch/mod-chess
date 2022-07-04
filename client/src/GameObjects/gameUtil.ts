@@ -63,12 +63,12 @@ export const kingInCheck = (gameState: GameState, player: PlayerColour): boolean
   const threatenedPositions: Move[] = [];
   for (let i = 0; i < board.length; i++) {
     for (let j = 0; j < board[0].length; j++) {
-      if (board[i][j].piece.owner === player && board[i][j].piece.pieceType === PieceType.king) {
+      if (board[i][j].piece.owner === player && board[i][j].piece.type === PieceType.king) {
         kingPositions.push({ row: i, col: j, flags: [] });
       }
       if (board[i][j].piece.owner !== player) {
         // threatenedPositions.push(...board[i][j].piece.moveF(board[i][j].piece, i, j, gameState, false));
-        const moveFunction = moveFunctionMap.get(board[i][j].piece.pieceIdentifier);
+        const moveFunction = moveFunctionMap.get(board[i][j].piece.identifier);
         if (moveFunction) threatenedPositions.push(...moveFunction(board[i][j].piece, i, j, gameState, false));
       }
     }

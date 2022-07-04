@@ -80,23 +80,47 @@ const UISlice = createSlice({
   name: 'ui',
   initialState: initialUIState,
   reducers: {
-    invertBoard: (state: UIState, action: PayloadAction<boolean>) => {
+    updateBoardInversion: (state: UIState, action: PayloadAction<boolean>) => {
       state.boardInversion = action.payload;
     },
-    toggleCreateLocalGameMenu: (state: UIState, action: PayloadAction<boolean>) => {
-      state.createLocalGameMenuOpen = action.payload;
+    toggleBoardInversion: (state: UIState) => {
+      state.boardInversion = !state.boardInversion;
     },
-    toggleCreateGameMenu: (state: UIState, action: PayloadAction<boolean>) => {
-      state.createGameMenuOpen = action.payload;
+    toggleCreateLocalGameMenu: (state: UIState) => {
+      state.createGameMenuOpen = false;
+      state.joinGameMenuOpen = false;
+      state.createLocalGameMenuOpen = !state.createLocalGameMenuOpen;
     },
-    toggleJoinGameMenu: (state: UIState, action: PayloadAction<boolean>) => {
-      state.joinGameMenuOpen = action.payload;
+    toggleCreateGameMenu: (state: UIState) => {
+      state.createLocalGameMenuOpen = false;
+      state.joinGameMenuOpen = false;
+      state.createGameMenuOpen = !state.createGameMenuOpen;
+    },
+    toggleJoinGameMenu: (state: UIState) => {
+      state.createLocalGameMenuOpen = false;
+      state.createGameMenuOpen = false;
+      state.joinGameMenuOpen = !state.joinGameMenuOpen;
+    },
+    closeAllMenus: (state: UIState) => {
+      state.createGameMenuOpen = false;
+      state.joinGameMenuOpen = false;
+      state.createLocalGameMenuOpen = false;
+    },
+    addPlayer: (state: UIState, action: PayloadAction<UserInfo>) => {
+      state.otherPlayers.push(action.payload);
     },
     removePlayer: (state: UIState, action: PayloadAction<UserInfo>) => {
       state.otherPlayers = state.otherPlayers.filter((a: UserInfo) => a.id !== action.payload.id);
     },
     updatePlayer: (state: UIState, action: PayloadAction<UserInfo>) => {
       state.player = action.payload;
+    },
+    swapLocalPlayer: (state: UIState) => {
+      const next = state.otherPlayers.pop();
+      if (next) {
+        state.otherPlayers.push(state.player);
+        state.player = next;
+      }
     },
     addAlert: (state: UIState, action: PayloadAction<Alert>) => {
       state.alerts.push(action.payload);
@@ -143,10 +167,14 @@ export const {
   joinedOnlineGame,
   updatePlayer,
   anotherPlayerJoinedGame,
+  addPlayer,
   removePlayer,
-  invertBoard,
+  swapLocalPlayer,
+  updateBoardInversion,
+  toggleBoardInversion,
   toggleCreateGameMenu,
   toggleJoinGameMenu,
   toggleCreateLocalGameMenu,
   updateGameStartState,
+  closeAllMenus,
 } = UISlice.actions;

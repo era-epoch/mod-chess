@@ -38,7 +38,7 @@ const CreateOnlineMenu = (): JSX.Element => {
         playerName: playerName,
       } as CreateGameEvent),
     );
-    dispatch(toggleCreateGameMenu(false));
+    dispatch(toggleCreateGameMenu());
   };
 
   const handleCreatorColourChange = (event: React.ChangeEvent<HTMLInputElement>) => {

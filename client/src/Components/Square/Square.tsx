@@ -10,12 +10,8 @@ interface Props {
 }
 
 const Square = (props: Props): JSX.Element => {
-  // let statusClasses = '';
-  // props.content.squareStatuses.forEach((s) => {
-  //   statusClasses += s + ' ';
-  // })
-
-  const icon = pieceIconMap.get(props.content.piece.pieceIdentifier);
+  const icon = pieceIconMap.get(props.content.piece.identifier);
+  console.log(`${props.content.piece.origin}`);
 
   return (
     <div
@@ -30,7 +26,9 @@ const Square = (props: Props): JSX.Element => {
           <div className="icon-wrapper">
             <FontAwesomeIcon
               icon={icon}
-              className={props.content.piece.owner === PlayerColour.dark ? 'dark-piece' : 'light-piece'}
+              className={`${props.content.piece.owner === PlayerColour.dark ? 'dark-piece' : 'light-piece'} ${
+                props.content.piece.origin
+              }`}
             />
           </div>
         ) : null}

@@ -4,6 +4,7 @@ import { uid } from 'react-uid';
 import { wsEmitMove } from '../../socketMiddleware';
 import { RootState } from '../../state/rootReducer';
 import { makeMove, selectSquare } from '../../state/slices/game/slice';
+import { OnlineGameStatus, swapLocalPlayer, toggleBoardInversion } from '../../state/slices/ui/slice';
 import { store } from '../../state/store';
 import { SquareStatus } from '../../types';
 import { isPlayersTurn } from '../../util';
@@ -14,6 +15,7 @@ const Board = (): JSX.Element => {
   const dispatch = useDispatch();
   const gameState = useSelector((state: RootState) => state.game);
   const boardInversion = useSelector((state: RootState) => state.ui.boardInversion);
+  const onlineGame = useSelector((state: RootState) => state.ui.onlineGameStatus);
   const player = useSelector((state: RootState) => state.ui.player);
 
   const board = gameState.board.slice(0);
@@ -25,6 +27,11 @@ const Board = (): JSX.Element => {
         dispatch(makeMove({ row: row, col: col }));
         const newGameState = store.getState().game;
         dispatch(wsEmitMove(newGameState));
+        // If local hotseat game, switch players
+        if (onlineGame === OnlineGameStatus.NONE) {
+          dispatch(swapLocalPlayer());
+          // dispatch(toggleBoardInversion());
+        }
       } else {
         dispatch(selectSquare({ row: row, col: col }));
       }

@@ -6,6 +6,8 @@ body {
   -moz-osx-font-smoothing: grayscale;
   background-color: whitesmoke;
   --primary: rgb(141, 23, 23);
+  --sidebar-width: 15vw;
+  --gamearea-width: 85vw;
 }
 
 code {

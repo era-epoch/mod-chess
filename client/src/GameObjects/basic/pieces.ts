@@ -1,15 +1,15 @@
-import { PlayerColour, Piece, Orientation, PieceStatus, PieceType, PieceIdentifier } from '../../types';
+import { PlayerColour, Piece, Orientation, PieceType, PieceIdentifier, PieceOrigin } from '../../types';
 import { genPID } from '../gameUtil';
 
 export const EmptySquare = (): Piece => {
   const piece: Piece = {
     owner: PlayerColour.neutral,
-    pieceIdentifier: PieceIdentifier.emptyBasic,
+    identifier: PieceIdentifier.empty,
+    origin: PieceOrigin.basic,
     nMoves: 0,
     orientation: Orientation.neutral,
-    // TODO: get rid of piecestatus as Set
-    pieceStatuses: new Set<PieceStatus>(),
-    pieceType: PieceType.empty,
+    statuses: [],
+    type: PieceType.empty,
     id: genPID(),
     name: '',
     onDeathFs: [],
@@ -20,14 +20,15 @@ export const EmptySquare = (): Piece => {
   return piece;
 };
 
-export const PawnBasic = (): Piece => {
+export const BasicPawn = (): Piece => {
   const piece: Piece = {
     owner: PlayerColour.neutral,
-    pieceIdentifier: PieceIdentifier.pawnBasic,
+    identifier: PieceIdentifier.basicPawn,
+    origin: PieceOrigin.basic,
     nMoves: 0,
     orientation: Orientation.neutral,
-    pieceStatuses: new Set<PieceStatus>(),
-    pieceType: PieceType.pawn,
+    statuses: [],
+    type: PieceType.pawn,
     id: genPID(),
     name: 'Pawn',
     onDeathFs: [],
@@ -38,14 +39,15 @@ export const PawnBasic = (): Piece => {
   return piece;
 };
 
-export const RookBasic = (): Piece => {
+export const BasicRook = (): Piece => {
   const piece: Piece = {
     owner: PlayerColour.neutral,
     nMoves: 0,
     orientation: Orientation.neutral,
-    pieceStatuses: new Set<PieceStatus>(),
-    pieceIdentifier: PieceIdentifier.rookBasic,
-    pieceType: PieceType.rook,
+    statuses: [],
+    identifier: PieceIdentifier.basicRook,
+    type: PieceType.rook,
+    origin: PieceOrigin.basic,
     id: genPID(),
     name: 'Rook',
     onDeathFs: [],
@@ -56,14 +58,15 @@ export const RookBasic = (): Piece => {
   return piece;
 };
 
-export const BishopBasic = (): Piece => {
+export const BasicBishop = (): Piece => {
   const piece: Piece = {
     owner: PlayerColour.neutral,
     nMoves: 0,
     orientation: Orientation.neutral,
-    pieceStatuses: new Set<PieceStatus>(),
-    pieceType: PieceType.bishop,
-    pieceIdentifier: PieceIdentifier.bishopBasic,
+    statuses: [],
+    type: PieceType.bishop,
+    identifier: PieceIdentifier.basicBishop,
+    origin: PieceOrigin.basic,
     id: genPID(),
     name: 'Bishop',
     onDeathFs: [],
@@ -74,14 +77,15 @@ export const BishopBasic = (): Piece => {
   return piece;
 };
 
-export const KnightBasic = (): Piece => {
+export const BasicKnight = (): Piece => {
   const piece: Piece = {
     owner: PlayerColour.neutral,
     nMoves: 0,
     orientation: Orientation.neutral,
-    pieceStatuses: new Set<PieceStatus>(),
-    pieceType: PieceType.knight,
-    pieceIdentifier: PieceIdentifier.knightBasic,
+    statuses: [],
+    type: PieceType.knight,
+    identifier: PieceIdentifier.basicKnight,
+    origin: PieceOrigin.basic,
     id: genPID(),
     name: 'Knight',
     onDeathFs: [],
@@ -92,14 +96,15 @@ export const KnightBasic = (): Piece => {
   return piece;
 };
 
-export const QueenBasic = (): Piece => {
+export const BasicQueen = (): Piece => {
   const piece: Piece = {
     owner: PlayerColour.neutral,
     nMoves: 0,
     orientation: Orientation.neutral,
-    pieceStatuses: new Set<PieceStatus>(),
-    pieceType: PieceType.queen,
-    pieceIdentifier: PieceIdentifier.queenBasic,
+    statuses: [],
+    type: PieceType.queen,
+    identifier: PieceIdentifier.basicQueen,
+    origin: PieceOrigin.basic,
     id: genPID(),
     name: 'Queen',
     onDeathFs: [],
@@ -110,14 +115,15 @@ export const QueenBasic = (): Piece => {
   return piece;
 };
 
-export const KingBasic = (): Piece => {
+export const BasicKing = (): Piece => {
   const piece: Piece = {
     owner: PlayerColour.neutral,
     nMoves: 0,
     orientation: Orientation.neutral,
-    pieceStatuses: new Set<PieceStatus>(),
-    pieceType: PieceType.king,
-    pieceIdentifier: PieceIdentifier.kingBasic,
+    statuses: [],
+    type: PieceType.king,
+    identifier: PieceIdentifier.basicKing,
+    origin: PieceOrigin.basic,
     id: genPID(),
     name: 'King',
     onDeathFs: [],

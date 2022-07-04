@@ -1,6 +1,6 @@
 import { GameState } from '../../state/slices/game/slice';
 import { MoveFunction, Piece, Move } from '../../types';
-import { pawnBasicMoveF } from '../basic/moveFunctions';
+import { basicPawnMoveF } from '../basic/moveFunctions';
 
 export const crimsonPawnMoveF: MoveFunction = (
   piece: Piece,
@@ -9,5 +9,5 @@ export const crimsonPawnMoveF: MoveFunction = (
   state: GameState,
   checkKing: boolean = true,
 ): Move[] => {
-  return pawnBasicMoveF(piece, row, col, state, checkKing);
+  return basicPawnMoveF(piece, row, col, state, checkKing);
 };

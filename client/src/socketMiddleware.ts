@@ -17,10 +17,8 @@ import { fullGameStateUpdate, GameState } from './state/slices/game/slice';
 import {
   addChatItemToLog,
   updatePlayer,
-  ChatItem,
   ChatItemType,
   createdOnlineGame,
-  invertBoard,
   joinedOnlineGame,
   toggleActiveGame,
   anotherPlayerJoinedGame,
@@ -29,8 +27,9 @@ import {
   AlertType,
   getAlertID,
   removeAlert,
-  toggleJoinGameMenu,
   updateGameStartState,
+  closeAllMenus,
+  updateBoardInversion,
 } from './state/slices/ui/slice';
 import { PlayerColour } from './types';
 
@@ -73,7 +72,7 @@ const socketMiddleware: Middleware = (api: MiddlewareAPI) => {
     api.dispatch(createdOnlineGame(event));
     api.dispatch(updateGameStartState(produce(event.game, () => {})));
     if (event.player.colour === PlayerColour.dark) {
-      api.dispatch(invertBoard(true));
+      api.dispatch(updateBoardInversion(true));
     }
     api.dispatch(toggleActiveGame(true));
     api.dispatch(fullGameStateUpdate(event.game));
@@ -89,13 +88,13 @@ const socketMiddleware: Middleware = (api: MiddlewareAPI) => {
 
   const handleGameJoined = (event: GameJoinedEvent) => {
     // TODO: better dispatch structure
-    api.dispatch(toggleJoinGameMenu(false));
+    api.dispatch(closeAllMenus());
     api.dispatch(updatePlayer(event.player));
     api.dispatch(joinedOnlineGame(event));
     api.dispatch(updateGameStartState(produce(event.game, () => {})));
     api.dispatch(toggleActiveGame(true));
     if (event.player.colour === PlayerColour.dark) {
-      api.dispatch(invertBoard(true));
+      api.dispatch(updateBoardInversion(true));
     }
     api.dispatch(fullGameStateUpdate(event.game));
     api.dispatch(
