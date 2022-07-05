@@ -44,16 +44,18 @@ export const filterMoves = (
   // Filter moves that put the king in danger & out-of-bounds moves
   moves = moves.filter((move: Move) => board[move.row][move.col].inBounds);
   if (checkKing) moves = moves.filter((move: Move) => validateMoveWRTKing(piece, row, col, state, move));
-  // Add en passant targeted flag to moves that target an en passant square
-  moves = moves.map((move: Move) => {
-    if (
-      board[move.row][move.col].squareStatuses.includes(SquareStatus.EPV) &&
-      board[move.row][move.col].enPassantOrigin?.owner !== piece.owner
-    ) {
-      move.flags.push(MoveFlag.KILL);
-    }
-    return move;
-  });
+  // Add kill flag to pawn moves that target an en passant square
+  if (piece.type === PieceType.pawn) {
+    moves = moves.map((move: Move) => {
+      if (
+        board[move.row][move.col].squareStatuses.includes(SquareStatus.EPV) &&
+        board[move.row][move.col].enPassantOrigin?.owner !== piece.owner
+      ) {
+        move.flags.push(MoveFlag.KILL);
+      }
+      return move;
+    });
+  }
   return moves;
 };
 

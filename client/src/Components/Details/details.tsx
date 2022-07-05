@@ -7,7 +7,7 @@ const pawn = (): JSX.Element => {
   return (
     <div className="detail">
       <div>
-        <span className="detail-title">Movement: </span>
+        <span className="detail-title">Pawn: </span>
         <span className="detail-info">
           A pawn can move forward to the unoccupied square immediately in front of it on the same file, or on its first
           move it can advance two squares along the same file, provided both squares are unoccupied. A pawn can capture
@@ -52,7 +52,7 @@ const knight = (): JSX.Element => {
   return (
     <div className="detail">
       <div>
-        <span className="detail-title">Movement: </span>
+        <span className="detail-title">Knight: </span>
         <span className="detail-info">
           A knight moves to any of the closest squares that are not on the same rank, file, or diagonal. (Thus the move
           forms an "L"-shape: two squares vertically and one square horizontally, or two squares horizontally and one
@@ -67,7 +67,7 @@ const bishop = (): JSX.Element => {
   return (
     <div className="detail">
       <div>
-        <span className="detail-title">Movement: </span>
+        <span className="detail-title">Bishop: </span>
         <span className="detail-info">
           A bishop can move any number of squares diagonally, but cannot leap over other pieces.
         </span>
@@ -80,7 +80,7 @@ const rook = (): JSX.Element => {
   return (
     <div className="detail">
       <div>
-        <span className="detail-title">Movement: </span>
+        <span className="detail-title">Rook: </span>
         <span className="detail-info">
           A rook can move any number of squares along a rank or file, but cannot leap over other pieces.
         </span>
@@ -93,7 +93,7 @@ const queen = (): JSX.Element => {
   return (
     <div className="detail">
       <div>
-        <span className="detail-title">Movement: </span>
+        <span className="detail-title">Queen: </span>
         <span className="detail-info">
           A queen combines the power of a rook and bishop and can move any number of squares along a rank, file, or
           diagonal, but cannot leap over other pieces.
@@ -107,7 +107,7 @@ const king = (): JSX.Element => {
   return (
     <div className="detail">
       <div>
-        <span className="detail-title">Movement: </span>
+        <span className="detail-title">King: </span>
         <span className="detail-info">
           The king moves one square in any direction. The king is the most valuable piece — attacks on the king must be
           immediately countered, and if this is impossible, immediate loss of the game ensues.

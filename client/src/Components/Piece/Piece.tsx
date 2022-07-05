@@ -11,10 +11,12 @@ const BoardPiece = (props: Props): JSX.Element => {
   const icon = pieceIconMap.get(props.piece.identifier);
   return (
     <div className="icon-wrapper">
-      <FontAwesomeIcon
-        icon={icon}
-        className={`${props.piece.owner === PlayerColour.dark ? 'dark-piece' : 'light-piece'} ${props.piece.origin}`}
-      />
+      {icon !== null ? (
+        <FontAwesomeIcon
+          icon={icon}
+          className={`${props.piece.owner === PlayerColour.dark ? 'dark-piece' : 'light-piece'} ${props.piece.origin}`}
+        />
+      ) : null}
     </div>
   );
 };

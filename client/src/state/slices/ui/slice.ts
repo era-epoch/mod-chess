@@ -122,6 +122,10 @@ const UISlice = createSlice({
         state.player = next;
       }
     },
+    clearPlayers: (state: UIState) => {
+      state.otherPlayers = [];
+      state.player = blankPlayer;
+    },
     addAlert: (state: UIState, action: PayloadAction<Alert>) => {
       state.alerts.push(action.payload);
     },
@@ -170,6 +174,7 @@ export const {
   addPlayer,
   removePlayer,
   swapLocalPlayer,
+  clearPlayers,
   updateBoardInversion,
   toggleBoardInversion,
   toggleCreateGameMenu,

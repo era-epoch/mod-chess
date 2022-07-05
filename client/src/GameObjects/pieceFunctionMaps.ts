@@ -1,5 +1,10 @@
-import { PieceIdentifier, MoveFunction, LifecycleFunction } from '../types';
-import { standardOnDeathF } from './basic/lifecycleFunctions';
+import { PieceIdentifier, MoveFunction, LifecycleFunction, CaptureFunction, DeathFunction } from '../types';
+import {
+  standardOnCaptureF,
+  standardOnDeathF,
+  standardOnTurnEndF,
+  standardOnTurnStartF,
+} from './basic/lifecycleFunctions';
 import {
   emptyMoveF,
   basicPawnMoveF,
@@ -24,7 +29,7 @@ export const moveFunctionMap = new Map<PieceIdentifier, MoveFunction>([
   [PieceIdentifier.crimsonPawn, crimsonPawnMoveF],
 ]);
 
-export const onDeathFunctionMap = new Map<PieceIdentifier, LifecycleFunction>([
+export const onDeathFunctionMap = new Map<PieceIdentifier, DeathFunction>([
   [PieceIdentifier.empty, standardOnDeathF],
   [PieceIdentifier.basicPawn, standardOnDeathF],
   [PieceIdentifier.basicRook, standardOnDeathF],
@@ -34,6 +39,42 @@ export const onDeathFunctionMap = new Map<PieceIdentifier, LifecycleFunction>([
   [PieceIdentifier.basicKing, standardOnDeathF],
   [PieceIdentifier.scourgePawn, standardOnDeathF],
   [PieceIdentifier.crimsonPawn, standardOnDeathF],
+]);
+
+export const onCaptureFunctionMap = new Map<PieceIdentifier, CaptureFunction>([
+  [PieceIdentifier.empty, standardOnCaptureF],
+  [PieceIdentifier.basicPawn, standardOnCaptureF],
+  [PieceIdentifier.basicRook, standardOnCaptureF],
+  [PieceIdentifier.basicKnight, standardOnCaptureF],
+  [PieceIdentifier.basicBishop, standardOnCaptureF],
+  [PieceIdentifier.basicQueen, standardOnCaptureF],
+  [PieceIdentifier.basicKing, standardOnCaptureF],
+  [PieceIdentifier.scourgePawn, standardOnCaptureF],
+  [PieceIdentifier.crimsonPawn, standardOnCaptureF],
+]);
+
+export const onTurnStartFunctionMap = new Map<PieceIdentifier, LifecycleFunction>([
+  [PieceIdentifier.empty, standardOnTurnStartF],
+  [PieceIdentifier.basicPawn, standardOnTurnStartF],
+  [PieceIdentifier.basicRook, standardOnTurnStartF],
+  [PieceIdentifier.basicKnight, standardOnTurnStartF],
+  [PieceIdentifier.basicBishop, standardOnTurnStartF],
+  [PieceIdentifier.basicQueen, standardOnTurnStartF],
+  [PieceIdentifier.basicKing, standardOnTurnStartF],
+  [PieceIdentifier.scourgePawn, standardOnTurnStartF],
+  [PieceIdentifier.crimsonPawn, standardOnTurnStartF],
+]);
+
+export const onTurnEndFunctionMap = new Map<PieceIdentifier, LifecycleFunction>([
+  [PieceIdentifier.empty, standardOnTurnEndF],
+  [PieceIdentifier.basicPawn, standardOnTurnEndF],
+  [PieceIdentifier.basicRook, standardOnTurnEndF],
+  [PieceIdentifier.basicKnight, standardOnTurnEndF],
+  [PieceIdentifier.basicBishop, standardOnTurnEndF],
+  [PieceIdentifier.basicQueen, standardOnTurnEndF],
+  [PieceIdentifier.basicKing, standardOnTurnEndF],
+  [PieceIdentifier.scourgePawn, standardOnTurnEndF],
+  [PieceIdentifier.crimsonPawn, standardOnTurnEndF],
 ]);
 
 export default moveFunctionMap;

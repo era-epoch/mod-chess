@@ -14,6 +14,7 @@ import {
   addPlayer,
   ChatItem,
   ChatItemType,
+  clearPlayers,
   closeAllMenus,
   toggleActiveGame,
   toggleCreateGameMenu,
@@ -33,6 +34,7 @@ const LeftBar = (): JSX.Element => {
   const dispatch = useDispatch();
   const startLocalGame = useCallback(() => {
     dispatch(toggleActiveGame(true));
+    dispatch(clearPlayers());
     dispatch(
       updatePlayer({
         colour: PlayerColour.light,
@@ -57,14 +59,16 @@ const LeftBar = (): JSX.Element => {
           { player: PlayerColour.light, contents: [] },
           { player: PlayerColour.dark, contents: [] },
         ],
+        lightRunes: 0,
+        darkRunes: 1, // Dark starts with 1 rune to balance going 2nd
         winner: null,
         creatorColour: null,
         timedGame: false,
         gameTime: 0,
         turnTimeBack: 0,
         moveHistory: [],
-        lightRunes: 1,
-        darkRunes: 1,
+        lightRuneSpawns: 1,
+        darkRuneSpawns: 1,
         runeDuration: Infinity,
         runeSpawnTurn: 0,
       } as GameState),

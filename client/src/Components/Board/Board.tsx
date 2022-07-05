@@ -23,8 +23,10 @@ const Board = (): JSX.Element => {
     if (gameState.selectedRow !== null && gameState.selectedCol !== null) {
       if (gameState.board[gameState.selectedRow][gameState.selectedCol].piece.owner === player.colour) {
         dispatch(makeMove({ row: row, col: col }));
-        const newGameState = store.getState().game;
-        dispatch(wsEmitMove(newGameState));
+        if (onlineGame === OnlineGameStatus.SUCCESS) {
+          const newGameState = store.getState().game;
+          dispatch(wsEmitMove(newGameState));
+        }
         // If local hotseat game, switch players
         if (onlineGame === OnlineGameStatus.NONE) {
           dispatch(swapLocalPlayer());

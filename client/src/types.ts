@@ -128,6 +128,10 @@ export interface Piece {
 
 export type MoveFunction = (piece: Piece, row: number, col: number, state: GameState, checkKing: boolean) => Move[];
 
+export type DeathFunction = (piece: Piece, row: number, col: number, state: GameState, capturer?: Piece) => void;
+
+export type CaptureFunction = (piece: Piece, row: number, col: number, state: GameState, target: Piece) => void;
+
 export type LifecycleFunction = (piece: Piece, row: number, col: number, state: GameState) => void;
 
 export interface Graveyard {

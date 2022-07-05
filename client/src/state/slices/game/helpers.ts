@@ -1,6 +1,10 @@
 import { EmptySquare } from '../../../GameObjects/basic/pieces';
 import { kingInCheck } from '../../../GameObjects/gameUtil';
-import moveFunctionMap from '../../../GameObjects/pieceFunctionMaps';
+import moveFunctionMap, {
+  onCaptureFunctionMap,
+  onDeathFunctionMap,
+  onTurnStartFunctionMap,
+} from '../../../GameObjects/pieceFunctionMaps';
 import {
   Piece,
   Move,
@@ -56,6 +60,7 @@ export const denoteMove = (state: GameState, piece: Piece, move: Move) => {
 
 export const movePiece = (gameState: GameState, piece: Piece, move: Move) => {
   // piece.onMove();
+
   // Castle Logic
   if (move.flags.includes(MoveFlag.CSTL)) {
     let kingPos = 0;
@@ -84,20 +89,22 @@ export const movePiece = (gameState: GameState, piece: Piece, move: Move) => {
       gameState.board[move.row][move.col + i].piece = EmptySquare();
     }
   }
+
   // En passant capture logic
   if (
     gameState.board[move.row][move.col].squareStatuses.includes(SquareStatus.EPV) &&
-    gameState.board[move.row][move.col].enPassantOrigin?.owner !== piece.owner
+    gameState.board[move.row][move.col].enPassantOrigin?.owner !== piece.owner &&
+    piece.type === PieceType.pawn
   ) {
     for (let i = 0; i < gameState.board.length; i++) {
       for (let j = 0; j < gameState.board[i].length; j++) {
         if (gameState.board[i][j].piece.id === gameState.board[move.row][move.col].enPassantOrigin?.id) {
-          // gameState.board[i][j].piece.onDeath()
-          removePieceAtLocation(gameState, i, j);
+          capturePieceAtLocation(gameState, i, j);
         }
       }
     }
   }
+
   // Post EP cleanup
   for (let i = 0; i < gameState.board.length; i++) {
     for (let j = 0; j < gameState.board[i].length; j++) {
@@ -105,6 +112,7 @@ export const movePiece = (gameState: GameState, piece: Piece, move: Move) => {
       gameState.board[i][j].enPassantOrigin = null;
     }
   }
+
   // En passant logic
   if (move.flags.includes(MoveFlag.EP)) {
     let pawnPos = 0;
@@ -129,25 +137,40 @@ export const movePiece = (gameState: GameState, piece: Piece, move: Move) => {
   gameState.board[move.row][move.col].piece.nMoves++;
 };
 
-export const removePieceAtLocation = (gameState: GameState, row: number, col: number) => {
-  // .onDeath();
-  const player = gameState.board[row][col].piece.owner;
-  const graveyard = gameState.graveyards.find((g: Graveyard) => g.player === (player + 1) % 2);
-  if (gameState.board[row][col].piece.type !== PieceType.empty) {
-    graveyard?.contents.push(gameState.board[row][col].piece);
+export const capturePieceAtLocation = (gameState: GameState, row: number, col: number, capturer?: Piece) => {
+  const target = gameState.board[row][col].piece;
+  const deathF = onDeathFunctionMap.get(target.identifier);
+  if (capturer) {
+    const captureF = onCaptureFunctionMap.get(capturer.identifier);
+    if (captureF) captureF(capturer, row, col, gameState, target);
+    if (deathF) deathF(target, row, col, gameState, capturer);
+  } else {
+    if (deathF) deathF(target, row, col, gameState);
   }
-  gameState.board[row][col].piece = EmptySquare();
 };
 
 export const nextTurn = (state: GameState) => {
+  endTurn(state);
   state.turn++;
+  startTurn(state);
+};
+
+export const startTurn = (state: GameState) => {
   if (
     state.turn === state.runeSpawnTurn ||
     (state.turn > state.runeSpawnTurn && (state.turn - state.runeSpawnTurn) % state.runeDuration === 0)
   ) {
     spawnNewRunes(state);
   }
+  for (let i = 0; i < state.board.length; i++) {
+    for (let j = 0; j < state.board[i].length; j++) {
+      const f = onTurnStartFunctionMap.get(state.board[i][j].piece.identifier);
+      if (f) f(state.board[i][j].piece, i, j, state);
+    }
+  }
 };
+
+export const endTurn = (state: GameState) => {};
 
 export const spawnNewRunes = (state: GameState) => {
   // Remove existing runes
@@ -157,12 +180,12 @@ export const spawnNewRunes = (state: GameState) => {
     }
   }
   // Spawn new runes in random unoccupied squares in the middle
-  for (let i = 0; i < state.lightRunes; i++) {
+  for (let i = 0; i < state.lightRuneSpawns; i++) {
     const row = 5;
     const col = Math.floor(Math.random() * (8 - 1 + 1) + 1);
     state.board[row][col].squareStatuses.push(SquareStatus.RUNE);
   }
-  for (let i = 0; i < state.darkRunes; i++) {
+  for (let i = 0; i < state.darkRuneSpawns; i++) {
     const row = 4;
     const col = Math.floor(Math.random() * (8 - 1 + 1) + 1);
     state.board[row][col].squareStatuses.push(SquareStatus.RUNE);

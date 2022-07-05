@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { EmptySquare } from '../../../GameObjects/basic/pieces';
 import { Graveyard, Move, MoveFlag, PlayerColour, SquareContents, SquareStatus } from '../../../types';
 import {
-  removePieceAtLocation,
+  capturePieceAtLocation,
   movePiece,
   isGameover,
   handleGameover,
@@ -20,14 +20,16 @@ export interface GameState {
   selectedRow: number | null;
   selectedCol: number | null;
   graveyards: Graveyard[];
+  lightRunes: number;
+  darkRunes: number;
   winner: PlayerColour | null; // null = not finished, PLayer.neutral = Draw
   creatorColour: PlayerColour | null;
   timedGame: boolean;
   gameTime: number;
   turnTimeBack: number;
   moveHistory: ChatItem[];
-  lightRunes: number;
-  darkRunes: number;
+  lightRuneSpawns: number;
+  darkRuneSpawns: number;
   runeDuration: number;
   runeSpawnTurn: number;
 }
@@ -41,14 +43,16 @@ const initialGameState: GameState = {
     { player: PlayerColour.light, contents: [] },
     { player: PlayerColour.dark, contents: [] },
   ],
+  lightRunes: 0,
+  darkRunes: 0,
   winner: null,
   creatorColour: null,
   timedGame: false,
   gameTime: 10,
   turnTimeBack: 1,
   moveHistory: [],
-  lightRunes: 0,
-  darkRunes: 0,
+  lightRuneSpawns: 0,
+  darkRuneSpawns: 0,
   runeDuration: 0,
   runeSpawnTurn: 0,
 };
@@ -64,14 +68,16 @@ const gameSlice = createSlice({
       state.selectedCol = action.payload.selectedCol;
       state.selectedRow = action.payload.selectedRow;
       state.turn = action.payload.turn;
+      state.lightRunes = action.payload.lightRunes;
+      state.darkRunes = action.payload.darkRunes;
       state.winner = action.payload.winner;
       state.creatorColour = action.payload.creatorColour;
       state.timedGame = action.payload.timedGame;
       state.gameTime = action.payload.gameTime;
       state.turnTimeBack = action.payload.turnTimeBack;
       state.moveHistory = action.payload.moveHistory;
-      state.lightRunes = action.payload.lightRunes;
-      state.darkRunes = action.payload.darkRunes;
+      state.lightRuneSpawns = action.payload.lightRuneSpawns;
+      state.darkRuneSpawns = action.payload.darkRuneSpawns;
       state.runeDuration = action.payload.runeDuration;
       state.runeSpawnTurn = action.payload.runeSpawnTurn;
     },
@@ -83,7 +89,6 @@ const gameSlice = createSlice({
     makeMove: (state: GameState, action: PayloadAction<{ row: number; col: number }>) => {
       if (state.selectedRow === null || state.selectedCol === null) return;
       const pieceToMove = state.board[state.selectedRow][state.selectedCol].piece;
-      // TODO: Pass in the actual move to reducer
       const moveFunction = moveFunctionMap.get(pieceToMove.identifier);
       if (!moveFunction) return;
       const move = moveFunction(pieceToMove, state.selectedRow, state.selectedCol, state, true).find(
@@ -95,7 +100,7 @@ const gameSlice = createSlice({
       // LEAVING
       originSquare.piece = EmptySquare();
       // REMOVING TARGET
-      removePieceAtLocation(state, move.row, move.col);
+      capturePieceAtLocation(state, move.row, move.col);
       // ENTERING & EFFECTS
       movePiece(state, pieceToMove, move);
       // CLEANUP
@@ -108,14 +113,13 @@ const gameSlice = createSlice({
           state.board[i][j].squareStatuses = state.board[i][j].squareStatuses.filter((s) => s !== SquareStatus.HLK);
         }
       }
-      //.onTurnEnd()
-      // if () .onRoundEnd()
       // Write an algebraic representation of the move to the history
       denoteMove(state, pieceToMove, move);
-
+      // Check if any gameover conditions are met
       if (isGameover(state, pieceToMove.owner)) {
         handleGameover(state, pieceToMove.owner);
       } else {
+        // If not, proceed to next turn
         nextTurn(state);
       }
       state.selectedRow = null;
@@ -127,7 +131,6 @@ const gameSlice = createSlice({
       const movesToHighlight: Move[] = [];
       const moveFunction = moveFunctionMap.get(state.board[row][col].piece.identifier);
       if (moveFunction) movesToHighlight.push(...moveFunction(state.board[row][col].piece, row, col, state, true));
-
       const selectedSameSquare = state.selectedRow === row && state.selectedCol === col;
       for (let i = 0; i < state.board.length; i++) {
         for (let j = 0; j < state.board[i].length; j++) {

@@ -13,6 +13,9 @@ import TurnCounter from './TurnCounter/TurnCounter';
 const GameAreaInfo = (): JSX.Element => {
   const player = useSelector((state: RootState) => state.ui.player);
   const otherPlayers = useSelector((state: RootState) => state.ui.otherPlayers);
+  const allPlayers = otherPlayers.slice(0);
+  allPlayers.push(player);
+  allPlayers.sort((a, b) => a.colour - b.colour);
   return (
     <div className="game-area-info">
       <InfoTitle />
@@ -21,10 +24,7 @@ const GameAreaInfo = (): JSX.Element => {
       <ChatBox />
       <ChatBoxInput />
       <div className="player-infos">
-        <div>
-          <PlayerInfo user={player} />
-        </div>
-        {otherPlayers.map((p: UserInfo) => {
+        {allPlayers.map((p: UserInfo) => {
           return (
             <div key={uid(p)}>
               <PlayerInfo user={p} />

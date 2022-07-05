@@ -6,6 +6,7 @@ import { RootState } from '../../../../state/rootReducer';
 import { Piece, PieceType, PlayerColour } from '../../../../types';
 import BoardPiece from '../../../Piece/Piece';
 import './Inspector.css';
+import { uid } from 'react-uid';
 
 const Inspector = (): JSX.Element => {
   const row = useSelector((state: RootState) => state.game.selectedRow);
@@ -28,7 +29,7 @@ const Inspector = (): JSX.Element => {
           <div className="inspector-details">
             <div className="inspector-name">{piece.name}</div>
             {infoBits?.map((i: Function) => {
-              return i();
+              return <div key={uid(i)}>i()</div>;
             })}
           </div>
         </div>
