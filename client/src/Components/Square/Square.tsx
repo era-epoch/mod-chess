@@ -1,4 +1,4 @@
-import { faChessPawn, faCircle, faCrown, faSkull } from '@fortawesome/free-solid-svg-icons';
+import { faBolt, faChessPawn, faCircle, faCrown, faMagic, faSkull } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { SquareContents, SquareStatus } from '../../types';
 import BoardPiece from '../Piece/Piece';
@@ -42,6 +42,11 @@ const Square = (props: Props): JSX.Element => {
         ) : null}
         {props.content.inBounds && props.content.squareStatuses.includes(SquareStatus.SEL) ? (
           <div className="square-selected"></div>
+        ) : null}
+        {props.content.squareStatuses.includes(SquareStatus.RUNE) ? (
+          <div className={`icon-wrapper rune`}>
+            <FontAwesomeIcon icon={faBolt} />
+          </div>
         ) : null}
       </div>
     </div>

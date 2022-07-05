@@ -1,15 +1,20 @@
-.light-piece.basic {
+.light-piece,
+.dark-piece {
+  z-index: 3;
+}
+
+.light-piece.Basic {
   color: var(--basic-light);
 }
 
-.dark-piece.basic {
+.dark-piece.Basic {
   color: var(--basic-dark);
 }
 
-.light-piece.scourge {
+.light-piece.Scourge {
   color: var(--scourge-light);
 }
 
-.dark-piece.scourge {
+.dark-piece.Scourge {
   color: var(--scourge-dark);
 }

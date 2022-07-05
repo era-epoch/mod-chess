@@ -13,7 +13,7 @@ import {
   GameCreatedInExistingRoomEvent,
 } from '../../ws/events';
 import { RootState } from './state/rootReducer';
-import { fullGameStateUpdate, GameState } from './state/slices/game/slice';
+import { fullGameStateUpdate, GameState, setUpGame } from './state/slices/game/slice';
 import {
   addChatItemToLog,
   updatePlayer,
@@ -76,6 +76,7 @@ const socketMiddleware: Middleware = (api: MiddlewareAPI) => {
     }
     api.dispatch(toggleActiveGame(true));
     api.dispatch(fullGameStateUpdate(event.game));
+    api.dispatch(setUpGame());
     api.dispatch(
       addChatItemToLog({
         content: `Welcome, ${event.player.name}. You've created an online game! The code to join your game is ${event.gameId}`,
@@ -97,6 +98,7 @@ const socketMiddleware: Middleware = (api: MiddlewareAPI) => {
       api.dispatch(updateBoardInversion(true));
     }
     api.dispatch(fullGameStateUpdate(event.game));
+    api.dispatch(setUpGame());
     api.dispatch(
       addChatItemToLog({
         content: `You've joined ${event.otherPlayers[0].name}'s online game!`,

@@ -25,13 +25,13 @@ export enum SquareStatus {
 export enum PieceStatus {}
 
 export enum PieceType {
-  'empty' = 0,
-  'pawn' = 1,
-  'rook' = 2,
-  'knight' = 3,
-  'bishop' = 4,
-  'queen' = 5,
-  'king' = 6,
+  empty = 'Empty Square',
+  pawn = 'Pawn',
+  rook = 'Rook',
+  knight = 'Knight',
+  bishop = 'Bishop',
+  queen = 'Queen',
+  king = 'King',
 }
 
 export const typeAlgebriacNotationMap = new Map<PieceType, string>([
@@ -51,9 +51,9 @@ export enum MoveFlag {
 }
 
 export enum PieceOrigin {
-  basic = 'basic',
-  scourge = 'scourge',
-  crimson = 'crimson',
+  basic = 'Basic',
+  scourge = 'Scourge',
+  crimson = 'Crimson',
 }
 
 export enum PieceIdentifier {

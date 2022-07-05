@@ -1,0 +1,13 @@
+.detail {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.detail-title {
+  font-weight: bold;
+}
+
+.detail-list {
+  padding-left: 2rem;
+}

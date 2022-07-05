@@ -1,7 +1,15 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { EmptySquare } from '../../../GameObjects/basic/pieces';
 import { Graveyard, Move, MoveFlag, PlayerColour, SquareContents, SquareStatus } from '../../../types';
-import { removePieceAtLocation, movePiece, isGameover, handleGameover, denoteMove } from './helpers';
+import {
+  removePieceAtLocation,
+  movePiece,
+  isGameover,
+  handleGameover,
+  denoteMove,
+  nextTurn,
+  spawnNewRunes,
+} from './helpers';
 import emptyBoard from '../../../GameObjects/boards/emptyBoard';
 import moveFunctionMap from '../../../GameObjects/pieceFunctionMaps';
 import { ChatItem } from '../ui/slice';
@@ -18,6 +26,10 @@ export interface GameState {
   gameTime: number;
   turnTimeBack: number;
   moveHistory: ChatItem[];
+  lightRunes: number;
+  darkRunes: number;
+  runeDuration: number;
+  runeSpawnTurn: number;
 }
 
 const initialGameState: GameState = {
@@ -35,6 +47,10 @@ const initialGameState: GameState = {
   gameTime: 10,
   turnTimeBack: 1,
   moveHistory: [],
+  lightRunes: 0,
+  darkRunes: 0,
+  runeDuration: 0,
+  runeSpawnTurn: 0,
 };
 
 // Reducer
@@ -54,6 +70,15 @@ const gameSlice = createSlice({
       state.gameTime = action.payload.gameTime;
       state.turnTimeBack = action.payload.turnTimeBack;
       state.moveHistory = action.payload.moveHistory;
+      state.lightRunes = action.payload.lightRunes;
+      state.darkRunes = action.payload.darkRunes;
+      state.runeDuration = action.payload.runeDuration;
+      state.runeSpawnTurn = action.payload.runeSpawnTurn;
+    },
+    setUpGame: (state: GameState) => {
+      if (state.runeSpawnTurn === 0) {
+        spawnNewRunes(state);
+      }
     },
     makeMove: (state: GameState, action: PayloadAction<{ row: number; col: number }>) => {
       if (state.selectedRow === null || state.selectedCol === null) return;
@@ -88,8 +113,11 @@ const gameSlice = createSlice({
       // Write an algebraic representation of the move to the history
       denoteMove(state, pieceToMove, move);
 
-      if (isGameover(state, pieceToMove.owner)) handleGameover(state, pieceToMove.owner);
-      state.turn++;
+      if (isGameover(state, pieceToMove.owner)) {
+        handleGameover(state, pieceToMove.owner);
+      } else {
+        nextTurn(state);
+      }
       state.selectedRow = null;
       state.selectedCol = null;
     },
@@ -149,4 +177,4 @@ const gameSlice = createSlice({
   },
 });
 export default gameSlice.reducer;
-export const { makeMove, selectSquare, fullGameStateUpdate } = gameSlice.actions;
+export const { makeMove, selectSquare, fullGameStateUpdate, setUpGame } = gameSlice.actions;

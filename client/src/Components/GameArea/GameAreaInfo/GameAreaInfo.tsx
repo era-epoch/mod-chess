@@ -6,6 +6,7 @@ import ChatBox from './ChatBox/ChatBox';
 import ChatBoxInput from './ChatBoxInput/ChatBoxInput';
 import './GameAreaInfo.css';
 import InfoTitle from './InfoTitle/InfoTitle';
+import Inspector from './Inspector/Inspector';
 import PlayerInfo from './PlayerInfo/PlayerInfo';
 import TurnCounter from './TurnCounter/TurnCounter';
 
@@ -16,6 +17,7 @@ const GameAreaInfo = (): JSX.Element => {
     <div className="game-area-info">
       <InfoTitle />
       <TurnCounter />
+      <Inspector />
       <ChatBox />
       <ChatBoxInput />
       <div className="player-infos">

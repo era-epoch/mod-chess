@@ -20,7 +20,7 @@ import {
   toggleJoinGameMenu,
   updatePlayer,
 } from '../../state/slices/ui/slice';
-import { fullGameStateUpdate, GameState } from '../../state/slices/game/slice';
+import { fullGameStateUpdate, GameState, setUpGame } from '../../state/slices/game/slice';
 import testBoard from '../../GameObjects/boards/testBoard';
 import { wsDisconnect } from '../../socketMiddleware';
 import { PlayerColour } from '../../types';
@@ -63,6 +63,10 @@ const LeftBar = (): JSX.Element => {
         gameTime: 0,
         turnTimeBack: 0,
         moveHistory: [],
+        lightRunes: 1,
+        darkRunes: 1,
+        runeDuration: Infinity,
+        runeSpawnTurn: 0,
       } as GameState),
     );
     dispatch(
@@ -73,6 +77,7 @@ const LeftBar = (): JSX.Element => {
         type: ChatItemType.GAME,
       } as ChatItem),
     );
+    dispatch(setUpGame());
   }, [dispatch]);
 
   const handleHomeClicked = () => {

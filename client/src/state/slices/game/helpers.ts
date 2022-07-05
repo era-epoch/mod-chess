@@ -139,6 +139,36 @@ export const removePieceAtLocation = (gameState: GameState, row: number, col: nu
   gameState.board[row][col].piece = EmptySquare();
 };
 
+export const nextTurn = (state: GameState) => {
+  state.turn++;
+  if (
+    state.turn === state.runeSpawnTurn ||
+    (state.turn > state.runeSpawnTurn && (state.turn - state.runeSpawnTurn) % state.runeDuration === 0)
+  ) {
+    spawnNewRunes(state);
+  }
+};
+
+export const spawnNewRunes = (state: GameState) => {
+  // Remove existing runes
+  for (let i = 0; i < state.board.length; i++) {
+    for (let j = 0; j < state.board[i].length; j++) {
+      state.board[i][j].squareStatuses = state.board[i][j].squareStatuses.filter((s) => s !== SquareStatus.RUNE);
+    }
+  }
+  // Spawn new runes in random unoccupied squares in the middle
+  for (let i = 0; i < state.lightRunes; i++) {
+    const row = 5;
+    const col = Math.floor(Math.random() * (8 - 1 + 1) + 1);
+    state.board[row][col].squareStatuses.push(SquareStatus.RUNE);
+  }
+  for (let i = 0; i < state.darkRunes; i++) {
+    const row = 4;
+    const col = Math.floor(Math.random() * (8 - 1 + 1) + 1);
+    state.board[row][col].squareStatuses.push(SquareStatus.RUNE);
+  }
+};
+
 export const isGameover = (gameState: GameState, player: PlayerColour): boolean => {
   const opponent: PlayerColour = (player + 1) % 2;
   const validMoves: Move[] = [];

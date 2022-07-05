@@ -15,7 +15,6 @@
 }
 
 .icon-stack .icon-wrapper {
-  z-index: 2;
   grid-row: 1;
   grid-column: 1;
   display: flex;
@@ -29,23 +28,21 @@
 }
 
 .light-square {
-  /* background-color: #d8b589; */
   background-color: rgba(0, 0, 0, 0.25);
 }
 
 .dark-square {
-  /* background-color: rgb(141, 23, 23); */
   background-color: rgba(0, 0, 0, 0.6);
 }
 
 .square-highlighted {
-  z-index: 3;
+  z-index: 5;
   color: rgba(255, 255, 0, 0.75);
   font-size: 1.25rem;
 }
 
 .square-highlighted-kill {
-  z-index: 3;
+  z-index: 5;
   color: rgba(255, 0, 0, 0.75);
   font-size: 1.25rem;
 }
@@ -65,4 +62,10 @@
   background-color: transparent;
   color: transparent;
   box-shadow: none;
+}
+
+.rune {
+  color: rgba(0, 255, 255, 0.75);
+  font-size: 2rem;
+  z-index: 4;
 }
