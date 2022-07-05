@@ -3,6 +3,7 @@ import { kingInCheck } from '../../../GameObjects/gameUtil';
 import moveFunctionMap, {
   onCaptureFunctionMap,
   onDeathFunctionMap,
+  onTurnEndFunctionMap,
   onTurnStartFunctionMap,
 } from '../../../GameObjects/pieceFunctionMaps';
 import {
@@ -99,7 +100,7 @@ export const movePiece = (gameState: GameState, piece: Piece, move: Move) => {
     for (let i = 0; i < gameState.board.length; i++) {
       for (let j = 0; j < gameState.board[i].length; j++) {
         if (gameState.board[i][j].piece.id === gameState.board[move.row][move.col].enPassantOrigin?.id) {
-          capturePieceAtLocation(gameState, i, j);
+          capturePieceAtLocation(gameState, i, j, piece);
         }
       }
     }
@@ -170,7 +171,14 @@ export const startTurn = (state: GameState) => {
   }
 };
 
-export const endTurn = (state: GameState) => {};
+export const endTurn = (state: GameState) => {
+  for (let i = 0; i < state.board.length; i++) {
+    for (let j = 0; j < state.board[i].length; j++) {
+      const f = onTurnEndFunctionMap.get(state.board[i][j].piece.identifier);
+      if (f) f(state.board[i][j].piece, i, j, state);
+    }
+  }
+};
 
 export const spawnNewRunes = (state: GameState) => {
   // Remove existing runes

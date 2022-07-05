@@ -14,12 +14,18 @@
   height: 100%;
 }
 
-.icon-stack .icon-wrapper {
-  grid-row: 1;
-  grid-column: 1;
+.icon-wrapper {
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.icon-stack .icon-wrapper {
+  grid-row: 1;
+  grid-column: 1;
 }
 
 .active-square:hover {

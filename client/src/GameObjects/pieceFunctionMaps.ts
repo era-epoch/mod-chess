@@ -15,7 +15,7 @@ import {
   basicKingMoveF,
 } from './basic/moveFunctions';
 import { crimsonPawnMoveF } from './crimson/functions';
-import { scourgePawnMoveF } from './scourge/functions';
+import { scourgePawnMoveF, scourgePawnOnDeathF } from './scourge/functions';
 
 export const moveFunctionMap = new Map<PieceIdentifier, MoveFunction>([
   [PieceIdentifier.empty, emptyMoveF],
@@ -37,7 +37,7 @@ export const onDeathFunctionMap = new Map<PieceIdentifier, DeathFunction>([
   [PieceIdentifier.basicBishop, standardOnDeathF],
   [PieceIdentifier.basicQueen, standardOnDeathF],
   [PieceIdentifier.basicKing, standardOnDeathF],
-  [PieceIdentifier.scourgePawn, standardOnDeathF],
+  [PieceIdentifier.scourgePawn, scourgePawnOnDeathF],
   [PieceIdentifier.crimsonPawn, standardOnDeathF],
 ]);
 

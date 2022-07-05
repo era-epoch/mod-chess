@@ -100,7 +100,7 @@ const gameSlice = createSlice({
       // LEAVING
       originSquare.piece = EmptySquare();
       // REMOVING TARGET
-      capturePieceAtLocation(state, move.row, move.col);
+      capturePieceAtLocation(state, move.row, move.col, pieceToMove);
       // ENTERING & EFFECTS
       movePiece(state, pieceToMove, move);
       // CLEANUP

@@ -1,6 +1,7 @@
+import { faSkullCrossbones } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import pieceIconMap from '../../GameObjects/pieceIconMap';
-import { Piece, PlayerColour } from '../../types';
+import { Piece, PieceStatus, PlayerColour } from '../../types';
 import './Piece.css';
 
 interface Props {
@@ -17,6 +18,15 @@ const BoardPiece = (props: Props): JSX.Element => {
           className={`${props.piece.owner === PlayerColour.dark ? 'dark-piece' : 'light-piece'} ${props.piece.origin}`}
         />
       ) : null}
+      <div className="statuses">
+        {props.piece.statuses.map((s: PieceStatus) => {
+          if (s === PieceStatus.PSN) {
+            return <FontAwesomeIcon icon={faSkullCrossbones} className="status-poison" />;
+          } else {
+            return null;
+          }
+        })}
+      </div>
     </div>
   );
 };

@@ -22,7 +22,9 @@ export enum SquareStatus {
   RUNE = 'rune',
 }
 
-export enum PieceStatus {}
+export enum PieceStatus {
+  PSN = 'poisoned',
+}
 
 export enum PieceType {
   empty = 'Empty Square',

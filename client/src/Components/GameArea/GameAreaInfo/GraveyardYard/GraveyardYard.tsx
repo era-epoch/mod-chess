@@ -14,7 +14,11 @@ const GraveyardYard = (props: Props): JSX.Element => {
         <p>No captures</p>
       ) : (
         props.graveyard.contents.map((piece: Piece) => {
-          return <BoardPiece key={uid(piece)} piece={piece} />;
+          return (
+            <div className="graveyard-icon-wrapper">
+              <BoardPiece key={uid(piece)} piece={piece} />
+            </div>
+          );
         })
       )}
     </div>

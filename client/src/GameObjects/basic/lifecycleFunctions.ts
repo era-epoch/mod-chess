@@ -1,3 +1,4 @@
+import { capturePieceAtLocation } from '../../state/slices/game/helpers';
 import { GameState } from '../../state/slices/game/slice';
 import {
   CaptureFunction,
@@ -5,6 +6,7 @@ import {
   Graveyard,
   LifecycleFunction,
   Piece,
+  PieceStatus,
   PieceType,
   PlayerColour,
   SquareStatus,
@@ -56,7 +58,6 @@ export const standardOnTurnStartF: LifecycleFunction = (
       state.darkRunes++;
     }
   }
-  return;
 };
 
 export const standardOnTurnEndF: LifecycleFunction = (
@@ -65,7 +66,16 @@ export const standardOnTurnEndF: LifecycleFunction = (
   col: number,
   state: GameState,
 ): void => {
-  return;
+  // Check to see if the piece dies from poison
+  let poisonStacks = 0;
+  for (let i = 0; i < piece.statuses.length; i++) {
+    if (piece.statuses[i] === PieceStatus.PSN) {
+      poisonStacks++;
+    }
+  }
+  if (poisonStacks >= 3) {
+    capturePieceAtLocation(state, row, col);
+  }
 };
 
 export const standardOnRoundEndF: LifecycleFunction = (

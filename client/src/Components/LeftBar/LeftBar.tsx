@@ -60,7 +60,7 @@ const LeftBar = (): JSX.Element => {
           { player: PlayerColour.dark, contents: [] },
         ],
         lightRunes: 0,
-        darkRunes: 1, // Dark starts with 1 rune to balance going 2nd
+        darkRunes: 2, // Dark starts with 2 rune to balance going 2nd
         winner: null,
         creatorColour: null,
         timedGame: false,
