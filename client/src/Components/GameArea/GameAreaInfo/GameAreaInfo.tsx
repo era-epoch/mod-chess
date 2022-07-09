@@ -18,7 +18,7 @@ const GameAreaInfo = (): JSX.Element => {
   allPlayers.sort((a, b) => a.colour - b.colour);
   return (
     <div className="game-area-info">
-      <InfoTitle />
+      {/* <InfoTitle /> */}
       <TurnCounter />
       <Inspector />
       <ChatBox />

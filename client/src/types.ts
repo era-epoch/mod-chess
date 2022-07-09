@@ -136,6 +136,8 @@ export type CaptureFunction = (piece: Piece, row: number, col: number, state: Ga
 
 export type LifecycleFunction = (piece: Piece, row: number, col: number, state: GameState) => void;
 
+export type AbilityFunction = (source: Piece, targetRow: number, targetCol: number, state: GameState) => void;
+
 export interface Graveyard {
   player: PlayerColour;
   contents: Piece[];

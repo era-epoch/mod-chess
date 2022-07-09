@@ -13,6 +13,7 @@ import {
 import emptyBoard from '../../../GameObjects/boards/emptyBoard';
 import moveFunctionMap from '../../../GameObjects/pieceFunctionMaps';
 import { ChatItem } from '../ui/slice';
+import { abilityFunctionMap, AbilityName } from '../../../GameObjects/abilityMap';
 
 export interface GameState {
   board: SquareContents[][];
@@ -32,6 +33,7 @@ export interface GameState {
   darkRuneSpawns: number;
   runeDuration: number;
   runeSpawnTurn: number;
+  activeAbility: AbilityName;
 }
 
 const initialGameState: GameState = {
@@ -55,6 +57,7 @@ const initialGameState: GameState = {
   darkRuneSpawns: 0,
   runeDuration: 0,
   runeSpawnTurn: 0,
+  activeAbility: AbilityName.none,
 };
 
 // Reducer
@@ -65,8 +68,8 @@ const gameSlice = createSlice({
     fullGameStateUpdate: (state: GameState, action: PayloadAction<GameState>) => {
       state.board = action.payload.board;
       state.graveyards = action.payload.graveyards;
-      state.selectedCol = action.payload.selectedCol;
-      state.selectedRow = action.payload.selectedRow;
+      // state.selectedCol = action.payload.selectedCol;
+      // state.selectedRow = action.payload.selectedRow;
       state.turn = action.payload.turn;
       state.lightRunes = action.payload.lightRunes;
       state.darkRunes = action.payload.darkRunes;
@@ -80,6 +83,7 @@ const gameSlice = createSlice({
       state.darkRuneSpawns = action.payload.darkRuneSpawns;
       state.runeDuration = action.payload.runeDuration;
       state.runeSpawnTurn = action.payload.runeSpawnTurn;
+      // state.activeAbility = action.payload.activeAbility;
     },
     setUpGame: (state: GameState) => {
       if (state.runeSpawnTurn === 0) {
@@ -177,7 +181,18 @@ const gameSlice = createSlice({
         state.selectedCol = null;
       }
     },
+    updateActiveAbility: (state: GameState, action: PayloadAction<AbilityName>) => {
+      state.activeAbility = action.payload;
+    },
+    abilitySelect: (state: GameState, action: PayloadAction<{ row: number; col: number }>) => {
+      const abilityF = abilityFunctionMap.get(state.activeAbility);
+      if (abilityF && state.selectedRow && state.selectedCol) {
+        const source = state.board[state.selectedRow][state.selectedCol].piece;
+        abilityF(source, action.payload.row, action.payload.col, state);
+      }
+    },
   },
 });
 export default gameSlice.reducer;
-export const { makeMove, selectSquare, fullGameStateUpdate, setUpGame } = gameSlice.actions;
+export const { makeMove, selectSquare, fullGameStateUpdate, setUpGame, updateActiveAbility, abilitySelect } =
+  gameSlice.actions;

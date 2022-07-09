@@ -21,7 +21,7 @@ const BoardPiece = (props: Props): JSX.Element => {
       <div className="statuses">
         {props.piece.statuses.map((s: PieceStatus) => {
           if (s === PieceStatus.PSN) {
-            return <FontAwesomeIcon icon={faSkullCrossbones} className="status-poison" />;
+            return <FontAwesomeIcon icon={faSkullCrossbones} className="poison" />;
           } else {
             return null;
           }

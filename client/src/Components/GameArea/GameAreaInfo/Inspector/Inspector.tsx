@@ -8,6 +8,7 @@ import BoardPiece from '../../../Piece/Piece';
 import './Inspector.css';
 import { uid } from 'react-uid';
 import { statusInfoMap } from '../../../Details/statusDetails';
+import React from 'react';
 
 const Inspector = (): JSX.Element => {
   const row = useSelector((state: RootState) => state.game.selectedRow);
@@ -35,11 +36,11 @@ const Inspector = (): JSX.Element => {
           </div>
           <div className="inspector-details">
             <div className="inspector-name">{piece.name}</div>
-            {statusBits?.map((i: Function) => {
-              return <div key={uid(i)}>{i()}</div>;
+            {statusBits?.map((i: React.FC) => {
+              return <div key={uid(i)}>{React.createElement(i, {})}</div>;
             })}
-            {infoBits?.map((i: Function) => {
-              return <div key={uid(i)}>{i()}</div>;
+            {infoBits?.map((i: React.FC) => {
+              return <div key={uid(i)}>{React.createElement(i, {})}</div>;
             })}
           </div>
         </div>

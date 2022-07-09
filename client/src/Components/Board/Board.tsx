@@ -1,9 +1,10 @@
 import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
 import { uid } from 'react-uid';
+import { AbilityName } from '../../GameObjects/abilityMap';
 import { wsEmitMove } from '../../socketMiddleware';
 import { RootState } from '../../state/rootReducer';
-import { makeMove, selectSquare } from '../../state/slices/game/slice';
+import { abilitySelect, makeMove, selectSquare } from '../../state/slices/game/slice';
 import { OnlineGameStatus, swapLocalPlayer } from '../../state/slices/ui/slice';
 import { store } from '../../state/store';
 import { SquareStatus } from '../../types';
@@ -39,7 +40,11 @@ const Board = (): JSX.Element => {
   };
 
   const handleSelect = (row: number, col: number) => {
-    dispatch(selectSquare({ row: row, col: col }));
+    if (gameState.activeAbility === AbilityName.none) {
+      dispatch(selectSquare({ row: row, col: col }));
+    } else if (isPlayersTurn(gameState.turn, player)) {
+      dispatch(abilitySelect({ row: row, col: col }));
+    }
   };
 
   const handleSquareClick = (row: number, col: number) => {

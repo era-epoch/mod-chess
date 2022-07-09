@@ -71,6 +71,7 @@ const LeftBar = (): JSX.Element => {
         darkRuneSpawns: 1,
         runeDuration: Infinity,
         runeSpawnTurn: 0,
+        activeAbility: '',
       } as GameState),
     );
     dispatch(

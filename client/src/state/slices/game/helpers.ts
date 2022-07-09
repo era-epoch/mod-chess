@@ -6,16 +6,7 @@ import moveFunctionMap, {
   onTurnEndFunctionMap,
   onTurnStartFunctionMap,
 } from '../../../GameObjects/pieceFunctionMaps';
-import {
-  Piece,
-  Move,
-  MoveFlag,
-  SquareStatus,
-  PieceType,
-  Graveyard,
-  PlayerColour,
-  typeAlgebriacNotationMap,
-} from '../../../types';
+import { Piece, Move, MoveFlag, SquareStatus, PieceType, PlayerColour, typeAlgebriacNotationMap } from '../../../types';
 import { ChatItem, ChatItemType } from '../ui/slice';
 import { GameState } from './slice';
 

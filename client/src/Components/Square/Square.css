@@ -23,6 +23,14 @@
   height: 100%;
 }
 
+.hover-icon {
+  display: none;
+}
+
+.icon-stack:hover .hover-icon {
+  display: flex;
+}
+
 .icon-stack .icon-wrapper {
   grid-row: 1;
   grid-column: 1;
@@ -34,11 +42,11 @@
 }
 
 .light-square {
-  background-color: rgba(0, 0, 0, 0.25);
+  background-color: rgba(190, 190, 190, 1);
 }
 
 .dark-square {
-  background-color: rgba(0, 0, 0, 0.6);
+  background-color: rgba(115, 115, 115, 1);
 }
 
 .square-highlighted {
@@ -58,7 +66,7 @@
 }
 
 .square-selected {
-  background-color: rgba(0, 0, 0, 0.25);
+  background-color: rgba(0, 0, 0, 0.15);
   z-index: 1;
   grid-row: 1;
   grid-column: 1;
@@ -70,8 +78,19 @@
   box-shadow: none;
 }
 
-.rune {
+.board-rune {
   color: rgba(0, 255, 255, 0.75);
   font-size: 2rem;
   z-index: 4;
+}
+
+.heart {
+  color: rgba(255, 0, 0, 0.75);
+  z-index: 5;
+  font-size: 2rem;
+}
+
+.ability-cure:hover {
+  outline: 2px dashed red;
+  z-index: 2;
 }

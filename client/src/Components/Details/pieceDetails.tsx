@@ -1,12 +1,20 @@
+import { faBolt, faCircleInfo } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
+import { AbilityName } from '../../GameObjects/abilityMap';
+import { RootState } from '../../state/rootReducer';
+import { updateActiveAbility } from '../../state/slices/game/slice';
 import { PieceIdentifier } from '../../types';
 import './details.css';
 
 // SOURCES: Wikipedia
 
-const pawn = (): JSX.Element => {
+const PawnDetail = (): JSX.Element => {
   return (
-    <div className="detail">
+    <div className="detail text-detail">
       <div>
+        <FontAwesomeIcon icon={faCircleInfo} className="detail-icon" />
         <span className="detail-title">Pawn: </span>
         <span className="detail-info">
           A pawn can move forward to the unoccupied square immediately in front of it on the same file, or on its first
@@ -18,11 +26,12 @@ const pawn = (): JSX.Element => {
   );
 };
 
-const enPassant = (): JSX.Element => {
+const EnPassantDetail = (): JSX.Element => {
   return (
-    <div className="detail">
+    <div className="detail text-detail">
       <div>
-        <span className="detail-title">En Passant</span>
+        <FontAwesomeIcon icon={faCircleInfo} className="detail-icon" />
+        <span className="detail-title">En Passant: </span>
         <span className="detail-info">
           When a pawn makes a two-step advance from its starting position and there is an opponent's pawn on a square
           next to the destination square on an adjacent file, then the opponent's pawn can capture it en passant ("in
@@ -34,10 +43,11 @@ const enPassant = (): JSX.Element => {
   );
 };
 
-const promotion = (): JSX.Element => {
+const PromotionDetail = (): JSX.Element => {
   return (
-    <div className="detail">
+    <div className="detail text-detail">
       <div>
+        <FontAwesomeIcon icon={faCircleInfo} className="detail-icon" />
         <span className="detail-title">Promotion: </span>
         <span className="detail-info">
           When a pawn advances to its eighth rank, as part of the move, it is promoted and must be exchanged for the
@@ -48,10 +58,11 @@ const promotion = (): JSX.Element => {
   );
 };
 
-const knight = (): JSX.Element => {
+const KnightDetail = (): JSX.Element => {
   return (
-    <div className="detail">
+    <div className="detail text-detail">
       <div>
+        <FontAwesomeIcon icon={faCircleInfo} className="detail-icon" />
         <span className="detail-title">Knight: </span>
         <span className="detail-info">
           A knight moves to any of the closest squares that are not on the same rank, file, or diagonal. (Thus the move
@@ -63,10 +74,11 @@ const knight = (): JSX.Element => {
   );
 };
 
-const bishop = (): JSX.Element => {
+const BishopDetail = (): JSX.Element => {
   return (
-    <div className="detail">
+    <div className="detail text-detail">
       <div>
+        <FontAwesomeIcon icon={faCircleInfo} className="detail-icon" />
         <span className="detail-title">Bishop: </span>
         <span className="detail-info">
           A bishop can move any number of squares diagonally, but cannot leap over other pieces.
@@ -76,10 +88,11 @@ const bishop = (): JSX.Element => {
   );
 };
 
-const rook = (): JSX.Element => {
+const RookDetail = (): JSX.Element => {
   return (
-    <div className="detail">
+    <div className="detail text-detail">
       <div>
+        <FontAwesomeIcon icon={faCircleInfo} className="detail-icon" />
         <span className="detail-title">Rook: </span>
         <span className="detail-info">
           A rook can move any number of squares along a rank or file, but cannot leap over other pieces.
@@ -89,10 +102,11 @@ const rook = (): JSX.Element => {
   );
 };
 
-const queen = (): JSX.Element => {
+const QueenDetail = (): JSX.Element => {
   return (
-    <div className="detail">
+    <div className="detail text-detail">
       <div>
+        <FontAwesomeIcon icon={faCircleInfo} className="detail-icon" />
         <span className="detail-title">Queen: </span>
         <span className="detail-info">
           A queen combines the power of a rook and bishop and can move any number of squares along a rank, file, or
@@ -103,10 +117,11 @@ const queen = (): JSX.Element => {
   );
 };
 
-const king = (): JSX.Element => {
+const KingDetail = (): JSX.Element => {
   return (
-    <div className="detail">
+    <div className="detail text-detail">
       <div>
+        <FontAwesomeIcon icon={faCircleInfo} className="detail-icon" />
         <span className="detail-title">King: </span>
         <span className="detail-info">
           The king moves one square in any direction. The king is the most valuable piece — attacks on the king must be
@@ -117,10 +132,11 @@ const king = (): JSX.Element => {
   );
 };
 
-const castling = (): JSX.Element => {
+const CastlingDetail = (): JSX.Element => {
   return (
-    <div className="detail">
+    <div className="detail text-detail">
       <div>
+        <FontAwesomeIcon icon={faCircleInfo} className="detail-icon" />
         <span className="detail-title">Castling: </span>
         <span className="detail-info">
           Once per game, each king can make a move known as castling. Castling consists of moving the king two squares
@@ -140,10 +156,11 @@ const castling = (): JSX.Element => {
   );
 };
 
-const scourgePawn = (): JSX.Element => {
+const ScourgePawnDetail = (): JSX.Element => {
   return (
-    <div className="detail">
+    <div className="detail text-detail">
       <div>
+        <FontAwesomeIcon icon={faCircleInfo} className="detail-icon" />
         <span className="detail-title">Posthumous Transmission: </span>
         <span className="detail-info">
           When this piece is captured, the capturing piece gains one stack of <i>poisoned</i>.
@@ -153,12 +170,48 @@ const scourgePawn = (): JSX.Element => {
   );
 };
 
-export const pieceInfoMap = new Map<PieceIdentifier, Function[]>([
-  [PieceIdentifier.basicPawn, [pawn, enPassant, promotion]],
-  [PieceIdentifier.basicBishop, [bishop]],
-  [PieceIdentifier.basicKnight, [knight]],
-  [PieceIdentifier.basicRook, [rook]],
-  [PieceIdentifier.basicQueen, [queen]],
-  [PieceIdentifier.basicKing, [king, castling]],
-  [PieceIdentifier.scourgePawn, [scourgePawn, pawn, enPassant, promotion]],
+const ScourgeBishopDetail = (): JSX.Element => {
+  const activeAbility = useSelector((state: RootState) => state.game.activeAbility);
+  const abilityName = AbilityName.cure;
+  const dispatch = useDispatch();
+  const handleClick = () => {
+    if (activeAbility !== abilityName) {
+      dispatch(updateActiveAbility(abilityName));
+    } else {
+      // Deactivate
+      dispatch(updateActiveAbility(AbilityName.none));
+    }
+  };
+  // TODO: Change vis for enemy pieces
+  // TODO: Get ability cost from somewhere central
+  return (
+    <div className={`detail ability quick${activeAbility === abilityName ? ' active' : ''}`} onClick={handleClick}>
+      <div>
+        <FontAwesomeIcon icon={faBolt} className="detail-icon rune" />
+        <span className="detail-title">Cure Sickness: </span>
+        <span className="detail-info">
+          (Quick) Remove one stack of <span className="emph poison-text">poisoned</span> from any of your pieces.
+        </span>
+      </div>
+      <div>
+        <div className="detail-rune-cost">
+          <div className={`rune`}>
+            <FontAwesomeIcon icon={faBolt} />
+          </div>
+          <div>1</div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export const pieceInfoMap = new Map<PieceIdentifier, React.FC[]>([
+  [PieceIdentifier.basicPawn, [PawnDetail, EnPassantDetail, PromotionDetail]],
+  [PieceIdentifier.basicBishop, [BishopDetail]],
+  [PieceIdentifier.basicKnight, [KnightDetail]],
+  [PieceIdentifier.basicRook, [RookDetail]],
+  [PieceIdentifier.basicQueen, [QueenDetail]],
+  [PieceIdentifier.basicKing, [KingDetail, CastlingDetail]],
+  [PieceIdentifier.scourgePawn, [ScourgePawnDetail, PawnDetail, EnPassantDetail, PromotionDetail]],
+  [PieceIdentifier.scourgeBishop, [ScourgeBishopDetail, BishopDetail]],
 ]);
