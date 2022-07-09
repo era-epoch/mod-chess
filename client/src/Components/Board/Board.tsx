@@ -1,16 +1,17 @@
 import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
 import { uid } from 'react-uid';
-import { AbilityName } from '../../GameObjects/ability';
 import { wsEmitMove } from '../../socketMiddleware';
 import { RootState } from '../../state/rootReducer';
-import { abilitySelect, makeMove, selectSquare } from '../../state/slices/game/slice';
+import { abilitySelect, endTurnFromAbility, makeMove, selectSquare } from '../../state/slices/game/slice';
 import { OnlineGameStatus, swapLocalPlayer } from '../../state/slices/ui/slice';
 import { store } from '../../state/store';
 import { SquareStatus } from '../../types';
 import { isPlayersTurn } from '../../util';
 import Square from '../Square/Square';
 import './Board.css';
+import '../Details/details.css';
+import { isAbilityQuick } from '../../GameObjects/ability';
 
 const Board = (): JSX.Element => {
   const dispatch = useDispatch();
@@ -40,11 +41,14 @@ const Board = (): JSX.Element => {
   };
 
   const handleSelect = (row: number, col: number) => {
-    if (gameState.activeAbility === AbilityName.none) {
+    if (gameState.activeAbility === '') {
       dispatch(selectSquare({ row: row, col: col }));
     } else if (isPlayersTurn(gameState.turn, player)) {
       dispatch(abilitySelect({ row: row, col: col }));
       // If the ability ends the turn, end the turn
+      if (!isAbilityQuick(gameState.activeAbility)) {
+        dispatch(endTurnFromAbility());
+      }
     }
   };
 

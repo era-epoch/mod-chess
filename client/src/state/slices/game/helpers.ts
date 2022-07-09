@@ -1,11 +1,6 @@
-import { EmptySquare } from '../../../GameObjects/basic/pieces';
+import { EmptySquare } from '../../../GameObjects/basic/emptySquare';
+import { getCaptureF, getDeathF, getMoveF, getOnTurnEndF, getOnTurnStartF } from '../../../GameObjects/gamePiece';
 import { kingInCheck } from '../../../GameObjects/gameUtil';
-import moveFunctionMap, {
-  onCaptureFunctionMap,
-  onDeathFunctionMap,
-  onTurnEndFunctionMap,
-  onTurnStartFunctionMap,
-} from '../../../GameObjects/pieceFunctionMaps';
 import { Piece, Move, MoveFlag, SquareStatus, PieceType, PlayerColour, typeAlgebriacNotationMap } from '../../../types';
 import { ChatItem, ChatItemType } from '../ui/slice';
 import { GameState } from './slice';
@@ -131,9 +126,9 @@ export const movePiece = (gameState: GameState, piece: Piece, move: Move) => {
 
 export const capturePieceAtLocation = (gameState: GameState, row: number, col: number, capturer?: Piece) => {
   const target = gameState.board[row][col].piece;
-  const deathF = onDeathFunctionMap.get(target.identifier);
+  const deathF = getDeathF(target.identifier);
   if (capturer) {
-    const captureF = onCaptureFunctionMap.get(capturer.identifier);
+    const captureF = getCaptureF(capturer.identifier);
     if (captureF) captureF(capturer, row, col, gameState, target);
     if (deathF) deathF(target, row, col, gameState, capturer);
   } else {
@@ -156,7 +151,7 @@ export const startTurn = (state: GameState) => {
   }
   for (let i = 0; i < state.board.length; i++) {
     for (let j = 0; j < state.board[i].length; j++) {
-      const f = onTurnStartFunctionMap.get(state.board[i][j].piece.identifier);
+      const f = getOnTurnStartF(state.board[i][j].piece.identifier);
       if (f) f(state.board[i][j].piece, i, j, state);
     }
   }
@@ -165,7 +160,7 @@ export const startTurn = (state: GameState) => {
 export const endTurn = (state: GameState) => {
   for (let i = 0; i < state.board.length; i++) {
     for (let j = 0; j < state.board[i].length; j++) {
-      const f = onTurnEndFunctionMap.get(state.board[i][j].piece.identifier);
+      const f = getOnTurnEndF(state.board[i][j].piece.identifier);
       if (f) f(state.board[i][j].piece, i, j, state);
     }
   }
@@ -197,7 +192,7 @@ export const isGameover = (gameState: GameState, player: PlayerColour): boolean 
   for (let i = 0; i < gameState.board.length; i++) {
     for (let j = 0; j < gameState.board[0].length; j++) {
       if (gameState.board[i][j].piece.owner === opponent) {
-        const moveFunction = moveFunctionMap.get(gameState.board[i][j].piece.identifier);
+        const moveFunction = getMoveF(gameState.board[i][j].piece.identifier);
         if (moveFunction) validMoves.push(...moveFunction(gameState.board[i][j].piece, i, j, gameState, true));
       }
     }
@@ -232,4 +227,25 @@ export const clearHighlights = (state: GameState) => {
       state.board[i][j].squareStatuses = state.board[i][j].squareStatuses.filter((s) => s !== SquareStatus.HLK);
     }
   }
+};
+
+export const handleEndOfTurn = (state: GameState, currentPlayer: PlayerColour) => {
+  // CLEANUP
+  for (let i = 0; i < state.board.length; i++) {
+    for (let j = 0; j < state.board[i].length; j++) {
+      state.board[i][j].squareStatuses = state.board[i][j].squareStatuses.filter((s) => s !== SquareStatus.HL);
+      state.board[i][j].squareStatuses = state.board[i][j].squareStatuses.filter((s) => s !== SquareStatus.SEL);
+      state.board[i][j].squareStatuses = state.board[i][j].squareStatuses.filter((s) => s !== SquareStatus.HLC);
+      state.board[i][j].squareStatuses = state.board[i][j].squareStatuses.filter((s) => s !== SquareStatus.HLK);
+    }
+  }
+  // Check if any gameover conditions are met
+  if (isGameover(state, currentPlayer)) {
+    handleGameover(state, currentPlayer);
+  } else {
+    // If not, proceed to next turn
+    nextTurn(state);
+  }
+  state.selectedRow = null;
+  state.selectedCol = null;
 };

@@ -1,5 +1,4 @@
 import { SquareContents } from '../../types';
-import { EmptySquare } from '../basic/pieces';
 import { setUpSquare } from '../gameUtil';
 
 const emptyBoard: SquareContents[][] = [

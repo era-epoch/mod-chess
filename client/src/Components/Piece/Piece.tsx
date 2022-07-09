@@ -1,7 +1,7 @@
 import { faSkullCrossbones } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { uid } from 'react-uid';
-import pieceIconMap from '../../GameObjects/pieceIconMap';
+import { getIcon } from '../../GameObjects/gamePiece';
 import { Piece, PieceStatus, PlayerColour } from '../../types';
 import './Piece.css';
 
@@ -10,7 +10,7 @@ interface Props {
 }
 
 const BoardPiece = (props: Props): JSX.Element => {
-  const icon = pieceIconMap.get(props.piece.identifier);
+  const icon = getIcon(props.piece.identifier);
   return (
     <div className="icon-wrapper">
       {icon !== null ? (
@@ -20,9 +20,9 @@ const BoardPiece = (props: Props): JSX.Element => {
         />
       ) : null}
       <div className="statuses">
-        {props.piece.statuses.map((s: PieceStatus) => {
+        {props.piece.statuses.map((s: PieceStatus, i) => {
           if (s === PieceStatus.PSN) {
-            return <FontAwesomeIcon key={uid(s)} icon={faSkullCrossbones} className="poison" />;
+            return <FontAwesomeIcon key={uid(i)} icon={faSkullCrossbones} className="poison" />;
           } else {
             return null;
           }

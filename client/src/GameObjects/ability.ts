@@ -1,11 +1,4 @@
 import { AbilityFunction, AbilitySelectFunction } from '../types';
-import { cureAbilityF, cureSelectF, infectAbilityF, infectSelectF } from './scourge/functions';
-
-export enum AbilityName {
-  none = '',
-  cure = 'ability-cure',
-  infect = 'ability-infect',
-}
 
 export interface Ability {
   id: string;
@@ -19,12 +12,36 @@ export interface Ability {
 
 export const ABILITIES: Ability[] = [];
 
-export const abilitySelectMap = new Map<AbilityName, AbilitySelectFunction>([
-  [AbilityName.cure, cureSelectF],
-  [AbilityName.infect, infectSelectF],
-]);
+export const registerAbility = (a: Ability) => {
+  ABILITIES.push(a);
+};
 
-export const abilityFunctionMap = new Map<AbilityName, AbilityFunction>([
-  [AbilityName.cure, cureAbilityF],
-  [AbilityName.infect, infectAbilityF],
-]);
+export const getAbilityName = (id: string): string | undefined => {
+  const A = ABILITIES.find((a: Ability) => a.id === id);
+  if (A) return A.name;
+};
+
+export const getAbilityRenderString = (id: string): string | undefined => {
+  const A = ABILITIES.find((a: Ability) => a.id === id);
+  if (A) return A.renderString;
+};
+
+export const getAbilityRuneCost = (id: string): number | undefined => {
+  const A = ABILITIES.find((a: Ability) => a.id === id);
+  if (A) return A.runeCost;
+};
+
+export const isAbilityQuick = (id: string): boolean | undefined => {
+  const A = ABILITIES.find((a: Ability) => a.id === id);
+  if (A) return A.quick;
+};
+
+export const getAbilitySelectF = (id: string): AbilitySelectFunction | undefined => {
+  const A = ABILITIES.find((a: Ability) => a.id === id);
+  if (A) return A.selectF;
+};
+
+export const getAbilityF = (id: string): AbilityFunction | undefined => {
+  const A = ABILITIES.find((a: Ability) => a.id === id);
+  if (A) return A.abilityF;
+};

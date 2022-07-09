@@ -1,8 +1,8 @@
 import produce from 'immer';
 import { GameState } from '../state/slices/game/slice';
 import { Piece, Move, SquareStatus, MoveFlag, PlayerColour, PieceType, Orientation, SquareContents } from '../types';
-import { EmptySquare } from './basic/pieces';
-import moveFunctionMap from './pieceFunctionMaps';
+import { EmptySquare } from './basic/emptySquare';
+import { getMoveF } from './gamePiece';
 
 // ensure PID sync between users (update: should be okay with board coming from host?)
 let PID = 0;
@@ -70,7 +70,7 @@ export const kingInCheck = (gameState: GameState, player: PlayerColour): boolean
       }
       if (board[i][j].piece.owner !== player) {
         // threatenedPositions.push(...board[i][j].piece.moveF(board[i][j].piece, i, j, gameState, false));
-        const moveFunction = moveFunctionMap.get(board[i][j].piece.identifier);
+        const moveFunction = getMoveF(board[i][j].piece.identifier);
         if (moveFunction) threatenedPositions.push(...moveFunction(board[i][j].piece, i, j, gameState, false));
       }
     }

@@ -1,7 +1,15 @@
 import { SquareContents } from '../../types';
-import { EmptySquare, BasicRook, BasicKnight, BasicBishop, BasicQueen, BasicKing, BasicPawn } from '../basic/pieces';
+import { BasicBishop } from '../basic/basicBishop';
+import { BasicKing } from '../basic/basicKing';
+import { BasicKnight } from '../basic/basicKnight';
+import { BasicPawn } from '../basic/basicPawn';
+import { BasicQueen } from '../basic/basicQueen';
+import { BasicRook } from '../basic/basicRook';
+import { EmptySquare } from '../basic/emptySquare';
 import { setUpSquare } from '../gameUtil';
-import { ScourgeBishop, ScourgePawn, ScourgeRook } from '../scourge/pieces';
+import { ScourgeBishop } from '../scourge/scourgeBishop';
+import { ScourgePawn } from '../scourge/scourgePawn';
+import { ScourgeRook } from '../scourge/scourgeRook';
 
 const testBoard: SquareContents[][] = [
   [

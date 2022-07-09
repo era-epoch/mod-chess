@@ -1,19 +1,12 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { EmptySquare } from '../../../GameObjects/basic/pieces';
 import { Graveyard, Move, MoveFlag, PlayerColour, SquareContents, SquareStatus } from '../../../types';
-import {
-  capturePieceAtLocation,
-  movePiece,
-  isGameover,
-  handleGameover,
-  denoteMove,
-  nextTurn,
-  spawnNewRunes,
-} from './helpers';
+import { capturePieceAtLocation, movePiece, denoteMove, spawnNewRunes, handleEndOfTurn } from './helpers';
 import emptyBoard from '../../../GameObjects/boards/emptyBoard';
-import moveFunctionMap from '../../../GameObjects/pieceFunctionMaps';
 import { ChatItem } from '../ui/slice';
-import { abilityFunctionMap, AbilityName, abilitySelectMap } from '../../../GameObjects/ability';
+import { getMoveF } from '../../../GameObjects/gamePiece';
+import { EmptySquare } from '../../../GameObjects/basic/emptySquare';
+import { getAbilityF, getAbilitySelectF } from '../../../GameObjects/ability';
+import { getCurrentPlayer } from '../../../util';
 
 export interface GameState {
   board: SquareContents[][];
@@ -33,7 +26,7 @@ export interface GameState {
   darkRuneSpawns: number;
   runeDuration: number;
   runeSpawnTurn: number;
-  activeAbility: AbilityName;
+  activeAbility: string;
 }
 
 const initialGameState: GameState = {
@@ -57,7 +50,7 @@ const initialGameState: GameState = {
   darkRuneSpawns: 0,
   runeDuration: 0,
   runeSpawnTurn: 0,
-  activeAbility: AbilityName.none,
+  activeAbility: '',
 };
 
 // Reducer
@@ -93,7 +86,7 @@ const gameSlice = createSlice({
     makeMove: (state: GameState, action: PayloadAction<{ row: number; col: number }>) => {
       if (state.selectedRow === null || state.selectedCol === null) return;
       const pieceToMove = state.board[state.selectedRow][state.selectedCol].piece;
-      const moveFunction = moveFunctionMap.get(pieceToMove.identifier);
+      const moveFunction = getMoveF(pieceToMove.identifier);
       if (!moveFunction) return;
       const move = moveFunction(pieceToMove, state.selectedRow, state.selectedCol, state, true).find(
         (move: Move) => move.row === action.payload.row && move.col === action.payload.col,
@@ -107,33 +100,15 @@ const gameSlice = createSlice({
       capturePieceAtLocation(state, move.row, move.col, pieceToMove);
       // ENTERING & EFFECTS
       movePiece(state, pieceToMove, move);
-      // CLEANUP
-      for (let i = 0; i < state.board.length; i++) {
-        for (let j = 0; j < state.board[i].length; j++) {
-          // TODO: Transfer cleanup to postMove function
-          state.board[i][j].squareStatuses = state.board[i][j].squareStatuses.filter((s) => s !== SquareStatus.HL);
-          state.board[i][j].squareStatuses = state.board[i][j].squareStatuses.filter((s) => s !== SquareStatus.SEL);
-          state.board[i][j].squareStatuses = state.board[i][j].squareStatuses.filter((s) => s !== SquareStatus.HLC);
-          state.board[i][j].squareStatuses = state.board[i][j].squareStatuses.filter((s) => s !== SquareStatus.HLK);
-        }
-      }
       // Write an algebraic representation of the move to the history
       denoteMove(state, pieceToMove, move);
-      // Check if any gameover conditions are met
-      if (isGameover(state, pieceToMove.owner)) {
-        handleGameover(state, pieceToMove.owner);
-      } else {
-        // If not, proceed to next turn
-        nextTurn(state);
-      }
-      state.selectedRow = null;
-      state.selectedCol = null;
+      handleEndOfTurn(state, pieceToMove.owner);
     },
     selectSquare: (state: GameState, action: PayloadAction<{ row: number; col: number }>) => {
       const row = action.payload.row;
       const col = action.payload.col;
       const movesToHighlight: Move[] = [];
-      const moveFunction = moveFunctionMap.get(state.board[row][col].piece.identifier);
+      const moveFunction = getMoveF(state.board[row][col].piece.identifier);
       if (moveFunction) movesToHighlight.push(...moveFunction(state.board[row][col].piece, row, col, state, true));
       const selectedSameSquare = state.selectedRow === row && state.selectedCol === col;
       for (let i = 0; i < state.board.length; i++) {
@@ -185,20 +160,23 @@ const gameSlice = createSlice({
       state.selectedRow = null;
       state.selectedCol = null;
     },
-    updateActiveAbility: (state: GameState, action: PayloadAction<AbilityName>) => {
+    updateActiveAbility: (state: GameState, action: PayloadAction<string>) => {
       state.activeAbility = action.payload;
-      const selectF = abilitySelectMap.get(action.payload);
+      const selectF = getAbilitySelectF(action.payload);
       if (selectF && state.selectedRow && state.selectedCol) {
         const source = state.board[state.selectedRow][state.selectedCol].piece;
         selectF(source, state);
       }
     },
     abilitySelect: (state: GameState, action: PayloadAction<{ row: number; col: number }>) => {
-      const abilityF = abilityFunctionMap.get(state.activeAbility);
+      const abilityF = getAbilityF(state.activeAbility);
       if (abilityF && state.selectedRow && state.selectedCol) {
         const source = state.board[state.selectedRow][state.selectedCol].piece;
         abilityF(source, action.payload.row, action.payload.col, state);
       }
+    },
+    endTurnFromAbility: (state: GameState) => {
+      handleEndOfTurn(state, getCurrentPlayer(state.turn));
     },
   },
 });
@@ -211,4 +189,5 @@ export const {
   updateActiveAbility,
   abilitySelect,
   resetSelection,
+  endTurnFromAbility,
 } = gameSlice.actions;

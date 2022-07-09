@@ -52,7 +52,7 @@ const LeftBar = (): JSX.Element => {
     );
     dispatch(
       fullGameStateUpdate({
-        board: produce(localBoard, () => {}),
+        board: produce(testBoard, () => {}),
         turn: 0,
         selectedRow: null,
         selectedCol: null,

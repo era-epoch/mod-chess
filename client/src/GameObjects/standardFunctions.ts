@@ -1,5 +1,5 @@
-import { capturePieceAtLocation } from '../../state/slices/game/helpers';
-import { GameState } from '../../state/slices/game/slice';
+import { capturePieceAtLocation } from '../state/slices/game/helpers';
+import { GameState } from '../state/slices/game/slice';
 import {
   CaptureFunction,
   DeathFunction,
@@ -10,8 +10,8 @@ import {
   PieceType,
   PlayerColour,
   SquareStatus,
-} from '../../types';
-import { EmptySquare } from './pieces';
+} from '../types';
+import { EmptySquare } from './basic/emptySquare';
 
 export const standardOnDeathF: DeathFunction = (
   piece: Piece,

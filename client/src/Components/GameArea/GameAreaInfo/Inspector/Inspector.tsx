@@ -1,7 +1,6 @@
 import { faQuestion } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useSelector } from 'react-redux';
-import { pieceInfoMap } from '../../../Details/pieceDetails';
 import { RootState } from '../../../../state/rootReducer';
 import { Piece, PieceType, PlayerColour } from '../../../../types';
 import BoardPiece from '../../../Piece/Piece';
@@ -9,6 +8,7 @@ import './Inspector.css';
 import { uid } from 'react-uid';
 import { statusInfoMap } from '../../../Details/statusDetails';
 import React from 'react';
+import { getDetails } from '../../../../GameObjects/gamePiece';
 
 const Inspector = (): JSX.Element => {
   const row = useSelector((state: RootState) => state.game.selectedRow);
@@ -20,7 +20,7 @@ const Inspector = (): JSX.Element => {
   let statusBits = null;
   if (selected) {
     piece = board[row][col].piece as Piece;
-    infoBits = pieceInfoMap.get(piece.identifier);
+    infoBits = getDetails(piece.identifier);
     statusBits = [];
     for (let i = 0; i < piece.statuses.length; i++) {
       const statusDetails = statusInfoMap.get(piece.statuses[i]);
@@ -36,11 +36,11 @@ const Inspector = (): JSX.Element => {
           </div>
           <div className="inspector-details">
             <div className="inspector-name">{piece.name}</div>
-            {statusBits?.map((i: React.FC) => {
-              return <div key={uid(i)}>{React.createElement(i, {})}</div>;
+            {statusBits?.map((comp: React.FC, i) => {
+              return <div key={uid(i)}>{React.createElement(comp, {})}</div>;
             })}
-            {infoBits?.map((i: React.FC) => {
-              return <div key={uid(i)}>{React.createElement(i, {})}</div>;
+            {infoBits?.map((comp: React.FC, i) => {
+              return <div key={uid(i)}>{React.createElement(comp, {})}</div>;
             })}
           </div>
         </div>

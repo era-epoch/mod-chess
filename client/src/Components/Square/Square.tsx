@@ -1,6 +1,7 @@
 import { faBolt, faChessPawn, faCircle, faCrown, faHeart, faSkull } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useSelector } from 'react-redux';
+import { getAbilityRenderString } from '../../GameObjects/ability';
 import { RootState } from '../../state/rootReducer';
 import { PieceStatus, SquareContents, SquareStatus } from '../../types';
 import BoardPiece from '../Piece/Piece';
@@ -13,12 +14,13 @@ interface Props {
 
 const Square = (props: Props): JSX.Element => {
   const activeAbility = useSelector((state: RootState) => state.game.activeAbility);
+  const abilityRender = getAbilityRenderString(activeAbility);
   return (
     <div
       className={
         `square ${props.content.inBounds ? 'active-square' : 'inactive-square'}` +
         `${(props.content.row + props.content.col) % 2 === 0 ? ' light-square' : ' dark-square'}` +
-        ` ${props.content.inBounds ? activeAbility : ''}`
+        ` ${props.content.inBounds ? abilityRender : ''}`
       }
       onClick={() => props.clickHandler(props.content.row, props.content.col)}
     >
@@ -53,7 +55,7 @@ const Square = (props: Props): JSX.Element => {
           </div>
         ) : null}
         {props.content.inBounds &&
-        activeAbility === 'ability-cure' &&
+        abilityRender === 'ability-cure' &&
         props.content.piece.statuses.includes(PieceStatus.PSN) ? (
           <div className={`icon-wrapper hover-icon heart`}>
             <FontAwesomeIcon icon={faHeart} />
