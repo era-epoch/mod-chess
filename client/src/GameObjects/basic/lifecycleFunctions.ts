@@ -52,7 +52,6 @@ export const standardOnTurnStartF: LifecycleFunction = (
   if (state.board[row][col].squareStatuses.includes(SquareStatus.RUNE)) {
     if (piece.owner === PlayerColour.light) {
       state.lightRunes++;
-      console.log(state.lightRunes);
     }
     if (piece.owner === PlayerColour.dark) {
       state.darkRunes++;

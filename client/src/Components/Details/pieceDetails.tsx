@@ -2,9 +2,9 @@ import { faBolt, faCircleInfo } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
-import { AbilityName } from '../../GameObjects/abilityMap';
+import { AbilityName } from '../../GameObjects/ability';
 import { RootState } from '../../state/rootReducer';
-import { updateActiveAbility } from '../../state/slices/game/slice';
+import { resetSelection, selectSquare, updateActiveAbility } from '../../state/slices/game/slice';
 import { PieceIdentifier } from '../../types';
 import './details.css';
 
@@ -172,6 +172,8 @@ const ScourgePawnDetail = (): JSX.Element => {
 
 const ScourgeBishopDetail = (): JSX.Element => {
   const activeAbility = useSelector((state: RootState) => state.game.activeAbility);
+  const selectedCol = useSelector((state: RootState) => state.game.selectedCol);
+  const selectedRow = useSelector((state: RootState) => state.game.selectedRow);
   const abilityName = AbilityName.cure;
   const dispatch = useDispatch();
   const handleClick = () => {
@@ -180,6 +182,10 @@ const ScourgeBishopDetail = (): JSX.Element => {
     } else {
       // Deactivate
       dispatch(updateActiveAbility(AbilityName.none));
+      if (selectedCol && selectedRow) {
+        dispatch(resetSelection()); // Since selecting the same square twice hides it
+        dispatch(selectSquare({ row: selectedRow, col: selectedCol }));
+      }
     }
   };
   // TODO: Change vis for enemy pieces
@@ -205,6 +211,46 @@ const ScourgeBishopDetail = (): JSX.Element => {
   );
 };
 
+const ScourgeRookDetail = (): JSX.Element => {
+  const activeAbility = useSelector((state: RootState) => state.game.activeAbility);
+  const selectedCol = useSelector((state: RootState) => state.game.selectedCol);
+  const selectedRow = useSelector((state: RootState) => state.game.selectedRow);
+  const abilityName = AbilityName.infect;
+  const dispatch = useDispatch();
+  const handleClick = () => {
+    if (activeAbility !== abilityName) {
+      dispatch(updateActiveAbility(abilityName));
+    } else {
+      // Deactivate
+      dispatch(updateActiveAbility(AbilityName.none));
+      if (selectedCol && selectedRow) {
+        dispatch(selectSquare({ row: selectedRow, col: selectedCol }));
+      }
+    }
+  };
+  // TODO: Change vis for enemy pieces
+  // TODO: Get ability cost from somewhere central
+  return (
+    <div className={`detail ability quick${activeAbility === abilityName ? ' active' : ''}`} onClick={handleClick}>
+      <div>
+        <FontAwesomeIcon icon={faBolt} className="detail-icon rune" />
+        <span className="detail-title">Infect: </span>
+        <span className="detail-info">
+          <span className="emph poison-text">Poison</span> any piece adjacent to this piece.
+        </span>
+      </div>
+      <div>
+        <div className="detail-rune-cost">
+          <div className={`rune`}>
+            <FontAwesomeIcon icon={faBolt} />
+          </div>
+          <div>2</div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export const pieceInfoMap = new Map<PieceIdentifier, React.FC[]>([
   [PieceIdentifier.basicPawn, [PawnDetail, EnPassantDetail, PromotionDetail]],
   [PieceIdentifier.basicBishop, [BishopDetail]],
@@ -214,4 +260,5 @@ export const pieceInfoMap = new Map<PieceIdentifier, React.FC[]>([
   [PieceIdentifier.basicKing, [KingDetail, CastlingDetail]],
   [PieceIdentifier.scourgePawn, [ScourgePawnDetail, PawnDetail, EnPassantDetail, PromotionDetail]],
   [PieceIdentifier.scourgeBishop, [ScourgeBishopDetail, BishopDetail]],
+  [PieceIdentifier.scourgeRook, [ScourgeRookDetail, RookDetail]],
 ]);

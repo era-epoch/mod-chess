@@ -27,6 +27,7 @@ import { wsDisconnect } from '../../socketMiddleware';
 import { PlayerColour } from '../../types';
 import produce from 'immer';
 import { useCallback, useEffect } from 'react';
+import localBoard from '../../GameObjects/boards/localBoard';
 
 export const ws_url = `http://${window.location.hostname}:5000`;
 
@@ -51,7 +52,7 @@ const LeftBar = (): JSX.Element => {
     );
     dispatch(
       fullGameStateUpdate({
-        board: produce(testBoard, () => {}),
+        board: produce(localBoard, () => {}),
         turn: 0,
         selectedRow: null,
         selectedCol: null,

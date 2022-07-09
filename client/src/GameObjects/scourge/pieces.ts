@@ -30,3 +30,18 @@ export const ScourgeBishop = (): Piece => {
   };
   return piece;
 };
+
+export const ScourgeRook = (): Piece => {
+  const piece: Piece = {
+    owner: PlayerColour.neutral,
+    nMoves: 0,
+    orientation: Orientation.neutral,
+    statuses: [],
+    identifier: PieceIdentifier.scourgeRook,
+    type: PieceType.rook,
+    origin: PieceOrigin.scourge,
+    id: genPID(),
+    name: 'Scourge Rook',
+  };
+  return piece;
+};

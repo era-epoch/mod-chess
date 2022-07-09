@@ -17,6 +17,8 @@ import {
 import { crimsonPawnMoveF } from './crimson/functions';
 import { scourgePawnOnDeathF } from './scourge/functions';
 
+// TODO: Use classes for this to make adding things easier
+
 export const moveFunctionMap = new Map<PieceIdentifier, MoveFunction>([
   [PieceIdentifier.empty, emptyMoveF],
   [PieceIdentifier.basicPawn, basicPawnMoveF],
@@ -27,6 +29,7 @@ export const moveFunctionMap = new Map<PieceIdentifier, MoveFunction>([
   [PieceIdentifier.basicKing, basicKingMoveF],
   [PieceIdentifier.scourgePawn, basicPawnMoveF],
   [PieceIdentifier.scourgeBishop, basicBishopMoveF],
+  [PieceIdentifier.scourgeRook, basicRookMoveF],
   [PieceIdentifier.crimsonPawn, crimsonPawnMoveF],
 ]);
 
@@ -40,6 +43,7 @@ export const onDeathFunctionMap = new Map<PieceIdentifier, DeathFunction>([
   [PieceIdentifier.basicKing, standardOnDeathF],
   [PieceIdentifier.scourgePawn, scourgePawnOnDeathF],
   [PieceIdentifier.scourgeBishop, standardOnDeathF],
+  [PieceIdentifier.scourgeRook, standardOnDeathF],
   [PieceIdentifier.crimsonPawn, standardOnDeathF],
 ]);
 
@@ -53,6 +57,7 @@ export const onCaptureFunctionMap = new Map<PieceIdentifier, CaptureFunction>([
   [PieceIdentifier.basicKing, standardOnCaptureF],
   [PieceIdentifier.scourgePawn, standardOnCaptureF],
   [PieceIdentifier.scourgeBishop, standardOnCaptureF],
+  [PieceIdentifier.scourgeRook, standardOnCaptureF],
   [PieceIdentifier.crimsonPawn, standardOnCaptureF],
 ]);
 
@@ -66,6 +71,7 @@ export const onTurnStartFunctionMap = new Map<PieceIdentifier, LifecycleFunction
   [PieceIdentifier.basicKing, standardOnTurnStartF],
   [PieceIdentifier.scourgePawn, standardOnTurnStartF],
   [PieceIdentifier.scourgeBishop, standardOnTurnStartF],
+  [PieceIdentifier.scourgeRook, standardOnTurnStartF],
   [PieceIdentifier.crimsonPawn, standardOnTurnStartF],
 ]);
 
@@ -79,6 +85,7 @@ export const onTurnEndFunctionMap = new Map<PieceIdentifier, LifecycleFunction>(
   [PieceIdentifier.basicKing, standardOnTurnEndF],
   [PieceIdentifier.scourgePawn, standardOnTurnEndF],
   [PieceIdentifier.scourgeBishop, standardOnTurnEndF],
+  [PieceIdentifier.scourgeRook, standardOnTurnEndF],
   [PieceIdentifier.crimsonPawn, standardOnTurnEndF],
 ]);
 

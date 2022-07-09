@@ -1,7 +1,7 @@
 import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
 import { uid } from 'react-uid';
-import { AbilityName } from '../../GameObjects/abilityMap';
+import { AbilityName } from '../../GameObjects/ability';
 import { wsEmitMove } from '../../socketMiddleware';
 import { RootState } from '../../state/rootReducer';
 import { abilitySelect, makeMove, selectSquare } from '../../state/slices/game/slice';
@@ -44,6 +44,7 @@ const Board = (): JSX.Element => {
       dispatch(selectSquare({ row: row, col: col }));
     } else if (isPlayersTurn(gameState.turn, player)) {
       dispatch(abilitySelect({ row: row, col: col }));
+      // If the ability ends the turn, end the turn
     }
   };
 

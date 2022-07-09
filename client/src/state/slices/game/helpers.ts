@@ -223,3 +223,13 @@ export const selectedPieceCanMove = (gameState: GameState, row: number, col: num
     return gameState.board[row][col].piece.owner === PlayerColour.dark;
   }
 };
+
+export const clearHighlights = (state: GameState) => {
+  for (let i = 0; i < state.board.length; i++) {
+    for (let j = 0; j < state.board[i].length; j++) {
+      state.board[i][j].squareStatuses = state.board[i][j].squareStatuses.filter((s) => s !== SquareStatus.HL);
+      state.board[i][j].squareStatuses = state.board[i][j].squareStatuses.filter((s) => s !== SquareStatus.HLC);
+      state.board[i][j].squareStatuses = state.board[i][j].squareStatuses.filter((s) => s !== SquareStatus.HLK);
+    }
+  }
+};

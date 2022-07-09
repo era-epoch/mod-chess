@@ -28,16 +28,15 @@
   border: 2px solid rgb(10, 124, 130);
   border-radius: 0.5rem;
   padding: 0.5rem;
-}
-
-.ability:hover {
-  background-color: rgba(88, 225, 232, 0.3);
-  cursor: pointer;
   transition: all 250ms ease;
 }
 
+.ability:hover {
+  cursor: pointer;
+}
+
 .ability.active {
-  background-color: rgba(88, 225, 232, 0.5);
+  background-color: rgba(88, 225, 232, 0.6);
 }
 
 .detail-rune-cost {

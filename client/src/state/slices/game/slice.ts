@@ -13,7 +13,7 @@ import {
 import emptyBoard from '../../../GameObjects/boards/emptyBoard';
 import moveFunctionMap from '../../../GameObjects/pieceFunctionMaps';
 import { ChatItem } from '../ui/slice';
-import { abilityFunctionMap, AbilityName } from '../../../GameObjects/abilityMap';
+import { abilityFunctionMap, AbilityName, abilitySelectMap } from '../../../GameObjects/ability';
 
 export interface GameState {
   board: SquareContents[][];
@@ -181,8 +181,17 @@ const gameSlice = createSlice({
         state.selectedCol = null;
       }
     },
+    resetSelection: (state: GameState) => {
+      state.selectedRow = null;
+      state.selectedCol = null;
+    },
     updateActiveAbility: (state: GameState, action: PayloadAction<AbilityName>) => {
       state.activeAbility = action.payload;
+      const selectF = abilitySelectMap.get(action.payload);
+      if (selectF && state.selectedRow && state.selectedCol) {
+        const source = state.board[state.selectedRow][state.selectedCol].piece;
+        selectF(source, state);
+      }
     },
     abilitySelect: (state: GameState, action: PayloadAction<{ row: number; col: number }>) => {
       const abilityF = abilityFunctionMap.get(state.activeAbility);
@@ -194,5 +203,12 @@ const gameSlice = createSlice({
   },
 });
 export default gameSlice.reducer;
-export const { makeMove, selectSquare, fullGameStateUpdate, setUpGame, updateActiveAbility, abilitySelect } =
-  gameSlice.actions;
+export const {
+  makeMove,
+  selectSquare,
+  fullGameStateUpdate,
+  setUpGame,
+  updateActiveAbility,
+  abilitySelect,
+  resetSelection,
+} = gameSlice.actions;

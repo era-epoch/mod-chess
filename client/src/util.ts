@@ -1,4 +1,5 @@
-import { PlayerColour, UserInfo } from './types';
+import { GameState } from './state/slices/game/slice';
+import { Piece, PlayerColour, UserInfo } from './types';
 
 export const isPlayersTurn = (turn: number, player: UserInfo): boolean => {
   if (turn % 2 === 0) {
@@ -14,4 +15,15 @@ export const getCurrentPlayer = (turn: number): PlayerColour => {
   } else {
     return PlayerColour.dark;
   }
+};
+
+export const getPieceLocation = (piece: Piece, state: GameState): { row: number; col: number } => {
+  for (let i = 0; i < state.board.length; i++) {
+    for (let j = 0; j < state.board[i].length; j++) {
+      if (state.board[i][j].piece.id === piece.id) {
+        return { row: i, col: j };
+      }
+    }
+  }
+  return { row: -1, col: -1 };
 };
