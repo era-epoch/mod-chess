@@ -61,8 +61,8 @@ export const ScourgeBishopDetail = (): JSX.Element => {
       }
     }
   };
+  // TODO: const thisAbilityIsActive =
   // TODO: Change vis for enemy pieces
-  // TODO: Get ability cost from somewhere central
   return (
     <div className={`detail ability quick${activeAbility === abilityId ? ' active' : ''}`} onClick={handleClick}>
       <div>
@@ -128,20 +128,19 @@ export const cureAbilityF: AbilityFunction = (
   }
 
   const target = state.board[targetRow][targetCol].piece;
-  let activated = false;
   if (target.owner === player) {
     const index = target.statuses.findIndex((s: PieceStatus) => s === PieceStatus.PSN);
     if (index >= 0) {
       state.board[targetRow][targetCol].piece.statuses.splice(index, 1);
-      activated = true;
+      state.abilityActivatedFlag = true;
     }
   }
 
   // Subtract rune cost if ability successfully activated
   if (player === PlayerColour.light) {
-    if (activated) state.lightRunes -= abilityRuneCost;
+    if (state.abilityActivatedFlag) state.lightRunes -= abilityRuneCost;
   } else {
-    if (activated) state.darkRunes -= abilityRuneCost;
+    if (state.abilityActivatedFlag) state.darkRunes -= abilityRuneCost;
   }
 };
 

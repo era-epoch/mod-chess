@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux';
 import { uid } from 'react-uid';
 import { wsEmitMove } from '../../socketMiddleware';
 import { RootState } from '../../state/rootReducer';
-import { abilitySelect, endTurnFromAbility, makeMove, selectSquare } from '../../state/slices/game/slice';
+import { endTurnDirect, makeMove, selectSquare, tryActivateAbility } from '../../state/slices/game/slice';
 import { OnlineGameStatus, swapLocalPlayer } from '../../state/slices/ui/slice';
 import { store } from '../../state/store';
 import { SquareStatus } from '../../types';
@@ -21,19 +21,24 @@ const Board = (): JSX.Element => {
   const player = useSelector((state: RootState) => state.ui.player);
   const board = gameState.board.slice(0);
 
+  const handleTurnEnd = () => {
+    // If online game, emit the new game state
+    if (onlineGame === OnlineGameStatus.SUCCESS) {
+      const newGameState = store.getState().game;
+      dispatch(wsEmitMove(newGameState));
+    }
+    // If local hotseat game, switch players
+    if (onlineGame === OnlineGameStatus.NONE) {
+      dispatch(swapLocalPlayer());
+      // dispatch(toggleBoardInversion());
+    }
+  };
+
   const handleMove = (row: number, col: number) => {
     if (gameState.selectedRow !== null && gameState.selectedCol !== null) {
       if (gameState.board[gameState.selectedRow][gameState.selectedCol].piece.owner === player.colour) {
         dispatch(makeMove({ row: row, col: col }));
-        if (onlineGame === OnlineGameStatus.SUCCESS) {
-          const newGameState = store.getState().game;
-          dispatch(wsEmitMove(newGameState));
-        }
-        // If local hotseat game, switch players
-        if (onlineGame === OnlineGameStatus.NONE) {
-          dispatch(swapLocalPlayer());
-          // dispatch(toggleBoardInversion());
-        }
+        handleTurnEnd();
       } else {
         dispatch(selectSquare({ row: row, col: col }));
       }
@@ -44,10 +49,12 @@ const Board = (): JSX.Element => {
     if (gameState.activeAbility === '') {
       dispatch(selectSquare({ row: row, col: col }));
     } else if (isPlayersTurn(gameState.turn, player)) {
-      dispatch(abilitySelect({ row: row, col: col }));
-      // If the ability ends the turn, end the turn
-      if (!isAbilityQuick(gameState.activeAbility)) {
-        dispatch(endTurnFromAbility());
+      dispatch(tryActivateAbility({ row: row, col: col }));
+      const newGameState = store.getState().game;
+      // If the ability activated and ends the turn, end the turn
+      if (newGameState.abilityActivatedFlag && !isAbilityQuick(gameState.activeAbility)) {
+        dispatch(endTurnDirect());
+        handleTurnEnd();
       }
     }
   };

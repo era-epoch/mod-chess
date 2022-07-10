@@ -73,6 +73,7 @@ const LeftBar = (): JSX.Element => {
         runeDuration: Infinity,
         runeSpawnTurn: 0,
         activeAbility: '',
+        abilityActivatedFlag: false,
       } as GameState),
     );
     dispatch(

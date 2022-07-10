@@ -2,8 +2,8 @@ import { faBolt, faChessRook } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../state/rootReducer';
-import { clearHighlights } from '../../state/slices/game/helpers';
-import { GameState, updateActiveAbility, selectSquare } from '../../state/slices/game/slice';
+import { clearAOEHighlights, clearHighlights } from '../../state/slices/game/helpers';
+import { GameState, updateActiveAbility, selectSquare, resetSelection, clearAOE } from '../../state/slices/game/slice';
 import {
   Piece,
   PlayerColour,
@@ -14,6 +14,7 @@ import {
   AbilitySelectFunction,
   AbilityFunction,
   PieceStatus,
+  SquareStatus,
 } from '../../types';
 import { getCurrentPlayer, getPieceLocation } from '../../util';
 import { Ability, getAbilityName, getAbilityRuneCost, registerAbility } from '../ability';
@@ -56,19 +57,20 @@ const ScourgeRookDetail = (): JSX.Element => {
       // Deactivate
       dispatch(updateActiveAbility(''));
       if (selectedCol && selectedRow) {
+        dispatch(resetSelection()); // Since selecting the same square twice hides it
+        dispatch(clearAOE());
         dispatch(selectSquare({ row: selectedRow, col: selectedCol }));
       }
     }
   };
   // TODO: Change vis for enemy pieces
-  // TODO: Get ability cost from somewhere central
   return (
     <div className={`detail ability quick${activeAbility === abilityId ? ' active' : ''}`} onClick={handleClick}>
       <div>
         <FontAwesomeIcon icon={faBolt} className="detail-icon rune" />
         <span className="detail-title">{getAbilityName(abilityId)}: </span>
         <span className="detail-info">
-          <span className="emph poison-text">Poison</span> any piece adjacent to this piece.
+          <span className="emph poison-text">Poison</span> any piece within one square of this piece.
         </span>
       </div>
       <div>
@@ -76,7 +78,7 @@ const ScourgeRookDetail = (): JSX.Element => {
           <div className={`rune`}>
             <FontAwesomeIcon icon={faBolt} />
           </div>
-          <div>2</div>
+          <div>{getAbilityRuneCost(abilityId)}</div>
         </div>
       </div>
     </div>
@@ -101,6 +103,49 @@ registerGamePiece(ScourgeRookGamePiece);
 
 export const infectSelectF: AbilitySelectFunction = (source: Piece, state: GameState) => {
   clearHighlights(state);
+  // AOE Effect Highlights
+  if (state.selectedRow && state.selectedCol) {
+    if (state.board[state.selectedRow + 1][state.selectedCol].inBounds) {
+      state.board[state.selectedRow + 1][state.selectedCol].squareStatuses.push(
+        ...[SquareStatus.AOE, SquareStatus.AOE_B, SquareStatus.AOE_PSN],
+      );
+    }
+    if (state.board[state.selectedRow - 1][state.selectedCol].inBounds) {
+      state.board[state.selectedRow - 1][state.selectedCol].squareStatuses.push(
+        ...[SquareStatus.AOE, SquareStatus.AOE_T, SquareStatus.AOE_PSN],
+      );
+    }
+    if (state.board[state.selectedRow][state.selectedCol + 1].inBounds) {
+      state.board[state.selectedRow][state.selectedCol + 1].squareStatuses.push(
+        ...[SquareStatus.AOE, SquareStatus.AOE_R, SquareStatus.AOE_PSN],
+      );
+    }
+    if (state.board[state.selectedRow][state.selectedCol - 1].inBounds) {
+      state.board[state.selectedRow][state.selectedCol - 1].squareStatuses.push(
+        ...[SquareStatus.AOE, SquareStatus.AOE_L, SquareStatus.AOE_PSN],
+      );
+    }
+    if (state.board[state.selectedRow + 1][state.selectedCol + 1].inBounds) {
+      state.board[state.selectedRow + 1][state.selectedCol + 1].squareStatuses.push(
+        ...[SquareStatus.AOE, SquareStatus.AOE_B, SquareStatus.AOE_R, SquareStatus.AOE_PSN],
+      );
+    }
+    if (state.board[state.selectedRow - 1][state.selectedCol + 1].inBounds) {
+      state.board[state.selectedRow - 1][state.selectedCol + 1].squareStatuses.push(
+        ...[SquareStatus.AOE, SquareStatus.AOE_T, SquareStatus.AOE_R, SquareStatus.AOE_PSN],
+      );
+    }
+    if (state.board[state.selectedRow + 1][state.selectedCol - 1].inBounds) {
+      state.board[state.selectedRow + 1][state.selectedCol - 1].squareStatuses.push(
+        ...[SquareStatus.AOE, SquareStatus.AOE_B, SquareStatus.AOE_L, SquareStatus.AOE_PSN],
+      );
+    }
+    if (state.board[state.selectedRow - 1][state.selectedCol - 1].inBounds) {
+      state.board[state.selectedRow - 1][state.selectedCol - 1].squareStatuses.push(
+        ...[SquareStatus.AOE, SquareStatus.AOE_T, SquareStatus.AOE_L, SquareStatus.AOE_PSN],
+      );
+    }
+  }
 };
 
 export const infectAbilityF: AbilityFunction = (
@@ -126,20 +171,25 @@ export const infectAbilityF: AbilityFunction = (
     }
   }
   const sourceLocation = getPieceLocation(source, state);
-  let activated = false;
-  if (Math.abs(targetRow - sourceLocation.row) <= 1 && Math.abs(targetCol - sourceLocation.col) <= 1) {
-    state.board[targetRow][targetCol].piece.statuses.push(PieceStatus.PSN);
-    activated = true;
+  const yDiff = Math.abs(targetRow - sourceLocation.row);
+  const xDiff = Math.abs(targetCol - sourceLocation.col);
+  if (yDiff <= 1 && xDiff <= 1 && yDiff + xDiff > 0) {
+    if (state.board[targetRow][targetCol].piece.type !== PieceType.empty) {
+      state.board[targetRow][targetCol].piece.statuses.push(PieceStatus.PSN);
+      state.abilityActivatedFlag = true;
+    }
   }
 
   // Subtract rune cost if ability successfully activated
   if (player === PlayerColour.light) {
-    if (activated) state.lightRunes -= abilityRuneCost;
+    if (state.abilityActivatedFlag) state.lightRunes -= abilityRuneCost;
   } else {
-    if (activated) state.darkRunes -= abilityRuneCost;
+    if (state.abilityActivatedFlag) state.darkRunes -= abilityRuneCost;
   }
 
-  // End turn
+  if (state.abilityActivatedFlag) {
+    clearAOEHighlights(state);
+  }
 };
 
 const InfectAbility: Ability = {

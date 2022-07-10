@@ -1,6 +1,13 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Graveyard, Move, MoveFlag, PlayerColour, SquareContents, SquareStatus } from '../../../types';
-import { capturePieceAtLocation, movePiece, denoteMove, spawnNewRunes, handleEndOfTurn } from './helpers';
+import {
+  capturePieceAtLocation,
+  movePiece,
+  denoteMove,
+  spawnNewRunes,
+  handleEndOfTurn,
+  clearAOEHighlights,
+} from './helpers';
 import emptyBoard from '../../../GameObjects/boards/emptyBoard';
 import { ChatItem } from '../ui/slice';
 import { getMoveF } from '../../../GameObjects/gamePiece';
@@ -27,6 +34,7 @@ export interface GameState {
   runeDuration: number;
   runeSpawnTurn: number;
   activeAbility: string;
+  abilityActivatedFlag: boolean;
 }
 
 const initialGameState: GameState = {
@@ -51,6 +59,7 @@ const initialGameState: GameState = {
   runeDuration: 0,
   runeSpawnTurn: 0,
   activeAbility: '',
+  abilityActivatedFlag: false,
 };
 
 // Reducer
@@ -161,6 +170,7 @@ const gameSlice = createSlice({
       state.selectedCol = null;
     },
     updateActiveAbility: (state: GameState, action: PayloadAction<string>) => {
+      console.log('abillity selected' + action.payload);
       state.activeAbility = action.payload;
       const selectF = getAbilitySelectF(action.payload);
       if (selectF && state.selectedRow && state.selectedCol) {
@@ -168,15 +178,19 @@ const gameSlice = createSlice({
         selectF(source, state);
       }
     },
-    abilitySelect: (state: GameState, action: PayloadAction<{ row: number; col: number }>) => {
+    tryActivateAbility: (state: GameState, action: PayloadAction<{ row: number; col: number }>) => {
+      console.log('abillity activated' + action.payload);
       const abilityF = getAbilityF(state.activeAbility);
       if (abilityF && state.selectedRow && state.selectedCol) {
         const source = state.board[state.selectedRow][state.selectedCol].piece;
         abilityF(source, action.payload.row, action.payload.col, state);
       }
     },
-    endTurnFromAbility: (state: GameState) => {
+    endTurnDirect: (state: GameState) => {
       handleEndOfTurn(state, getCurrentPlayer(state.turn));
+    },
+    clearAOE: (state: GameState) => {
+      clearAOEHighlights(state);
     },
   },
 });
@@ -187,7 +201,8 @@ export const {
   fullGameStateUpdate,
   setUpGame,
   updateActiveAbility,
-  abilitySelect,
+  tryActivateAbility,
   resetSelection,
-  endTurnFromAbility,
+  endTurnDirect,
+  clearAOE,
 } = gameSlice.actions;

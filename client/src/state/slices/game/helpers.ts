@@ -136,12 +136,6 @@ export const capturePieceAtLocation = (gameState: GameState, row: number, col: n
   }
 };
 
-export const nextTurn = (state: GameState) => {
-  endTurn(state);
-  state.turn++;
-  startTurn(state);
-};
-
 export const startTurn = (state: GameState) => {
   if (
     state.turn === state.runeSpawnTurn ||
@@ -229,8 +223,23 @@ export const clearHighlights = (state: GameState) => {
   }
 };
 
+export const clearAOEHighlights = (state: GameState) => {
+  for (let i = 0; i < state.board.length; i++) {
+    for (let j = 0; j < state.board[i].length; j++) {
+      state.board[i][j].squareStatuses = state.board[i][j].squareStatuses.filter((s) => s !== SquareStatus.AOE);
+      state.board[i][j].squareStatuses = state.board[i][j].squareStatuses.filter((s) => s !== SquareStatus.AOE_B);
+      state.board[i][j].squareStatuses = state.board[i][j].squareStatuses.filter((s) => s !== SquareStatus.AOE_L);
+      state.board[i][j].squareStatuses = state.board[i][j].squareStatuses.filter((s) => s !== SquareStatus.AOE_T);
+      state.board[i][j].squareStatuses = state.board[i][j].squareStatuses.filter((s) => s !== SquareStatus.AOE_R);
+      state.board[i][j].squareStatuses = state.board[i][j].squareStatuses.filter((s) => s !== SquareStatus.AOE_PSN);
+    }
+  }
+};
+
 export const handleEndOfTurn = (state: GameState, currentPlayer: PlayerColour) => {
   // CLEANUP
+  state.activeAbility = '';
+  state.abilityActivatedFlag = false;
   for (let i = 0; i < state.board.length; i++) {
     for (let j = 0; j < state.board[i].length; j++) {
       state.board[i][j].squareStatuses = state.board[i][j].squareStatuses.filter((s) => s !== SquareStatus.HL);
@@ -244,7 +253,9 @@ export const handleEndOfTurn = (state: GameState, currentPlayer: PlayerColour) =
     handleGameover(state, currentPlayer);
   } else {
     // If not, proceed to next turn
-    nextTurn(state);
+    endTurn(state);
+    state.turn++;
+    startTurn(state);
   }
   state.selectedRow = null;
   state.selectedCol = null;

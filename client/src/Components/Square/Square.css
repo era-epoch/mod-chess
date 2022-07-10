@@ -25,6 +25,7 @@
 
 .hover-icon {
   display: none;
+  z-index: 5;
 }
 
 .icon-stack:hover .hover-icon {
@@ -84,13 +85,38 @@
   z-index: 4;
 }
 
-.heart {
-  color: rgba(255, 0, 0, 0.75);
-  z-index: 5;
-  font-size: 2rem;
-}
-
-.ability-cure:hover {
+.poison .ability-cure:hover {
   outline: 2px dashed red;
   z-index: 2;
+}
+
+.square-aoe {
+  z-index: 5;
+  grid-row: 1;
+  grid-column: 1;
+}
+
+.aoe-top {
+  border-top-width: 2px;
+  border-top-style: solid;
+}
+
+.aoe-bottom {
+  border-bottom-width: 2px;
+  border-bottom-style: solid;
+}
+
+.aoe-right {
+  border-right-width: 2px;
+  border-right-style: solid;
+}
+
+.aoe-left {
+  border-left-width: 2px;
+  border-left-style: solid;
+}
+
+.aoe-poison {
+  background-color: rgba(0, 255, 0, 0.1);
+  border-color: green;
 }

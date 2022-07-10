@@ -20,6 +20,12 @@ export enum SquareStatus {
   SEL = 'square-selected',
   EPV = 'en-passant-vulnerable',
   RUNE = 'rune',
+  AOE = 'aoe',
+  AOE_L = 'aoe-left',
+  AOE_R = 'aoe-right',
+  AOE_T = 'aoe-top',
+  AOE_B = 'aoe-bottom',
+  AOE_PSN = 'aoe-poison',
 }
 
 export enum PieceStatus {

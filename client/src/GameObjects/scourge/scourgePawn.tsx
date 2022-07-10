@@ -59,7 +59,8 @@ export const ScourgePawnDetail = (): JSX.Element => {
         <FontAwesomeIcon icon={faCircleInfo} className="detail-icon" />
         <span className="detail-title">Posthumous Transmission: </span>
         <span className="detail-info">
-          When this piece is captured, the capturing piece gains one stack of <i>poisoned</i>.
+          When this piece is captured, the capturing piece gains one stack of{' '}
+          <span className="emph poison-text">poisoned</span>.
         </span>
       </div>
     </div>

@@ -1,4 +1,12 @@
-import { faBolt, faChessPawn, faCircle, faCrown, faHeart, faSkull } from '@fortawesome/free-solid-svg-icons';
+import {
+  faBolt,
+  faChessPawn,
+  faCircle,
+  faCrown,
+  faHeart,
+  faSkull,
+  faSkullCrossbones,
+} from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useSelector } from 'react-redux';
 import { getAbilityRenderString } from '../../GameObjects/ability';
@@ -15,6 +23,7 @@ interface Props {
 const Square = (props: Props): JSX.Element => {
   const activeAbility = useSelector((state: RootState) => state.game.activeAbility);
   const abilityRender = getAbilityRenderString(activeAbility);
+  const squareStatuses = props.content.squareStatuses;
   return (
     <div
       className={
@@ -26,39 +35,58 @@ const Square = (props: Props): JSX.Element => {
     >
       <div className={`icon-stack`}>
         {props.content ? <BoardPiece piece={props.content.piece} /> : null}
-        {props.content.squareStatuses.includes(SquareStatus.HL) ? (
+        {squareStatuses.includes(SquareStatus.HL) ? (
           <div className="icon-wrapper square-highlighted">
             <FontAwesomeIcon icon={faCircle} />
           </div>
         ) : null}
-        {props.content.squareStatuses.includes(SquareStatus.HLC) ? (
+        {squareStatuses.includes(SquareStatus.HLC) ? (
           <div className="icon-wrapper square-highlighted">
             <FontAwesomeIcon icon={faCrown} />
           </div>
         ) : null}
-        {props.content.squareStatuses.includes(SquareStatus.HLK) ? (
+        {squareStatuses.includes(SquareStatus.HLK) ? (
           <div className="icon-wrapper square-highlighted-kill">
             <FontAwesomeIcon icon={faSkull} />
           </div>
         ) : null}
-        {props.content.squareStatuses.includes(SquareStatus.EPV) ? (
+        {squareStatuses.includes(SquareStatus.EPV) ? (
           <div className={`icon-wrapper en-passant-vulnerable`}>
             <FontAwesomeIcon icon={faChessPawn} />
           </div>
         ) : null}
-        {props.content.inBounds && props.content.squareStatuses.includes(SquareStatus.SEL) ? (
+        {props.content.inBounds && squareStatuses.includes(SquareStatus.SEL) ? (
           <div className="square-selected"></div>
         ) : null}
-        {props.content.inBounds && props.content.squareStatuses.includes(SquareStatus.RUNE) ? (
+        {props.content.inBounds && squareStatuses.includes(SquareStatus.RUNE) ? (
           <div className={`icon-wrapper board-rune`}>
             <FontAwesomeIcon icon={faBolt} />
           </div>
         ) : null}
+        {props.content.inBounds && squareStatuses.includes(SquareStatus.AOE) ? (
+          <div
+            className={
+              `square-aoe` +
+              (squareStatuses.includes(SquareStatus.AOE_PSN) ? ' aoe-poison' : '') +
+              (squareStatuses.includes(SquareStatus.AOE_B) ? ' aoe-bottom' : '') +
+              (squareStatuses.includes(SquareStatus.AOE_L) ? ' aoe-left' : '') +
+              (squareStatuses.includes(SquareStatus.AOE_T) ? ' aoe-top' : '') +
+              (squareStatuses.includes(SquareStatus.AOE_R) ? ' aoe-right' : '')
+            }
+          ></div>
+        ) : null}
         {props.content.inBounds &&
         abilityRender === 'ability-cure' &&
         props.content.piece.statuses.includes(PieceStatus.PSN) ? (
-          <div className={`icon-wrapper hover-icon heart`}>
+          <div className={`icon-wrapper hover-icon`} style={{ color: 'rgba(255, 0, 0, 0.75)', fontSize: '2rem' }}>
             <FontAwesomeIcon icon={faHeart} />
+          </div>
+        ) : null}
+        {props.content.inBounds &&
+        abilityRender === 'ability-infect' &&
+        squareStatuses.includes(SquareStatus.AOE_PSN) ? (
+          <div className={`icon-wrapper hover-icon`} style={{ color: 'greenyellow', fontSize: '1.5rem' }}>
+            <FontAwesomeIcon icon={faSkullCrossbones} />
           </div>
         ) : null}
       </div>
