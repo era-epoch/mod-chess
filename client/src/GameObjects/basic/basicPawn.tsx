@@ -61,6 +61,12 @@ export const basicPawnMoveF = (
     ) {
       moves.push({ row: row - 1, col: col + 1, flags: [MoveFlag.KILL], oRow: row, oCol: col });
     }
+    // Add promotion flag to moves that would result in a pawn promotion
+    for (let i = 0; i < moves.length; i++) {
+      if (moves[i].row <= 1) {
+        moves[i].flags.push(MoveFlag.PROMO);
+      }
+    }
   } else if (piece.orientation === Orientation.top) {
     if (board[row + 1][col].piece.type === PieceType.empty) {
       moves.push({ row: row + 1, col: col, oRow: row, oCol: col, flags: [] });
@@ -85,6 +91,12 @@ export const basicPawnMoveF = (
         board[row + 1][col + 1].enPassantOrigin?.owner !== piece.owner)
     ) {
       moves.push({ row: row + 1, col: col + 1, flags: [MoveFlag.KILL], oRow: row, oCol: col });
+    }
+    // Add promotion flag to moves that would result in a pawn promotion
+    for (let i = 0; i < moves.length; i++) {
+      if (moves[i].row >= 8) {
+        moves[i].flags.push(MoveFlag.PROMO);
+      }
     }
   }
   return filterMoves(piece, row, col, state, moves, checkKing);

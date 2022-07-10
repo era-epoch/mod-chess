@@ -56,6 +56,7 @@ export enum MoveFlag {
   CSTL = 'castle',
   KILL = 'kill',
   EP = 'en-passant',
+  PROMO = 'promotion',
 }
 
 export enum PieceOrigin {

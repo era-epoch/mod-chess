@@ -45,7 +45,7 @@ export const denoteMove = (state: GameState, piece: Piece, move: Move) => {
   } as ChatItem);
 };
 
-export const movePiece = (gameState: GameState, piece: Piece, move: Move) => {
+export const movePiece = (gameState: GameState, piece: Piece, move: Move): boolean => {
   // piece.onMove();
 
   // Castle Logic
@@ -120,8 +120,17 @@ export const movePiece = (gameState: GameState, piece: Piece, move: Move) => {
       gameState.board[move.row + 1][move.col].enPassantOrigin = piece;
     }
   }
+
   gameState.board[move.row][move.col].piece = piece;
   gameState.board[move.row][move.col].piece.nMoves++;
+
+  // Promotion logic
+  if (move.flags.includes(MoveFlag.PROMO)) {
+    gameState.promoPiece = piece;
+    return false;
+  }
+
+  return true;
 };
 
 export const capturePieceAtLocation = (gameState: GameState, row: number, col: number, capturer?: Piece) => {

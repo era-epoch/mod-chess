@@ -1,5 +1,16 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Graveyard, Move, MoveFlag, PlayerColour, SquareContents, SquareStatus } from '../../../types';
+import {
+  Graveyard,
+  Move,
+  MoveFlag,
+  Piece,
+  PieceIdentifier,
+  PieceOrigin,
+  PieceType,
+  PlayerColour,
+  SquareContents,
+  SquareStatus,
+} from '../../../types';
 import {
   capturePieceAtLocation,
   movePiece,
@@ -35,6 +46,7 @@ export interface GameState {
   runeSpawnTurn: number;
   activeAbility: string;
   abilityActivatedFlag: boolean;
+  promoPiece: Piece | null;
 }
 
 const initialGameState: GameState = {
@@ -60,6 +72,7 @@ const initialGameState: GameState = {
   runeSpawnTurn: 0,
   activeAbility: '',
   abilityActivatedFlag: false,
+  promoPiece: null,
 };
 
 // Reducer
@@ -108,10 +121,12 @@ const gameSlice = createSlice({
       // REMOVING TARGET
       capturePieceAtLocation(state, move.row, move.col, pieceToMove);
       // ENTERING & EFFECTS
-      movePiece(state, pieceToMove, move);
+      const moveEndedTurn = movePiece(state, pieceToMove, move);
       // Write an algebraic representation of the move to the history
-      denoteMove(state, pieceToMove, move);
-      handleEndOfTurn(state, pieceToMove.owner);
+      // denoteMove(state, pieceToMove, move);
+      if (moveEndedTurn) {
+        handleEndOfTurn(state, pieceToMove.owner);
+      }
     },
     selectSquare: (state: GameState, action: PayloadAction<{ row: number; col: number }>) => {
       const row = action.payload.row;
@@ -165,12 +180,52 @@ const gameSlice = createSlice({
         state.selectedCol = null;
       }
     },
+    promotePiece: (state: GameState, action: PayloadAction<PieceIdentifier>) => {
+      // TODO: This Better
+      let piece: Piece | undefined = undefined;
+      if (!state.promoPiece) return;
+      for (let i = 0; i < state.board.length; i++) {
+        for (let j = 0; j < state.board[i].length; j++) {
+          if (state.board[i][j].piece.id === state.promoPiece.id) {
+            piece = state.board[i][j].piece;
+          }
+        }
+      }
+      if (!piece) return;
+      switch (action.payload) {
+        case PieceIdentifier.basicQueen:
+          piece.identifier = PieceIdentifier.basicQueen;
+          piece.origin = PieceOrigin.basic;
+          piece.type = PieceType.queen;
+          piece.name = 'Queen';
+          break;
+        case PieceIdentifier.basicRook:
+          piece.identifier = PieceIdentifier.basicRook;
+          piece.origin = PieceOrigin.basic;
+          piece.type = PieceType.rook;
+          piece.name = 'Rook';
+          break;
+        case PieceIdentifier.basicBishop:
+          piece.identifier = PieceIdentifier.basicBishop;
+          piece.origin = PieceOrigin.basic;
+          piece.type = PieceType.bishop;
+          piece.name = 'Bishop';
+          break;
+        case PieceIdentifier.basicKnight:
+          piece.identifier = PieceIdentifier.basicKnight;
+          piece.origin = PieceOrigin.basic;
+          piece.type = PieceType.knight;
+          piece.name = 'Knight';
+          break;
+      }
+      // TODO: Promotion serialization
+      state.promoPiece = null;
+    },
     resetSelection: (state: GameState) => {
       state.selectedRow = null;
       state.selectedCol = null;
     },
     updateActiveAbility: (state: GameState, action: PayloadAction<string>) => {
-      console.log('abillity selected' + action.payload);
       state.activeAbility = action.payload;
       const selectF = getAbilitySelectF(action.payload);
       if (selectF && state.selectedRow && state.selectedCol) {
@@ -179,7 +234,6 @@ const gameSlice = createSlice({
       }
     },
     tryActivateAbility: (state: GameState, action: PayloadAction<{ row: number; col: number }>) => {
-      console.log('abillity activated' + action.payload);
       const abilityF = getAbilityF(state.activeAbility);
       if (abilityF && state.selectedRow && state.selectedCol) {
         const source = state.board[state.selectedRow][state.selectedCol].piece;
@@ -205,4 +259,5 @@ export const {
   resetSelection,
   endTurnDirect,
   clearAOE,
+  promotePiece,
 } = gameSlice.actions;

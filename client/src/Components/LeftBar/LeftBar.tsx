@@ -74,6 +74,7 @@ const LeftBar = (): JSX.Element => {
         runeSpawnTurn: 0,
         activeAbility: '',
         abilityActivatedFlag: false,
+        promoPiece: null,
       } as GameState),
     );
     dispatch(

@@ -42,6 +42,7 @@ const CreateOnlineMenu = (): JSX.Element => {
           runeSpawnTurn: 0,
           activeAbility: '',
           abilityActivatedFlag: false,
+          promoPiece: null,
         },
         playerName: playerName,
       } as CreateGameEvent),
