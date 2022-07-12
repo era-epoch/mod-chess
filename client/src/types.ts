@@ -30,6 +30,7 @@ export enum SquareStatus {
 
 export enum PieceStatus {
   PSN = 'poisoned',
+  bloodthirsty = 'bloodthirsty',
 }
 
 export enum PieceType {

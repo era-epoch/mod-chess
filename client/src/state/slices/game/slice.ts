@@ -241,6 +241,13 @@ const gameSlice = createSlice({
       }
     },
     endTurnDirect: (state: GameState) => {
+      // Post EP cleanup
+      for (let i = 0; i < state.board.length; i++) {
+        for (let j = 0; j < state.board[i].length; j++) {
+          state.board[i][j].squareStatuses = state.board[i][j].squareStatuses.filter((s) => s !== SquareStatus.EPV);
+          state.board[i][j].enPassantOrigin = null;
+        }
+      }
       handleEndOfTurn(state, getCurrentPlayer(state.turn));
     },
     clearAOE: (state: GameState) => {

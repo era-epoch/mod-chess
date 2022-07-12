@@ -150,6 +150,7 @@ const CureAbility: Ability = {
   renderString: 'ability-cure',
   runeCost: 1,
   quick: true,
+  immediate: false,
   selectF: cureSelectF,
   abilityF: cureAbilityF,
 };

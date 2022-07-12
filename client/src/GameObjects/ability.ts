@@ -6,6 +6,7 @@ export interface Ability {
   renderString: string;
   runeCost: number;
   quick: boolean;
+  immediate: boolean;
   selectF: AbilitySelectFunction;
   abilityF: AbilityFunction;
 }
@@ -34,6 +35,11 @@ export const getAbilityRuneCost = (id: string): number | undefined => {
 export const isAbilityQuick = (id: string): boolean | undefined => {
   const A = ABILITIES.find((a: Ability) => a.id === id);
   if (A) return A.quick;
+};
+
+export const isAbilityImmediate = (id: string): boolean | undefined => {
+  const A = ABILITIES.find((a: Ability) => a.id === id);
+  if (A) return A.immediate;
 };
 
 export const getAbilitySelectF = (id: string): AbilitySelectFunction | undefined => {

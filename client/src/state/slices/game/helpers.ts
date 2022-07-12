@@ -1,5 +1,12 @@
 import { EmptySquare } from '../../../GameObjects/basic/emptySquare';
-import { getCaptureF, getDeathF, getMoveF, getOnTurnEndF, getOnTurnStartF } from '../../../GameObjects/gamePiece';
+import {
+  getCaptureF,
+  getDeathF,
+  getMoveF,
+  getOnMovedF,
+  getOnTurnEndF,
+  getOnTurnStartF,
+} from '../../../GameObjects/gamePiece';
 import { kingInCheck } from '../../../GameObjects/gameUtil';
 import { Piece, Move, MoveFlag, SquareStatus, PieceType, PlayerColour, typeAlgebriacNotationMap } from '../../../types';
 import { ChatItem, ChatItemType } from '../ui/slice';
@@ -46,8 +53,6 @@ export const denoteMove = (state: GameState, piece: Piece, move: Move) => {
 };
 
 export const movePiece = (gameState: GameState, piece: Piece, move: Move): boolean => {
-  // piece.onMove();
-
   // Castle Logic
   if (move.flags.includes(MoveFlag.CSTL)) {
     let kingPos = 0;
@@ -122,7 +127,8 @@ export const movePiece = (gameState: GameState, piece: Piece, move: Move): boole
   }
 
   gameState.board[move.row][move.col].piece = piece;
-  gameState.board[move.row][move.col].piece.nMoves++;
+  const movedF = getOnMovedF(piece.identifier);
+  if (movedF) movedF(piece, move.row, move.col, gameState);
 
   // Promotion logic
   if (move.flags.includes(MoveFlag.PROMO)) {

@@ -6,6 +6,7 @@ import { BasicPawn } from '../basic/basicPawn';
 import { BasicQueen } from '../basic/basicQueen';
 import { BasicRook } from '../basic/basicRook';
 import { EmptySquare } from '../basic/emptySquare';
+import { CrimsonPawn } from '../crimson/crimsonPawn';
 import { setUpSquare } from '../gameUtil';
 import { ScourgeBishop } from '../scourge/scourgeBishop';
 import { ScourgePawn } from '../scourge/scourgePawn';
@@ -41,8 +42,8 @@ const testBoard: SquareContents[][] = [
     setUpSquare(2, 1, ScourgePawn(), 1, 0, true),
     setUpSquare(2, 2, ScourgePawn(), 1, 0, true),
     setUpSquare(2, 3, ScourgePawn(), 1, 0, true),
-    setUpSquare(2, 4, ScourgePawn(), 1, 0, true),
-    setUpSquare(2, 5, ScourgePawn(), 1, 0, true),
+    setUpSquare(2, 4, CrimsonPawn(), 1, 0, true),
+    setUpSquare(2, 5, CrimsonPawn(), 1, 0, true),
     setUpSquare(2, 6, ScourgePawn(), 1, 0, true),
     setUpSquare(2, 7, ScourgePawn(), 1, 0, true),
     setUpSquare(2, 8, ScourgePawn(), 1, 0, true),
@@ -99,12 +100,12 @@ const testBoard: SquareContents[][] = [
   [
     setUpSquare(7, 0, EmptySquare(), 2, 2, false),
     setUpSquare(7, 1, BasicPawn(), 0, 1, true),
-    setUpSquare(7, 2, BasicPawn(), 0, 1, true),
+    setUpSquare(7, 2, CrimsonPawn(), 0, 1, true),
     setUpSquare(7, 3, BasicPawn(), 0, 1, true),
     setUpSquare(7, 4, ScourgePawn(), 0, 1, true),
     setUpSquare(7, 5, BasicPawn(), 0, 1, true),
     setUpSquare(7, 6, ScourgePawn(), 0, 1, true),
-    setUpSquare(7, 7, BasicPawn(), 0, 1, true),
+    setUpSquare(7, 7, CrimsonPawn(), 0, 1, true),
     setUpSquare(7, 8, ScourgePawn(), 0, 1, true),
     setUpSquare(7, 9, EmptySquare(), 2, 2, false),
   ],

@@ -19,6 +19,14 @@
   color: var(--scourge-dark);
 }
 
+.light-piece.Crimson {
+  color: var(--crimson-light);
+}
+
+.dark-piece.Crimson {
+  color: var(--crimson-dark);
+}
+
 .statuses {
   display: flex;
   width: 100%;
@@ -34,4 +42,8 @@
 
 .poison {
   color: greenyellow;
+}
+
+.blood {
+  color: red;
 }

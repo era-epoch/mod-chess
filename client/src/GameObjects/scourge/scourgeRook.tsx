@@ -198,6 +198,7 @@ const InfectAbility: Ability = {
   renderString: 'ability-infect',
   runeCost: 2,
   quick: false,
+  immediate: false,
   selectF: infectSelectF,
   abilityF: infectAbilityF,
 };

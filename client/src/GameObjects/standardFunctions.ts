@@ -1,6 +1,7 @@
 import { capturePieceAtLocation } from '../state/slices/game/helpers';
 import { GameState } from '../state/slices/game/slice';
 import {
+  AbilitySelectFunction,
   CaptureFunction,
   DeathFunction,
   Graveyard,
@@ -39,6 +40,7 @@ export const standardOnCaptureF: CaptureFunction = (
 };
 
 export const standardOnMovedF: LifecycleFunction = (piece: Piece, row: number, col: number, state: GameState): void => {
+  piece.nMoves++;
   return;
 };
 
@@ -83,5 +85,9 @@ export const standardOnRoundEndF: LifecycleFunction = (
   col: number,
   state: GameState,
 ): void => {
+  return;
+};
+
+export const standardAbilitySelectF: AbilitySelectFunction = (source: Piece, state: GameState) => {
   return;
 };

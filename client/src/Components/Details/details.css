@@ -20,11 +20,11 @@
   border: 2px solid gray;
   border-radius: 0.5rem;
   padding: 0.5rem;
-  background-color: rgba(0, 0, 0, 0.2);
+  background-color: rgba(0, 0, 0, 0.1);
 }
 
 .ability {
-  background-color: rgba(88, 225, 232, 0.2);
+  background-color: rgba(10, 124, 130, 0.1);
   border: 2px solid rgb(10, 124, 130);
   border-radius: 0.5rem;
   padding: 0.5rem;
@@ -33,6 +33,10 @@
 
 .ability:hover {
   cursor: pointer;
+}
+
+.ability.immediate:hover {
+  background-color: rgba(88, 225, 232, 0.6);
 }
 
 .ability.active {
