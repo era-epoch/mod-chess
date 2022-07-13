@@ -8,14 +8,14 @@ import './Inspector.css';
 import { uid } from 'react-uid';
 import { statusInfoMap } from '../../../Details/statusDetails';
 import React from 'react';
-import { getDetails } from '../../../../GameObjects/gamePiece';
+import { GamePieceDetailProps, getDetails } from '../../../../GameObjects/gamePiece';
 
 const Inspector = (): JSX.Element => {
   const row = useSelector((state: RootState) => state.game.selectedRow);
   const col = useSelector((state: RootState) => state.game.selectedCol);
   const board = useSelector((state: RootState) => state.game.board);
   const selected = row !== null && col != null;
-  let piece = null;
+  let piece: Piece | null = null;
   let infoBits = null;
   let statusBits = null;
   if (selected) {
@@ -36,11 +36,11 @@ const Inspector = (): JSX.Element => {
           </div>
           <div className="inspector-details">
             <div className="inspector-name">{piece.name}</div>
-            {statusBits?.map((comp: React.FC, i) => {
-              return <div key={uid(i)}>{React.createElement(comp, {})}</div>;
+            {statusBits?.map((comp: React.FC<GamePieceDetailProps>, i) => {
+              return <div key={uid(i)}>{React.createElement(comp, { piece: piece })}</div>;
             })}
-            {infoBits?.map((comp: React.FC, i) => {
-              return <div key={uid(i)}>{React.createElement(comp, {})}</div>;
+            {infoBits?.map((comp: React.FC<GamePieceDetailProps>, i) => {
+              return <div key={uid(i)}>{React.createElement(comp, { piece: piece })}</div>;
             })}
           </div>
         </div>

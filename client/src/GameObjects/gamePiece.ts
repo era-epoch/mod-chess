@@ -1,5 +1,9 @@
 import React from 'react';
-import { CaptureFunction, DeathFunction, LifecycleFunction, MoveFunction, PieceIdentifier } from '../types';
+import { CaptureFunction, DeathFunction, LifecycleFunction, MoveFunction, Piece, PieceIdentifier } from '../types';
+
+export interface GamePieceDetailProps {
+  piece: Piece | null;
+}
 
 export interface GamePiece {
   identifier: PieceIdentifier;
@@ -9,7 +13,7 @@ export interface GamePiece {
   onMovedF: LifecycleFunction;
   onTurnStartF: LifecycleFunction;
   onTurnEndF: LifecycleFunction;
-  details: React.FC[];
+  details: React.FC<GamePieceDetailProps>[];
   icon: any;
 }
 
@@ -49,7 +53,7 @@ export const getOnTurnEndF = (id: PieceIdentifier): LifecycleFunction | undefine
   if (GP) return GP.onTurnEndF;
 };
 
-export const getDetails = (id: PieceIdentifier): React.FC[] | undefined => {
+export const getDetails = (id: PieceIdentifier): React.FC<GamePieceDetailProps>[] | undefined => {
   const GP = GAME_PIECES.find((gp: GamePiece) => gp.identifier === id);
   if (GP) return GP.details;
 };

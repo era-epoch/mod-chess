@@ -1,34 +1,36 @@
-import { faBolt, faChessPawn } from '@fortawesome/free-solid-svg-icons';
+import { faBolt, faChessKing } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useSelector, useDispatch } from 'react-redux';
 import { wsEmitMove } from '../../socketMiddleware';
 import { RootState } from '../../state/rootReducer';
+import { clearAOEHighlights, clearHighlights } from '../../state/slices/game/helpers';
 import {
-  endTurnDirect,
-  GameState,
-  resetSelection,
-  tryActivateAbility,
   updateActiveAbility,
+  resetSelection,
+  clearAOE,
+  selectSquare,
+  GameState,
+  hoverActiveAbility,
+  tryActivateAbility,
+  endTurnDirect,
 } from '../../state/slices/game/slice';
 import { OnlineGameStatus, swapLocalPlayer } from '../../state/slices/ui/slice';
 import { store } from '../../state/store';
 import {
   Piece,
   PlayerColour,
-  PieceIdentifier,
-  PieceOrigin,
   Orientation,
+  PieceIdentifier,
   PieceType,
-  MoveFunction,
-  Move,
-  PieceStatus,
-  MoveFlag,
+  PieceOrigin,
   AbilityFunction,
-  LifecycleFunction,
+  PieceStatus,
+  AbilityHoverFunction,
+  SquareStatus,
 } from '../../types';
 import { getCurrentPlayer, isPlayersTurn } from '../../util';
 import { Ability, getAbilityName, getAbilityRuneCost, registerAbility } from '../ability';
-import { basicPawnMoveF, EnPassantDetail, PawnDetail, PromotionDetail } from '../basic/basicPawn';
+import { basicKingMoveF, CastlingDetail, KingDetail } from '../basic/basicKing';
 import { GamePiece, GamePieceDetailProps, registerGamePiece } from '../gamePiece';
 import { genPID } from '../gameUtil';
 import {
@@ -38,63 +40,31 @@ import {
   standardOnTurnStartF,
   standardOnTurnEndF,
   standardAbilitySelectF,
-  standardAbilityHoverF,
 } from '../standardFunctions';
 
-export const CrimsonPawn = (): Piece => {
+export const ScourgeKing = (): Piece => {
   const piece: Piece = {
     owner: PlayerColour.neutral,
-    identifier: PieceIdentifier.crimsonPawn,
-    origin: PieceOrigin.crimson,
     nMoves: 0,
     orientation: Orientation.neutral,
     statuses: [],
-    type: PieceType.pawn,
+    identifier: PieceIdentifier.scourgeKing,
+    type: PieceType.king,
+    origin: PieceOrigin.scourge,
     id: genPID(),
-    name: 'Thrall',
+    name: 'Harbinger of Contagion',
   };
   return piece;
 };
 
-export const crimsonPawnMoveF: MoveFunction = (
-  piece: Piece,
-  row: number,
-  col: number,
-  state: GameState,
-  checkKing: boolean = true,
-): Move[] => {
-  const moves = basicPawnMoveF(piece, row, col, state, checkKing);
-  if (piece.statuses.includes(PieceStatus.bloodthirsty)) {
-    if (piece.orientation === Orientation.bottom) {
-      if (state.board[row - 1][col].piece.owner === (piece.owner + 1) % 2) {
-        moves.push({ row: row - 1, col: col, flags: [MoveFlag.KILL], oRow: row, oCol: col });
-      }
-    } else if (piece.orientation === Orientation.top) {
-      if (state.board[row + 1][col].piece.owner === (piece.owner + 1) % 2) {
-        moves.push({ row: row + 1, col: col, flags: [MoveFlag.KILL], oRow: row, oCol: col });
-      }
-    }
-  }
-  return moves;
-};
-
-export const crimsonPawnOnMovedF: LifecycleFunction = (piece: Piece, row: number, col: number, state: GameState) => {
-  standardOnMovedF(piece, row, col, state);
-  const index = piece.statuses.findIndex((s: PieceStatus) => s === PieceStatus.bloodthirsty);
-  if (index >= 0) {
-    piece.statuses.splice(index, 1);
-    state.abilityActivatedFlag = true;
-  }
-};
-
-export const CrimsonPawnDetail = (props: GamePieceDetailProps): JSX.Element => {
+const ScourgeKingDetail = (props: GamePieceDetailProps): JSX.Element => {
   const activeAbility = useSelector((state: RootState) => state.game.activeAbility);
   const selectedCol = useSelector((state: RootState) => state.game.selectedCol);
   const selectedRow = useSelector((state: RootState) => state.game.selectedRow);
   const onlineGame = useSelector((state: RootState) => state.ui.onlineGameStatus);
   const turn = useSelector((state: RootState) => state.game.turn);
   const player = useSelector((state: RootState) => state.ui.player);
-  const abilityId = 'bloodthirst';
+  const abilityId = 'contagion';
   const dispatch = useDispatch();
 
   const handleTurnEnd = () => {
@@ -115,7 +85,6 @@ export const CrimsonPawnDetail = (props: GamePieceDetailProps): JSX.Element => {
       if (selectedCol && selectedRow) {
         dispatch(updateActiveAbility(abilityId));
         dispatch(tryActivateAbility({ row: selectedRow, col: selectedCol }));
-        dispatch(updateActiveAbility(''));
         if (store.getState().game.abilityActivatedFlag) {
           dispatch(endTurnDirect());
           handleTurnEnd();
@@ -123,17 +92,38 @@ export const CrimsonPawnDetail = (props: GamePieceDetailProps): JSX.Element => {
       }
     }
   };
+  const startHover = () => {
+    if (props.piece && player.colour === props.piece.owner && isPlayersTurn(turn, player)) {
+      dispatch(updateActiveAbility(abilityId));
+      dispatch(hoverActiveAbility());
+    }
+  };
+  const endHover = () => {
+    if (
+      props.piece &&
+      player.colour === props.piece.owner &&
+      isPlayersTurn(turn, player) &&
+      selectedCol &&
+      selectedRow
+    ) {
+      dispatch(updateActiveAbility(''));
+      dispatch(resetSelection()); // Since selecting the same square twice hides it
+      dispatch(clearAOE());
+      dispatch(selectSquare({ row: selectedRow, col: selectedCol }));
+    }
+  };
   return (
     <div
-      className={`detail ability immediate quick${activeAbility === abilityId ? ' active' : ''}`}
+      className={`detail ability ${activeAbility === abilityId ? ' active' : ''}`}
       onClick={handleClick}
+      onMouseOver={startHover}
+      onMouseOut={endHover}
     >
       <div>
         <FontAwesomeIcon icon={faBolt} className="detail-icon rune" />
         <span className="detail-title">{getAbilityName(abilityId)}: </span>
         <span className="detail-info">
-          This piece becomes <span className="emph blood">bloodthirsty</span>: the next time it moves, it can capture by
-          moving one space forward.
+          <span className="emph poison-text">Poison</span> every piece on the board.
         </span>
       </div>
       <div>
@@ -148,29 +138,33 @@ export const CrimsonPawnDetail = (props: GamePieceDetailProps): JSX.Element => {
   );
 };
 
-const CrimsonPawnGamePiece: GamePiece = {
-  identifier: PieceIdentifier.crimsonPawn,
-  moveF: crimsonPawnMoveF,
+const ScourgeKingGamePiece: GamePiece = {
+  identifier: PieceIdentifier.scourgeKing,
+  moveF: basicKingMoveF,
   onDeathF: standardOnDeathF,
   onCaptureF: standardOnCaptureF,
-  onMovedF: crimsonPawnOnMovedF,
+  onMovedF: standardOnMovedF,
   onTurnStartF: standardOnTurnStartF,
   onTurnEndF: standardOnTurnEndF,
-  details: [CrimsonPawnDetail, PawnDetail, EnPassantDetail, PromotionDetail],
-  icon: faChessPawn,
+  details: [ScourgeKingDetail, KingDetail, CastlingDetail],
+  icon: faChessKing,
 };
 
-registerGamePiece(CrimsonPawnGamePiece);
+registerGamePiece(ScourgeKingGamePiece);
 
 // ABILITY
 
-export const bloodthirstAbilityF: AbilityFunction = (
-  source: Piece,
-  targetRow: number,
-  targetCol: number,
-  state: GameState,
-) => {
-  const abilityRuneCost = getAbilityRuneCost('bloodthirst');
+const contagionHoverF: AbilityHoverFunction = (source: Piece, state: GameState) => {
+  clearHighlights(state);
+  for (let i = 0; i < state.board.length; i++) {
+    for (let j = 0; j < state.board[i].length; j++) {
+      state.board[i][j].squareStatuses.push(...[SquareStatus.AOE, SquareStatus.AOE_PSN]);
+    }
+  }
+};
+
+const contagionAbilityF: AbilityFunction = (source: Piece, targetRow: number, targetCol: number, state: GameState) => {
+  const abilityRuneCost = getAbilityRuneCost('contagion');
   if (!abilityRuneCost) return;
 
   const player = getCurrentPlayer(state.turn);
@@ -187,7 +181,13 @@ export const bloodthirstAbilityF: AbilityFunction = (
     }
   }
 
-  source.statuses.push(PieceStatus.bloodthirsty);
+  for (let i = 0; i < state.board.length; i++) {
+    for (let j = 0; j < state.board[i].length; j++) {
+      if (state.board[i][j].piece.type !== PieceType.empty) {
+        state.board[i][j].piece.statuses.push(PieceStatus.PSN);
+      }
+    }
+  }
   state.abilityActivatedFlag = true;
 
   // Subtract rune cost if ability successfully activated
@@ -196,18 +196,19 @@ export const bloodthirstAbilityF: AbilityFunction = (
   } else {
     if (state.abilityActivatedFlag) state.darkRunes -= abilityRuneCost;
   }
+  if (state.abilityActivatedFlag) clearAOEHighlights(state);
 };
 
-const BloodthirstAbility: Ability = {
-  id: 'bloodthirst',
-  name: 'Activate Bloodthirst',
-  renderString: 'ability-bloodthirst',
-  runeCost: 1,
-  quick: true,
+const Contagion: Ability = {
+  id: 'contagion',
+  name: 'Contagion',
+  renderString: 'ability-contagion',
+  runeCost: 10,
+  quick: false,
   immediate: true,
-  hoverF: standardAbilityHoverF,
+  hoverF: contagionHoverF,
   selectF: standardAbilitySelectF,
-  abilityF: bloodthirstAbilityF,
+  abilityF: contagionAbilityF,
 };
 
-registerAbility(BloodthirstAbility);
+registerAbility(Contagion);

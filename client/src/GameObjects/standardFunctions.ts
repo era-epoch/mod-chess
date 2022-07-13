@@ -1,6 +1,7 @@
 import { capturePieceAtLocation } from '../state/slices/game/helpers';
 import { GameState } from '../state/slices/game/slice';
 import {
+  AbilityHoverFunction,
   AbilitySelectFunction,
   CaptureFunction,
   DeathFunction,
@@ -12,6 +13,7 @@ import {
   PlayerColour,
   SquareStatus,
 } from '../types';
+import { getCurrentPlayer } from '../util';
 import { EmptySquare } from './basic/emptySquare';
 
 export const standardOnDeathF: DeathFunction = (
@@ -74,7 +76,9 @@ export const standardOnTurnEndF: LifecycleFunction = (
       poisonStacks++;
     }
   }
-  if (poisonStacks >= 3) {
+  // If poison stacks >=3 AND it is this player's turn
+  const immune = piece.statuses.includes(PieceStatus.immune);
+  if (!immune && poisonStacks >= 3 && piece.owner === getCurrentPlayer(state.turn)) {
     capturePieceAtLocation(state, row, col);
   }
 };
@@ -89,5 +93,9 @@ export const standardOnRoundEndF: LifecycleFunction = (
 };
 
 export const standardAbilitySelectF: AbilitySelectFunction = (source: Piece, state: GameState) => {
+  return;
+};
+
+export const standardAbilityHoverF: AbilityHoverFunction = (source: Piece, state: GameState) => {
   return;
 };

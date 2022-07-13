@@ -31,6 +31,7 @@ export enum SquareStatus {
 export enum PieceStatus {
   PSN = 'poisoned',
   bloodthirsty = 'bloodthirsty',
+  immune = 'immune',
 }
 
 export enum PieceType {
@@ -147,6 +148,8 @@ export type LifecycleFunction = (piece: Piece, row: number, col: number, state: 
 export type AbilityFunction = (source: Piece, targetRow: number, targetCol: number, state: GameState) => void;
 
 export type AbilitySelectFunction = (source: Piece, state: GameState) => void;
+
+export type AbilityHoverFunction = (source: Piece, state: GameState) => void;
 
 export interface Graveyard {
   player: PlayerColour;

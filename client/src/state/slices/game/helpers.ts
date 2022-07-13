@@ -183,14 +183,22 @@ export const spawnNewRunes = (state: GameState) => {
     }
   }
   // Spawn new runes in random unoccupied squares in the middle
+  const colOps = [
+    [2, 3],
+    [6, 7],
+  ];
   for (let i = 0; i < state.lightRuneSpawns; i++) {
     const row = 5;
-    const col = Math.floor(Math.random() * (8 - 1 + 1) + 1);
+    const index = Math.floor(Math.random() * colOps.length);
+    const colGroup = colOps.splice(index, 1)[0];
+    const col = colGroup[Math.floor(Math.random() * colGroup.length)];
     state.board[row][col].squareStatuses.push(SquareStatus.RUNE);
   }
   for (let i = 0; i < state.darkRuneSpawns; i++) {
     const row = 4;
-    const col = Math.floor(Math.random() * (8 - 1 + 1) + 1);
+    const index = Math.floor(Math.random() * colOps.length);
+    const colGroup = colOps.splice(index, 1)[0];
+    const col = colGroup[Math.floor(Math.random() * colGroup.length)];
     state.board[row][col].squareStatuses.push(SquareStatus.RUNE);
   }
 };

@@ -9,7 +9,10 @@ import { EmptySquare } from '../basic/emptySquare';
 import { CrimsonPawn } from '../crimson/crimsonPawn';
 import { setUpSquare } from '../gameUtil';
 import { ScourgeBishop } from '../scourge/scourgeBishop';
+import { ScourgeKing } from '../scourge/scourgeKing';
+import { ScourgeKnight } from '../scourge/scourgeKnight';
 import { ScourgePawn } from '../scourge/scourgePawn';
+import { ScourgeQueen } from '../scourge/scourgeQueen';
 import { ScourgeRook } from '../scourge/scourgeRook';
 
 const testBoard: SquareContents[][] = [
@@ -28,12 +31,12 @@ const testBoard: SquareContents[][] = [
   [
     setUpSquare(1, 0, EmptySquare(), 2, 2, false),
     setUpSquare(1, 1, ScourgeRook(), 1, 0, true),
-    setUpSquare(1, 2, BasicKnight(), 1, 0, true),
+    setUpSquare(1, 2, ScourgeKnight(), 1, 0, true),
     setUpSquare(1, 3, ScourgeBishop(), 1, 0, true),
-    setUpSquare(1, 4, BasicQueen(), 1, 0, true),
-    setUpSquare(1, 5, BasicKing(), 1, 0, true),
-    setUpSquare(1, 6, BasicBishop(), 1, 0, true),
-    setUpSquare(1, 7, BasicKnight(), 1, 0, true),
+    setUpSquare(1, 4, ScourgeQueen(), 1, 0, true),
+    setUpSquare(1, 5, ScourgeKing(), 1, 0, true),
+    setUpSquare(1, 6, ScourgeBishop(), 1, 0, true),
+    setUpSquare(1, 7, ScourgeKnight(), 1, 0, true),
     setUpSquare(1, 8, ScourgeRook(), 1, 0, true),
     setUpSquare(1, 9, EmptySquare(), 2, 2, false),
   ],
@@ -42,8 +45,8 @@ const testBoard: SquareContents[][] = [
     setUpSquare(2, 1, ScourgePawn(), 1, 0, true),
     setUpSquare(2, 2, ScourgePawn(), 1, 0, true),
     setUpSquare(2, 3, ScourgePawn(), 1, 0, true),
-    setUpSquare(2, 4, CrimsonPawn(), 1, 0, true),
-    setUpSquare(2, 5, CrimsonPawn(), 1, 0, true),
+    setUpSquare(2, 4, ScourgePawn(), 1, 0, true),
+    setUpSquare(2, 5, ScourgePawn(), 1, 0, true),
     setUpSquare(2, 6, ScourgePawn(), 1, 0, true),
     setUpSquare(2, 7, ScourgePawn(), 1, 0, true),
     setUpSquare(2, 8, ScourgePawn(), 1, 0, true),
@@ -99,20 +102,20 @@ const testBoard: SquareContents[][] = [
   ],
   [
     setUpSquare(7, 0, EmptySquare(), 2, 2, false),
-    setUpSquare(7, 1, BasicPawn(), 0, 1, true),
+    setUpSquare(7, 1, CrimsonPawn(), 0, 1, true),
     setUpSquare(7, 2, CrimsonPawn(), 0, 1, true),
-    setUpSquare(7, 3, BasicPawn(), 0, 1, true),
-    setUpSquare(7, 4, ScourgePawn(), 0, 1, true),
-    setUpSquare(7, 5, BasicPawn(), 0, 1, true),
-    setUpSquare(7, 6, ScourgePawn(), 0, 1, true),
+    setUpSquare(7, 3, CrimsonPawn(), 0, 1, true),
+    setUpSquare(7, 4, CrimsonPawn(), 0, 1, true),
+    setUpSquare(7, 5, CrimsonPawn(), 0, 1, true),
+    setUpSquare(7, 6, CrimsonPawn(), 0, 1, true),
     setUpSquare(7, 7, CrimsonPawn(), 0, 1, true),
-    setUpSquare(7, 8, ScourgePawn(), 0, 1, true),
+    setUpSquare(7, 8, CrimsonPawn(), 0, 1, true),
     setUpSquare(7, 9, EmptySquare(), 2, 2, false),
   ],
   [
     setUpSquare(8, 0, EmptySquare(), 2, 2, false),
     setUpSquare(8, 1, ScourgeRook(), 0, 1, true),
-    setUpSquare(8, 2, BasicKnight(), 0, 1, true),
+    setUpSquare(8, 2, ScourgeKnight(), 0, 1, true),
     setUpSquare(8, 3, BasicBishop(), 0, 1, true),
     setUpSquare(8, 4, BasicQueen(), 0, 1, true),
     setUpSquare(8, 5, BasicKing(), 0, 1, true),

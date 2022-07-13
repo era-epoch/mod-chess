@@ -23,7 +23,7 @@ import emptyBoard from '../../../GameObjects/boards/emptyBoard';
 import { ChatItem } from '../ui/slice';
 import { getMoveF } from '../../../GameObjects/gamePiece';
 import { EmptySquare } from '../../../GameObjects/basic/emptySquare';
-import { getAbilityF, getAbilitySelectF } from '../../../GameObjects/ability';
+import { getAbilityF, getAbilityHoverF, getAbilitySelectF } from '../../../GameObjects/ability';
 import { getCurrentPlayer } from '../../../util';
 
 export interface GameState {
@@ -119,7 +119,9 @@ const gameSlice = createSlice({
       // LEAVING
       originSquare.piece = EmptySquare();
       // REMOVING TARGET
-      capturePieceAtLocation(state, move.row, move.col, pieceToMove);
+      if (state.board[move.row][move.col].piece.type !== PieceType.empty) {
+        capturePieceAtLocation(state, move.row, move.col, pieceToMove);
+      }
       // ENTERING & EFFECTS
       const moveEndedTurn = movePiece(state, pieceToMove, move);
       // Write an algebraic representation of the move to the history
@@ -233,6 +235,13 @@ const gameSlice = createSlice({
         selectF(source, state);
       }
     },
+    hoverActiveAbility: (state: GameState) => {
+      const hoverF = getAbilityHoverF(state.activeAbility);
+      if (hoverF && state.selectedRow && state.selectedCol) {
+        const source = state.board[state.selectedRow][state.selectedCol].piece;
+        hoverF(source, state);
+      }
+    },
     tryActivateAbility: (state: GameState, action: PayloadAction<{ row: number; col: number }>) => {
       const abilityF = getAbilityF(state.activeAbility);
       if (abilityF && state.selectedRow && state.selectedCol) {
@@ -241,6 +250,7 @@ const gameSlice = createSlice({
       }
     },
     endTurnDirect: (state: GameState) => {
+      console.log('ending turn');
       // Post EP cleanup
       for (let i = 0; i < state.board.length; i++) {
         for (let j = 0; j < state.board[i].length; j++) {
@@ -261,6 +271,7 @@ export const {
   selectSquare,
   fullGameStateUpdate,
   setUpGame,
+  hoverActiveAbility,
   updateActiveAbility,
   tryActivateAbility,
   resetSelection,

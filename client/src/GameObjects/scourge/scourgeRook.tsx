@@ -2,7 +2,7 @@ import { faBolt, faChessRook } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../state/rootReducer';
-import { clearAOEHighlights, clearHighlights } from '../../state/slices/game/helpers';
+import { clearHighlights } from '../../state/slices/game/helpers';
 import { GameState, updateActiveAbility, selectSquare, resetSelection, clearAOE } from '../../state/slices/game/slice';
 import {
   Piece,
@@ -16,10 +16,10 @@ import {
   PieceStatus,
   SquareStatus,
 } from '../../types';
-import { getCurrentPlayer, getPieceLocation } from '../../util';
+import { getCurrentPlayer, getPieceLocation, isPlayersTurn } from '../../util';
 import { Ability, getAbilityName, getAbilityRuneCost, registerAbility } from '../ability';
 import { basicRookMoveF, RookDetail } from '../basic/basicRook';
-import { GamePiece, registerGamePiece } from '../gamePiece';
+import { GamePiece, GamePieceDetailProps, registerGamePiece } from '../gamePiece';
 import { genPID } from '../gameUtil';
 import {
   standardOnDeathF,
@@ -27,6 +27,7 @@ import {
   standardOnMovedF,
   standardOnTurnStartF,
   standardOnTurnEndF,
+  standardAbilityHoverF,
 } from '../standardFunctions';
 
 export const ScourgeRook = (): Piece => {
@@ -44,33 +45,36 @@ export const ScourgeRook = (): Piece => {
   return piece;
 };
 
-const ScourgeRookDetail = (): JSX.Element => {
+const ScourgeRookDetail = (props: GamePieceDetailProps): JSX.Element => {
   const activeAbility = useSelector((state: RootState) => state.game.activeAbility);
   const selectedCol = useSelector((state: RootState) => state.game.selectedCol);
   const selectedRow = useSelector((state: RootState) => state.game.selectedRow);
+  const turn = useSelector((state: RootState) => state.game.turn);
+  const player = useSelector((state: RootState) => state.ui.player);
   const abilityId = 'infect';
   const dispatch = useDispatch();
   const handleClick = () => {
-    if (activeAbility !== abilityId) {
-      dispatch(updateActiveAbility(abilityId));
-    } else {
-      // Deactivate
-      dispatch(updateActiveAbility(''));
-      if (selectedCol && selectedRow) {
-        dispatch(resetSelection()); // Since selecting the same square twice hides it
-        dispatch(clearAOE());
-        dispatch(selectSquare({ row: selectedRow, col: selectedCol }));
+    if (props.piece && player.colour === props.piece.owner && isPlayersTurn(turn, player)) {
+      if (activeAbility !== abilityId) {
+        dispatch(updateActiveAbility(abilityId));
+      } else {
+        // Deactivate
+        dispatch(updateActiveAbility(''));
+        if (selectedCol && selectedRow) {
+          dispatch(resetSelection()); // Since selecting the same square twice hides it
+          dispatch(clearAOE());
+          dispatch(selectSquare({ row: selectedRow, col: selectedCol }));
+        }
       }
     }
   };
-  // TODO: Change vis for enemy pieces
   return (
     <div className={`detail ability quick${activeAbility === abilityId ? ' active' : ''}`} onClick={handleClick}>
       <div>
         <FontAwesomeIcon icon={faBolt} className="detail-icon rune" />
         <span className="detail-title">{getAbilityName(abilityId)}: </span>
         <span className="detail-info">
-          <span className="emph poison-text">Poison</span> any piece within one square of this piece.
+          (Quick) <span className="emph poison-text">Poison</span> any piece within one square of this piece.
         </span>
       </div>
       <div>
@@ -101,59 +105,34 @@ registerGamePiece(ScourgeRookGamePiece);
 
 // ABILITIES
 
-export const infectSelectF: AbilitySelectFunction = (source: Piece, state: GameState) => {
+const infectSelectF: AbilitySelectFunction = (source: Piece, state: GameState) => {
   clearHighlights(state);
   // AOE Effect Highlights
   if (state.selectedRow && state.selectedCol) {
     if (state.board[state.selectedRow + 1][state.selectedCol].inBounds) {
       state.board[state.selectedRow + 1][state.selectedCol].squareStatuses.push(
-        ...[SquareStatus.AOE, SquareStatus.AOE_B, SquareStatus.AOE_PSN],
+        ...[SquareStatus.AOE, SquareStatus.AOE_PSN],
       );
     }
     if (state.board[state.selectedRow - 1][state.selectedCol].inBounds) {
       state.board[state.selectedRow - 1][state.selectedCol].squareStatuses.push(
-        ...[SquareStatus.AOE, SquareStatus.AOE_T, SquareStatus.AOE_PSN],
+        ...[SquareStatus.AOE, SquareStatus.AOE_PSN],
       );
     }
     if (state.board[state.selectedRow][state.selectedCol + 1].inBounds) {
       state.board[state.selectedRow][state.selectedCol + 1].squareStatuses.push(
-        ...[SquareStatus.AOE, SquareStatus.AOE_R, SquareStatus.AOE_PSN],
+        ...[SquareStatus.AOE, SquareStatus.AOE_PSN],
       );
     }
     if (state.board[state.selectedRow][state.selectedCol - 1].inBounds) {
       state.board[state.selectedRow][state.selectedCol - 1].squareStatuses.push(
-        ...[SquareStatus.AOE, SquareStatus.AOE_L, SquareStatus.AOE_PSN],
-      );
-    }
-    if (state.board[state.selectedRow + 1][state.selectedCol + 1].inBounds) {
-      state.board[state.selectedRow + 1][state.selectedCol + 1].squareStatuses.push(
-        ...[SquareStatus.AOE, SquareStatus.AOE_B, SquareStatus.AOE_R, SquareStatus.AOE_PSN],
-      );
-    }
-    if (state.board[state.selectedRow - 1][state.selectedCol + 1].inBounds) {
-      state.board[state.selectedRow - 1][state.selectedCol + 1].squareStatuses.push(
-        ...[SquareStatus.AOE, SquareStatus.AOE_T, SquareStatus.AOE_R, SquareStatus.AOE_PSN],
-      );
-    }
-    if (state.board[state.selectedRow + 1][state.selectedCol - 1].inBounds) {
-      state.board[state.selectedRow + 1][state.selectedCol - 1].squareStatuses.push(
-        ...[SquareStatus.AOE, SquareStatus.AOE_B, SquareStatus.AOE_L, SquareStatus.AOE_PSN],
-      );
-    }
-    if (state.board[state.selectedRow - 1][state.selectedCol - 1].inBounds) {
-      state.board[state.selectedRow - 1][state.selectedCol - 1].squareStatuses.push(
-        ...[SquareStatus.AOE, SquareStatus.AOE_T, SquareStatus.AOE_L, SquareStatus.AOE_PSN],
+        ...[SquareStatus.AOE, SquareStatus.AOE_PSN],
       );
     }
   }
 };
 
-export const infectAbilityF: AbilityFunction = (
-  source: Piece,
-  targetRow: number,
-  targetCol: number,
-  state: GameState,
-) => {
+const infectAbilityF: AbilityFunction = (source: Piece, targetRow: number, targetCol: number, state: GameState) => {
   const abilityRuneCost = getAbilityRuneCost('infect');
   if (!abilityRuneCost) return;
 
@@ -173,7 +152,7 @@ export const infectAbilityF: AbilityFunction = (
   const sourceLocation = getPieceLocation(source, state);
   const yDiff = Math.abs(targetRow - sourceLocation.row);
   const xDiff = Math.abs(targetCol - sourceLocation.col);
-  if (yDiff <= 1 && xDiff <= 1 && yDiff + xDiff > 0) {
+  if (yDiff + xDiff === 1) {
     if (state.board[targetRow][targetCol].piece.type !== PieceType.empty) {
       state.board[targetRow][targetCol].piece.statuses.push(PieceStatus.PSN);
       state.abilityActivatedFlag = true;
@@ -186,19 +165,16 @@ export const infectAbilityF: AbilityFunction = (
   } else {
     if (state.abilityActivatedFlag) state.darkRunes -= abilityRuneCost;
   }
-
-  if (state.abilityActivatedFlag) {
-    clearAOEHighlights(state);
-  }
 };
 
 const InfectAbility: Ability = {
   id: 'infect',
   name: 'Infect',
   renderString: 'ability-infect',
-  runeCost: 2,
-  quick: false,
+  runeCost: 1,
+  quick: true,
   immediate: false,
+  hoverF: standardAbilityHoverF,
   selectF: infectSelectF,
   abilityF: infectAbilityF,
 };

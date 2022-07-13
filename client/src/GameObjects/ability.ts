@@ -1,4 +1,4 @@
-import { AbilityFunction, AbilitySelectFunction } from '../types';
+import { AbilityFunction, AbilityHoverFunction, AbilitySelectFunction } from '../types';
 
 export interface Ability {
   id: string;
@@ -7,6 +7,7 @@ export interface Ability {
   runeCost: number;
   quick: boolean;
   immediate: boolean;
+  hoverF: AbilityHoverFunction;
   selectF: AbilitySelectFunction;
   abilityF: AbilityFunction;
 }
@@ -40,6 +41,11 @@ export const isAbilityQuick = (id: string): boolean | undefined => {
 export const isAbilityImmediate = (id: string): boolean | undefined => {
   const A = ABILITIES.find((a: Ability) => a.id === id);
   if (A) return A.immediate;
+};
+
+export const getAbilityHoverF = (id: string): AbilitySelectFunction | undefined => {
+  const A = ABILITIES.find((a: Ability) => a.id === id);
+  if (A) return A.hoverF;
 };
 
 export const getAbilitySelectF = (id: string): AbilitySelectFunction | undefined => {

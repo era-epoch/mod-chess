@@ -15,10 +15,10 @@ import {
   AbilityFunction,
   PieceStatus,
 } from '../../types';
-import { getCurrentPlayer } from '../../util';
+import { getCurrentPlayer, isPlayersTurn } from '../../util';
 import { Ability, getAbilityName, getAbilityRuneCost, registerAbility } from '../ability';
 import { basicBishopMoveF, BishopDetail } from '../basic/basicBishop';
-import { GamePiece, registerGamePiece } from '../gamePiece';
+import { GamePiece, GamePieceDetailProps, registerGamePiece } from '../gamePiece';
 import { genPID } from '../gameUtil';
 import {
   standardOnDeathF,
@@ -26,6 +26,7 @@ import {
   standardOnMovedF,
   standardOnTurnStartF,
   standardOnTurnEndF,
+  standardAbilityHoverF,
 } from '../standardFunctions';
 
 export const ScourgeBishop = (): Piece => {
@@ -43,26 +44,28 @@ export const ScourgeBishop = (): Piece => {
   return piece;
 };
 
-export const ScourgeBishopDetail = (): JSX.Element => {
+export const ScourgeBishopDetail = (props: GamePieceDetailProps): JSX.Element => {
   const activeAbility = useSelector((state: RootState) => state.game.activeAbility);
   const selectedCol = useSelector((state: RootState) => state.game.selectedCol);
   const selectedRow = useSelector((state: RootState) => state.game.selectedRow);
+  const turn = useSelector((state: RootState) => state.game.turn);
+  const player = useSelector((state: RootState) => state.ui.player);
   const abilityId = 'cure';
   const dispatch = useDispatch();
   const handleClick = () => {
-    if (activeAbility !== abilityId) {
-      dispatch(updateActiveAbility(abilityId));
-    } else {
-      // Deactivate
-      dispatch(updateActiveAbility(''));
-      if (selectedCol && selectedRow) {
-        dispatch(resetSelection()); // Since selecting the same square twice hides it
-        dispatch(selectSquare({ row: selectedRow, col: selectedCol }));
+    if (props.piece && player.colour === props.piece.owner && isPlayersTurn(turn, player)) {
+      if (activeAbility !== abilityId) {
+        dispatch(updateActiveAbility(abilityId));
+      } else {
+        // Deactivate
+        dispatch(updateActiveAbility(''));
+        if (selectedCol && selectedRow) {
+          dispatch(resetSelection()); // Since selecting the same square twice hides it
+          dispatch(selectSquare({ row: selectedRow, col: selectedCol }));
+        }
       }
     }
   };
-  // TODO: const thisAbilityIsActive =
-  // TODO: Change vis for enemy pieces
   return (
     <div className={`detail ability quick${activeAbility === abilityId ? ' active' : ''}`} onClick={handleClick}>
       <div>
@@ -151,6 +154,7 @@ const CureAbility: Ability = {
   runeCost: 1,
   quick: true,
   immediate: false,
+  hoverF: standardAbilityHoverF,
   selectF: cureSelectF,
   abilityF: cureAbilityF,
 };
