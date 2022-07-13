@@ -16,11 +16,18 @@
   padding-right: 0.5rem;
 }
 
-.text-detail {
+.text-detail-basic {
   border: 2px solid gray;
   border-radius: 0.5rem;
   padding: 0.5rem;
   background-color: rgba(0, 0, 0, 0.1);
+}
+
+.text-detail {
+  border: 2px solid black;
+  border-radius: 0.5rem;
+  padding: 0.5rem;
+  background-color: rgba(0, 0, 0, 0);
 }
 
 .ability {

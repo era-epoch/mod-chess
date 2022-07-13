@@ -3,13 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useSelector, useDispatch } from 'react-redux';
 import { wsEmitMove } from '../../socketMiddleware';
 import { RootState } from '../../state/rootReducer';
-import {
-  endTurnDirect,
-  GameState,
-  resetSelection,
-  tryActivateAbility,
-  updateActiveAbility,
-} from '../../state/slices/game/slice';
+import { endTurnDirect, GameState, tryActivateAbility, updateActiveAbility } from '../../state/slices/game/slice';
 import { OnlineGameStatus, swapLocalPlayer } from '../../state/slices/ui/slice';
 import { store } from '../../state/store';
 import {

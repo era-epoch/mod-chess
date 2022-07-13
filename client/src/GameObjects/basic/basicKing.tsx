@@ -115,7 +115,7 @@ export const basicKingMoveF = (
 
 export const KingDetail = (): JSX.Element => {
   return (
-    <div className="detail text-detail">
+    <div className="detail text-detail-basic">
       <div>
         <FontAwesomeIcon icon={faCircleInfo} className="detail-icon" />
         <span className="detail-title">King: </span>
@@ -130,7 +130,7 @@ export const KingDetail = (): JSX.Element => {
 
 export const CastlingDetail = (): JSX.Element => {
   return (
-    <div className="detail text-detail">
+    <div className="detail text-detail-basic">
       <div>
         <FontAwesomeIcon icon={faCircleInfo} className="detail-icon" />
         <span className="detail-title">Castling: </span>

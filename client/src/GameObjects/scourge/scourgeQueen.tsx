@@ -1,4 +1,4 @@
-import { faChessQueen, faCircleInfo } from '@fortawesome/free-solid-svg-icons';
+import { faChessQueen, faStar } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { GameState } from '../../state/slices/game/slice';
 import {
@@ -67,7 +67,7 @@ const ScourgeQueenDetail = (props: GamePieceDetailProps): JSX.Element => {
   return (
     <div className="detail text-detail">
       <div>
-        <FontAwesomeIcon icon={faCircleInfo} className="detail-icon" />
+        <FontAwesomeIcon icon={faStar} className="detail-icon" />
         <span className="detail-title">Greater Posthumous Transmission: </span>
         <span className="detail-info">
           This piece cannot die of <span className="emph poison-text">poison</span>. Whenever this piece captures

@@ -73,7 +73,7 @@ export const basicKnightMoveF = (
 
 export const KnightDetail = (): JSX.Element => {
   return (
-    <div className="detail text-detail">
+    <div className="detail text-detail-basic">
       <div>
         <FontAwesomeIcon icon={faCircleInfo} className="detail-icon" />
         <span className="detail-title">Knight: </span>

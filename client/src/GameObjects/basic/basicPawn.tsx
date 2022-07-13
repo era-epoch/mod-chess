@@ -104,7 +104,7 @@ export const basicPawnMoveF = (
 
 export const PawnDetail = (): JSX.Element => {
   return (
-    <div className="detail text-detail">
+    <div className="detail text-detail-basic">
       <div>
         <FontAwesomeIcon icon={faCircleInfo} className="detail-icon" />
         <span className="detail-title">Pawn: </span>
@@ -120,7 +120,7 @@ export const PawnDetail = (): JSX.Element => {
 
 export const EnPassantDetail = (): JSX.Element => {
   return (
-    <div className="detail text-detail">
+    <div className="detail text-detail-basic">
       <div>
         <FontAwesomeIcon icon={faCircleInfo} className="detail-icon" />
         <span className="detail-title">En Passant: </span>
@@ -137,7 +137,7 @@ export const EnPassantDetail = (): JSX.Element => {
 
 export const PromotionDetail = (): JSX.Element => {
   return (
-    <div className="detail text-detail">
+    <div className="detail text-detail-basic">
       <div>
         <FontAwesomeIcon icon={faCircleInfo} className="detail-icon" />
         <span className="detail-title">Promotion: </span>

@@ -1,4 +1,4 @@
-import { faChessPawn, faCircleInfo } from '@fortawesome/free-solid-svg-icons';
+import { faChessPawn, faStar } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { GameState } from '../../state/slices/game/slice';
 import {
@@ -56,7 +56,7 @@ export const ScourgePawnDetail = (): JSX.Element => {
   return (
     <div className="detail text-detail">
       <div>
-        <FontAwesomeIcon icon={faCircleInfo} className="detail-icon" />
+        <FontAwesomeIcon icon={faStar} className="detail-icon" />
         <span className="detail-title">Lesser Posthumous Transmission: </span>
         <span className="detail-info">
           When this piece is captured, the capturing piece gains one stack of{' '}
