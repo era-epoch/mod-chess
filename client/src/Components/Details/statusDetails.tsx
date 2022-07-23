@@ -1,9 +1,10 @@
-import { faDroplet, faSkullCrossbones } from '@fortawesome/free-solid-svg-icons';
+import { faDroplet, faSkullCrossbones, faSyringe } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { GamePieceDetailProps } from '../../GameObjects/gamePiece';
 import { PieceStatus } from '../../types';
 import './details.css';
 
-const Poisoned = (): JSX.Element => {
+const Poisoned = (props: GamePieceDetailProps): JSX.Element => {
   return (
     <div className="detail text-detail">
       <div className="detail-section">
@@ -18,7 +19,7 @@ const Poisoned = (): JSX.Element => {
   );
 };
 
-const Bloodthirsty = (): JSX.Element => {
+const Bloodthirsty = (props: GamePieceDetailProps): JSX.Element => {
   return (
     <div className="detail text-detail">
       <div className="detail-section">
@@ -30,7 +31,22 @@ const Bloodthirsty = (): JSX.Element => {
   );
 };
 
-export const statusInfoMap = new Map<PieceStatus, React.FC[]>([
+const Immune = (props: GamePieceDetailProps): JSX.Element => {
+  return (
+    <div className="detail text-detail">
+      <div className="detail-section">
+        <FontAwesomeIcon icon={faSyringe} className="detail-icon immune" />
+        <span className="detail-title">Immune: </span>
+        <span className="detail-info">
+          This piece cannot die from <span className="emph poison-text">poison</span>.
+        </span>
+      </div>
+    </div>
+  );
+};
+
+export const statusInfoMap = new Map<PieceStatus, React.FC<GamePieceDetailProps>[]>([
   [PieceStatus.PSN, [Poisoned]],
   [PieceStatus.bloodthirsty, [Bloodthirsty]],
+  [PieceStatus.immune, [Immune]],
 ]);

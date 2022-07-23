@@ -47,7 +47,7 @@ export const ScourgeKing = (): Piece => {
     owner: PlayerColour.neutral,
     nMoves: 0,
     orientation: Orientation.neutral,
-    statuses: [],
+    statuses: [PieceStatus.immune],
     identifier: PieceIdentifier.scourgeKing,
     type: PieceType.king,
     origin: PieceOrigin.scourge,
@@ -67,28 +67,24 @@ const ScourgeKingDetail = (props: GamePieceDetailProps): JSX.Element => {
   const abilityId = 'contagion';
   const dispatch = useDispatch();
 
-  const handleTurnEnd = () => {
-    // If online game, emit the new game state
-    if (onlineGame === OnlineGameStatus.SUCCESS) {
-      const newGameState = store.getState().game;
-      dispatch(wsEmitMove(newGameState));
-    }
-    // If local hotseat game, switch players
-    if (onlineGame === OnlineGameStatus.NONE) {
-      dispatch(swapLocalPlayer());
-      // dispatch(toggleBoardInversion());
-    }
-  };
+  // const handleTurnEnd = () => {
+  //   // If online game, emit the new game state
+  //   if (onlineGame === OnlineGameStatus.SUCCESS) {
+  //     const newGameState = store.getState().game;
+  //     dispatch(wsEmitMove(newGameState));
+  //   }
+  //   // If local hotseat game, switch players
+  //   if (onlineGame === OnlineGameStatus.NONE) {
+  //     dispatch(swapLocalPlayer());
+  //     // dispatch(toggleBoardInversion());
+  //   }
+  // };
 
   const handleClick = () => {
     if (props.piece && player.colour === props.piece.owner && isPlayersTurn(turn, player)) {
       if (selectedCol && selectedRow) {
         dispatch(updateActiveAbility(abilityId));
         dispatch(tryActivateAbility({ row: selectedRow, col: selectedCol }));
-        if (store.getState().game.abilityActivatedFlag) {
-          dispatch(endTurnDirect());
-          handleTurnEnd();
-        }
       }
     }
   };
@@ -165,7 +161,7 @@ const contagionHoverF: AbilityHoverFunction = (source: Piece, state: GameState) 
 
 const contagionAbilityF: AbilityFunction = (source: Piece, targetRow: number, targetCol: number, state: GameState) => {
   const abilityRuneCost = getAbilityRuneCost('contagion');
-  if (!abilityRuneCost) return;
+  if (abilityRuneCost === undefined) return;
 
   const player = getCurrentPlayer(state.turn);
 
@@ -203,8 +199,8 @@ const Contagion: Ability = {
   id: 'contagion',
   name: 'Contagion',
   renderString: 'ability-contagion',
-  runeCost: 10,
-  quick: false,
+  runeCost: 20,
+  quick: true,
   immediate: true,
   hoverF: contagionHoverF,
   selectF: standardAbilitySelectF,

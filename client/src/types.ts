@@ -19,6 +19,7 @@ export enum SquareStatus {
   HLK = 'square-highlighted-kill',
   SEL = 'square-selected',
   EPV = 'en-passant-vulnerable',
+  QUICK_KILL = 'quick-kill',
   RUNE = 'rune',
   AOE = 'aoe',
   AOE_L = 'aoe-left',
@@ -26,6 +27,7 @@ export enum SquareStatus {
   AOE_T = 'aoe-top',
   AOE_B = 'aoe-bottom',
   AOE_PSN = 'aoe-poison',
+  AOE_BLOOD = 'aoe-blood',
 }
 
 export enum PieceStatus {
@@ -135,6 +137,20 @@ export interface Piece {
   statuses: PieceStatus[];
   nMoves: number;
   orientation: Orientation;
+}
+
+export interface ResolutionEvent {
+  type: ResolutionEventType;
+  source?: Piece;
+  target?: Piece;
+  row?: number;
+  col?: number;
+}
+
+export enum ResolutionEventType {
+  PawnPromotion = 'PawnPromotion',
+  BloodSacrifice = 'BloodSacrifice',
+  AlacrityChain = 'AlacrityChain',
 }
 
 export type MoveFunction = (piece: Piece, row: number, col: number, state: GameState, checkKing: boolean) => Move[];

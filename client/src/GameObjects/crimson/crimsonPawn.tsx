@@ -112,7 +112,9 @@ export const CrimsonPawnDetail = (props: GamePieceDetailProps): JSX.Element => {
         dispatch(updateActiveAbility(''));
         if (store.getState().game.abilityActivatedFlag) {
           dispatch(endTurnDirect());
-          handleTurnEnd();
+          if (store.getState().game.postTurnResolutionQueue.length === 0) {
+            handleTurnEnd();
+          }
         }
       }
     }
@@ -165,7 +167,7 @@ export const bloodthirstAbilityF: AbilityFunction = (
   state: GameState,
 ) => {
   const abilityRuneCost = getAbilityRuneCost('bloodthirst');
-  if (!abilityRuneCost) return;
+  if (abilityRuneCost === undefined) return;
 
   const player = getCurrentPlayer(state.turn);
 

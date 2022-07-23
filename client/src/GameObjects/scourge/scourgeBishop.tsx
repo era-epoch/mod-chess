@@ -114,7 +114,7 @@ export const cureAbilityF: AbilityFunction = (
   state: GameState,
 ) => {
   const abilityRuneCost = getAbilityRuneCost('cure');
-  if (!abilityRuneCost) return;
+  if (abilityRuneCost === undefined) return;
 
   const player = getCurrentPlayer(state.turn);
 

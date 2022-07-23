@@ -8,6 +8,8 @@ import {
   PieceOrigin,
   PieceType,
   PlayerColour,
+  ResolutionEvent,
+  ResolutionEventType,
   SquareContents,
   SquareStatus,
 } from '../../../types';
@@ -46,7 +48,7 @@ export interface GameState {
   runeSpawnTurn: number;
   activeAbility: string;
   abilityActivatedFlag: boolean;
-  promoPiece: Piece | null;
+  postTurnResolutionQueue: ResolutionEvent[];
 }
 
 const initialGameState: GameState = {
@@ -72,7 +74,7 @@ const initialGameState: GameState = {
   runeSpawnTurn: 0,
   activeAbility: '',
   abilityActivatedFlag: false,
-  promoPiece: null,
+  postTurnResolutionQueue: [],
 };
 
 // Reducer
@@ -114,19 +116,16 @@ const gameSlice = createSlice({
         (move: Move) => move.row === action.payload.row && move.col === action.payload.col,
       );
       if (!pieceToMove || !move) return;
-      const originSquare = state.board[state.selectedRow][state.selectedCol];
-      // PRE-MOVE
-      // LEAVING
-      originSquare.piece = EmptySquare();
-      // REMOVING TARGET
       if (state.board[move.row][move.col].piece.type !== PieceType.empty) {
         capturePieceAtLocation(state, move.row, move.col, pieceToMove);
       }
       // ENTERING & EFFECTS
-      const moveEndedTurn = movePiece(state, pieceToMove, move);
+      movePiece(state, pieceToMove, move);
       // Write an algebraic representation of the move to the history
       // denoteMove(state, pieceToMove, move);
-      if (moveEndedTurn) {
+
+      // Unless halted by some effect that requires resolution, end the turn
+      if (state.postTurnResolutionQueue.length === 0) {
         handleEndOfTurn(state, pieceToMove.owner);
       }
     },
@@ -182,19 +181,19 @@ const gameSlice = createSlice({
         state.selectedCol = null;
       }
     },
-    promotePiece: (state: GameState, action: PayloadAction<PieceIdentifier>) => {
+    promotePiece: (state: GameState, action: PayloadAction<{ res: ResolutionEvent; new: PieceIdentifier }>) => {
       // TODO: This Better
+      if (action.payload.res.type !== ResolutionEventType.PawnPromotion) return;
       let piece: Piece | undefined = undefined;
-      if (!state.promoPiece) return;
       for (let i = 0; i < state.board.length; i++) {
         for (let j = 0; j < state.board[i].length; j++) {
-          if (state.board[i][j].piece.id === state.promoPiece.id) {
+          if (state.board[i][j].piece.id === action.payload.res.source?.id) {
             piece = state.board[i][j].piece;
           }
         }
       }
       if (!piece) return;
-      switch (action.payload) {
+      switch (action.payload.new) {
         case PieceIdentifier.basicQueen:
           piece.identifier = PieceIdentifier.basicQueen;
           piece.origin = PieceOrigin.basic;
@@ -220,8 +219,8 @@ const gameSlice = createSlice({
           piece.name = 'Knight';
           break;
       }
-      // TODO: Promotion serialization
-      state.promoPiece = null;
+      // Resolve Promotion
+      state.postTurnResolutionQueue.shift();
     },
     resetSelection: (state: GameState) => {
       state.selectedRow = null;
@@ -229,6 +228,7 @@ const gameSlice = createSlice({
     },
     updateActiveAbility: (state: GameState, action: PayloadAction<string>) => {
       state.activeAbility = action.payload;
+      state.abilityActivatedFlag = false;
       const selectF = getAbilitySelectF(action.payload);
       if (selectF && state.selectedRow && state.selectedCol) {
         const source = state.board[state.selectedRow][state.selectedCol].piece;
@@ -243,6 +243,7 @@ const gameSlice = createSlice({
       }
     },
     tryActivateAbility: (state: GameState, action: PayloadAction<{ row: number; col: number }>) => {
+      console.log('trying');
       const abilityF = getAbilityF(state.activeAbility);
       if (abilityF && state.selectedRow && state.selectedCol) {
         const source = state.board[state.selectedRow][state.selectedCol].piece;
@@ -250,7 +251,7 @@ const gameSlice = createSlice({
       }
     },
     endTurnDirect: (state: GameState) => {
-      console.log('ending turn');
+      if (state.postTurnResolutionQueue.length !== 0) return;
       // Post EP cleanup
       for (let i = 0; i < state.board.length; i++) {
         for (let j = 0; j < state.board[i].length; j++) {

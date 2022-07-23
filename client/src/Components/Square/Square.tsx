@@ -3,6 +3,7 @@ import {
   faChessPawn,
   faCircle,
   faCrown,
+  faDroplet,
   faHeart,
   faSkull,
   faSkullCrossbones,
@@ -71,7 +72,8 @@ const Square = (props: Props): JSX.Element => {
               (squareStatuses.includes(SquareStatus.AOE_B) ? ' aoe-bottom' : '') +
               (squareStatuses.includes(SquareStatus.AOE_L) ? ' aoe-left' : '') +
               (squareStatuses.includes(SquareStatus.AOE_T) ? ' aoe-top' : '') +
-              (squareStatuses.includes(SquareStatus.AOE_R) ? ' aoe-right' : '')
+              (squareStatuses.includes(SquareStatus.AOE_R) ? ' aoe-right' : '') +
+              (squareStatuses.includes(SquareStatus.AOE_BLOOD) ? ' aoe-blood' : '')
             }
           ></div>
         ) : null}
@@ -87,6 +89,18 @@ const Square = (props: Props): JSX.Element => {
         squareStatuses.includes(SquareStatus.AOE_PSN) ? (
           <div className={`icon-wrapper hover-icon`} style={{ color: 'greenyellow', fontSize: '1.5rem' }}>
             <FontAwesomeIcon icon={faSkullCrossbones} />
+          </div>
+        ) : null}
+        {props.content.inBounds &&
+        abilityRender === 'ability-blood_sacrifice' &&
+        squareStatuses.includes(SquareStatus.AOE_BLOOD) ? (
+          <div className={`icon-wrapper hover-icon`} style={{ color: 'red', fontSize: '1.5rem' }}>
+            <FontAwesomeIcon icon={faDroplet} />
+          </div>
+        ) : null}
+        {squareStatuses.includes(SquareStatus.QUICK_KILL) ? (
+          <div className="icon-wrapper square-highlighted-kill">
+            <FontAwesomeIcon icon={faSkull} />
           </div>
         ) : null}
       </div>

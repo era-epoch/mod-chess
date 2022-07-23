@@ -23,11 +23,13 @@ export const standardOnDeathF: DeathFunction = (
   state: GameState,
   capturer?: Piece,
 ): void => {
-  const player = piece.owner;
-  const graveyard = state.graveyards.find((g: Graveyard) => g.player === (player + 1) % 2);
-  if (state.board[row][col].piece.type !== PieceType.empty) {
-    graveyard?.contents.push(piece);
+  if (capturer) {
+    const graveyard = state.graveyards.find((g: Graveyard) => g.player === capturer.owner);
+    if (state.board[row][col].piece.type !== PieceType.empty) {
+      graveyard?.contents.push(piece);
+    }
   }
+  // TODO: Neutral graveyard
   state.board[row][col].piece = EmptySquare();
 };
 
@@ -37,13 +39,15 @@ export const standardOnCaptureF: CaptureFunction = (
   col: number,
   state: GameState,
   target: Piece,
-): void => {
+) => {
   return;
 };
 
 export const standardOnMovedF: LifecycleFunction = (piece: Piece, row: number, col: number, state: GameState): void => {
   piece.nMoves++;
-  return;
+  state.selectedRow = row;
+  state.selectedCol = col;
+  console.log('selected reset');
 };
 
 export const standardOnTurnStartF: LifecycleFunction = (

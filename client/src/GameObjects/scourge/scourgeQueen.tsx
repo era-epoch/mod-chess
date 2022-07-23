@@ -15,7 +15,13 @@ import {
 import { basicQueenMoveF, QueenDetail } from '../basic/basicQueen';
 import { GamePiece, GamePieceDetailProps, registerGamePiece } from '../gamePiece';
 import { genPID } from '../gameUtil';
-import { standardOnDeathF, standardOnMovedF, standardOnTurnEndF, standardOnTurnStartF } from '../standardFunctions';
+import {
+  standardOnCaptureF,
+  standardOnDeathF,
+  standardOnMovedF,
+  standardOnTurnEndF,
+  standardOnTurnStartF,
+} from '../standardFunctions';
 
 export const ScourgeQueen = (): Piece => {
   const piece: Piece = {
@@ -38,8 +44,9 @@ const scourgeQueenOnCaptureF: CaptureFunction = (
   col: number,
   state: GameState,
   target: Piece,
-): void => {
+) => {
   piece.statuses.push(PieceStatus.PSN);
+  standardOnCaptureF(piece, row, col, state, target);
 };
 
 const scourgeQueenOnDeathF: DeathFunction = (

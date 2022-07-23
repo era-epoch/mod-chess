@@ -60,7 +60,7 @@ const LeftBar = (): JSX.Element => {
           { player: PlayerColour.light, contents: [] },
           { player: PlayerColour.dark, contents: [] },
         ],
-        lightRunes: 0,
+        lightRunes: 100,
         darkRunes: 100, // Dark starts with 2 rune to balance going 2nd
         winner: null,
         creatorColour: null,
@@ -74,7 +74,7 @@ const LeftBar = (): JSX.Element => {
         runeSpawnTurn: 0,
         activeAbility: '',
         abilityActivatedFlag: false,
-        promoPiece: null,
+        postTurnResolutionQueue: [],
       } as GameState),
     );
     dispatch(

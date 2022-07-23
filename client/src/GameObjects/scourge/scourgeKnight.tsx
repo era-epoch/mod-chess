@@ -160,7 +160,7 @@ const noxiousCloudAbilityF: AbilityFunction = (
   state: GameState,
 ) => {
   const abilityRuneCost = getAbilityRuneCost('noxious_cloud');
-  if (!abilityRuneCost) return;
+  if (abilityRuneCost === undefined) return;
 
   const player = getCurrentPlayer(state.turn);
 

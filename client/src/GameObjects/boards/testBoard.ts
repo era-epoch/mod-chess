@@ -1,12 +1,11 @@
 import { SquareContents } from '../../types';
-import { BasicBishop } from '../basic/basicBishop';
-import { BasicKing } from '../basic/basicKing';
 import { BasicKnight } from '../basic/basicKnight';
-import { BasicPawn } from '../basic/basicPawn';
 import { BasicQueen } from '../basic/basicQueen';
-import { BasicRook } from '../basic/basicRook';
 import { EmptySquare } from '../basic/emptySquare';
+import { CrimsonBishop } from '../crimson/crimsonBishop';
+import { CrimsonKing } from '../crimson/crimsonKing';
 import { CrimsonPawn } from '../crimson/crimsonPawn';
+import { CrimsonRook } from '../crimson/crimsonRook';
 import { setUpSquare } from '../gameUtil';
 import { ScourgeBishop } from '../scourge/scourgeBishop';
 import { ScourgeKing } from '../scourge/scourgeKing';
@@ -114,14 +113,14 @@ const testBoard: SquareContents[][] = [
   ],
   [
     setUpSquare(8, 0, EmptySquare(), 2, 2, false),
-    setUpSquare(8, 1, ScourgeRook(), 0, 1, true),
+    setUpSquare(8, 1, CrimsonRook(), 0, 1, true),
     setUpSquare(8, 2, ScourgeKnight(), 0, 1, true),
-    setUpSquare(8, 3, BasicBishop(), 0, 1, true),
+    setUpSquare(8, 3, CrimsonBishop(), 0, 1, true),
     setUpSquare(8, 4, BasicQueen(), 0, 1, true),
-    setUpSquare(8, 5, BasicKing(), 0, 1, true),
-    setUpSquare(8, 6, ScourgeBishop(), 0, 1, true),
+    setUpSquare(8, 5, CrimsonKing(), 0, 1, true),
+    setUpSquare(8, 6, CrimsonBishop(), 0, 1, true),
     setUpSquare(8, 7, BasicKnight(), 0, 1, true),
-    setUpSquare(8, 8, BasicRook(), 0, 1, true),
+    setUpSquare(8, 8, CrimsonRook(), 0, 1, true),
     setUpSquare(8, 9, EmptySquare(), 2, 2, false),
   ],
   [

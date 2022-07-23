@@ -8,7 +8,16 @@ import {
   getOnTurnStartF,
 } from '../../../GameObjects/gamePiece';
 import { kingInCheck } from '../../../GameObjects/gameUtil';
-import { Piece, Move, MoveFlag, SquareStatus, PieceType, PlayerColour, typeAlgebriacNotationMap } from '../../../types';
+import {
+  Piece,
+  Move,
+  MoveFlag,
+  SquareStatus,
+  PieceType,
+  PlayerColour,
+  typeAlgebriacNotationMap,
+  ResolutionEventType,
+} from '../../../types';
 import { ChatItem, ChatItemType } from '../ui/slice';
 import { GameState } from './slice';
 
@@ -52,7 +61,7 @@ export const denoteMove = (state: GameState, piece: Piece, move: Move) => {
   } as ChatItem);
 };
 
-export const movePiece = (gameState: GameState, piece: Piece, move: Move): boolean => {
+export const movePiece = (gameState: GameState, piece: Piece, move: Move) => {
   // Castle Logic
   if (move.flags.includes(MoveFlag.CSTL)) {
     let kingPos = 0;
@@ -125,6 +134,9 @@ export const movePiece = (gameState: GameState, piece: Piece, move: Move): boole
       gameState.board[move.row + 1][move.col].enPassantOrigin = piece;
     }
   }
+  if (gameState.selectedRow === null || gameState.selectedCol === null) return;
+  const originSquare = gameState.board[gameState.selectedRow][gameState.selectedCol];
+  originSquare.piece = EmptySquare();
 
   gameState.board[move.row][move.col].piece = piece;
   const movedF = getOnMovedF(piece.identifier);
@@ -132,11 +144,8 @@ export const movePiece = (gameState: GameState, piece: Piece, move: Move): boole
 
   // Promotion logic
   if (move.flags.includes(MoveFlag.PROMO)) {
-    gameState.promoPiece = piece;
-    return false;
+    gameState.postTurnResolutionQueue.push({ type: ResolutionEventType.PawnPromotion, source: piece });
   }
-
-  return true;
 };
 
 export const capturePieceAtLocation = (gameState: GameState, row: number, col: number, capturer?: Piece) => {
@@ -242,6 +251,7 @@ export const clearHighlights = (state: GameState) => {
       state.board[i][j].squareStatuses = state.board[i][j].squareStatuses.filter((s) => s !== SquareStatus.HL);
       state.board[i][j].squareStatuses = state.board[i][j].squareStatuses.filter((s) => s !== SquareStatus.HLC);
       state.board[i][j].squareStatuses = state.board[i][j].squareStatuses.filter((s) => s !== SquareStatus.HLK);
+      state.board[i][j].squareStatuses = state.board[i][j].squareStatuses.filter((s) => s !== SquareStatus.QUICK_KILL);
     }
   }
 };
@@ -249,12 +259,15 @@ export const clearHighlights = (state: GameState) => {
 export const clearAOEHighlights = (state: GameState) => {
   for (let i = 0; i < state.board.length; i++) {
     for (let j = 0; j < state.board[i].length; j++) {
+      // TODO: Square TempStatus ?
       state.board[i][j].squareStatuses = state.board[i][j].squareStatuses.filter((s) => s !== SquareStatus.AOE);
       state.board[i][j].squareStatuses = state.board[i][j].squareStatuses.filter((s) => s !== SquareStatus.AOE_B);
       state.board[i][j].squareStatuses = state.board[i][j].squareStatuses.filter((s) => s !== SquareStatus.AOE_L);
       state.board[i][j].squareStatuses = state.board[i][j].squareStatuses.filter((s) => s !== SquareStatus.AOE_T);
       state.board[i][j].squareStatuses = state.board[i][j].squareStatuses.filter((s) => s !== SquareStatus.AOE_R);
       state.board[i][j].squareStatuses = state.board[i][j].squareStatuses.filter((s) => s !== SquareStatus.AOE_PSN);
+      state.board[i][j].squareStatuses = state.board[i][j].squareStatuses.filter((s) => s !== SquareStatus.AOE_BLOOD);
+      state.board[i][j].squareStatuses = state.board[i][j].squareStatuses.filter((s) => s !== SquareStatus.QUICK_KILL);
     }
   }
 };
@@ -269,6 +282,7 @@ export const handleEndOfTurn = (state: GameState, currentPlayer: PlayerColour) =
       state.board[i][j].squareStatuses = state.board[i][j].squareStatuses.filter((s) => s !== SquareStatus.SEL);
       state.board[i][j].squareStatuses = state.board[i][j].squareStatuses.filter((s) => s !== SquareStatus.HLC);
       state.board[i][j].squareStatuses = state.board[i][j].squareStatuses.filter((s) => s !== SquareStatus.HLK);
+      state.board[i][j].squareStatuses = state.board[i][j].squareStatuses.filter((s) => s !== SquareStatus.QUICK_KILL);
     }
   }
   // Check if any gameover conditions are met
