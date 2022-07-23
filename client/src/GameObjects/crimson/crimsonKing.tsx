@@ -131,7 +131,6 @@ const alacritySelectF: AbilitySelectFunction = (source: Piece, state: GameState)
 };
 
 const alacrityChainSelectF: AbilitySelectFunction = (source: Piece, state: GameState) => {
-  console.log('chaniSelect');
   state.postTurnResolutionQueue.shift();
   clearHighlights(state);
   for (let i = 0; i < state.board.length; i++) {
@@ -150,7 +149,6 @@ const alacrityChainSelectF: AbilitySelectFunction = (source: Piece, state: GameS
   }
 };
 const alacrityAbilityF: AbilityFunction = (source: Piece, targetRow: number, targetCol: number, state: GameState) => {
-  console.log('alacirtyF');
   alacrityAbilityBase(source, targetRow, targetCol, state, 'alacrity');
 };
 
@@ -160,7 +158,6 @@ const alacrityChainAbilityF: AbilityFunction = (
   targetCol: number,
   state: GameState,
 ) => {
-  console.log('chainF');
   alacrityAbilityBase(source, targetRow, targetCol, state, 'alacrity_chain');
 };
 

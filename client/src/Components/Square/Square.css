@@ -56,6 +56,12 @@
   font-size: 1.25rem;
 }
 
+.square-highlighted-potential {
+  z-index: 5;
+  color: rgba(255, 255, 0, 0.45);
+  font-size: 0.75rem;
+}
+
 .square-highlighted-kill {
   z-index: 5;
   color: rgba(255, 0, 0, 0.75);
@@ -77,6 +83,20 @@
   background-color: transparent;
   color: transparent;
   box-shadow: none;
+}
+
+.square-statuses {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+  position: absolute;
+  padding: 0.2rem;
+  gap: 0.2rem;
+  bottom: 0;
+  left: 0;
+  flex-wrap: wrap;
+  font-size: 1rem;
+  z-index: 4;
 }
 
 .board-rune {
@@ -122,6 +142,6 @@
 }
 
 .aoe-blood {
-  background-color: rgba(255, 0, 0, 0.1);
+  background-color: rgba(255, 0, 0, 0.2);
   border-color: red;
 }

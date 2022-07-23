@@ -242,6 +242,13 @@ const gameSlice = createSlice({
         hoverF(source, state);
       }
     },
+    hoverAbility: (state: GameState, action: PayloadAction<string>) => {
+      const hoverF = getAbilityHoverF(action.payload);
+      if (hoverF && state.selectedRow && state.selectedCol) {
+        const source = state.board[state.selectedRow][state.selectedCol].piece;
+        hoverF(source, state);
+      }
+    },
     tryActivateAbility: (state: GameState, action: PayloadAction<{ row: number; col: number }>) => {
       console.log('trying');
       const abilityF = getAbilityF(state.activeAbility);
@@ -273,6 +280,7 @@ export const {
   fullGameStateUpdate,
   setUpGame,
   hoverActiveAbility,
+  hoverAbility,
   updateActiveAbility,
   tryActivateAbility,
   resetSelection,

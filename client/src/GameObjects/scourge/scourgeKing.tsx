@@ -1,7 +1,6 @@
 import { faBolt, faChessKing } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useSelector, useDispatch } from 'react-redux';
-import { wsEmitMove } from '../../socketMiddleware';
 import { RootState } from '../../state/rootReducer';
 import { clearAOEHighlights, clearHighlights } from '../../state/slices/game/helpers';
 import {
@@ -12,10 +11,7 @@ import {
   GameState,
   hoverActiveAbility,
   tryActivateAbility,
-  endTurnDirect,
 } from '../../state/slices/game/slice';
-import { OnlineGameStatus, swapLocalPlayer } from '../../state/slices/ui/slice';
-import { store } from '../../state/store';
 import {
   Piece,
   PlayerColour,
@@ -61,24 +57,10 @@ const ScourgeKingDetail = (props: GamePieceDetailProps): JSX.Element => {
   const activeAbility = useSelector((state: RootState) => state.game.activeAbility);
   const selectedCol = useSelector((state: RootState) => state.game.selectedCol);
   const selectedRow = useSelector((state: RootState) => state.game.selectedRow);
-  const onlineGame = useSelector((state: RootState) => state.ui.onlineGameStatus);
   const turn = useSelector((state: RootState) => state.game.turn);
   const player = useSelector((state: RootState) => state.ui.player);
   const abilityId = 'contagion';
   const dispatch = useDispatch();
-
-  // const handleTurnEnd = () => {
-  //   // If online game, emit the new game state
-  //   if (onlineGame === OnlineGameStatus.SUCCESS) {
-  //     const newGameState = store.getState().game;
-  //     dispatch(wsEmitMove(newGameState));
-  //   }
-  //   // If local hotseat game, switch players
-  //   if (onlineGame === OnlineGameStatus.NONE) {
-  //     dispatch(swapLocalPlayer());
-  //     // dispatch(toggleBoardInversion());
-  //   }
-  // };
 
   const handleClick = () => {
     if (props.piece && player.colour === props.piece.owner && isPlayersTurn(turn, player)) {
@@ -199,7 +181,7 @@ const Contagion: Ability = {
   id: 'contagion',
   name: 'Contagion',
   renderString: 'ability-contagion',
-  runeCost: 20,
+  runeCost: 15,
   quick: true,
   immediate: true,
   hoverF: contagionHoverF,

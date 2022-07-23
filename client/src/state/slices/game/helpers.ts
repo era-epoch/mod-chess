@@ -268,6 +268,9 @@ export const clearAOEHighlights = (state: GameState) => {
       state.board[i][j].squareStatuses = state.board[i][j].squareStatuses.filter((s) => s !== SquareStatus.AOE_PSN);
       state.board[i][j].squareStatuses = state.board[i][j].squareStatuses.filter((s) => s !== SquareStatus.AOE_BLOOD);
       state.board[i][j].squareStatuses = state.board[i][j].squareStatuses.filter((s) => s !== SquareStatus.QUICK_KILL);
+      state.board[i][j].squareStatuses = state.board[i][j].squareStatuses.filter(
+        (s) => s !== SquareStatus.HL_POTENTIAL,
+      );
     }
   }
 };

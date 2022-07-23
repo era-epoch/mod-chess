@@ -7,6 +7,7 @@ import {
   faHeart,
   faSkull,
   faSkullCrossbones,
+  faWater,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useSelector } from 'react-redux';
@@ -49,6 +50,11 @@ const Square = (props: Props): JSX.Element => {
         {squareStatuses.includes(SquareStatus.HLK) ? (
           <div className="icon-wrapper square-highlighted-kill">
             <FontAwesomeIcon icon={faSkull} />
+          </div>
+        ) : null}
+        {squareStatuses.includes(SquareStatus.HL_POTENTIAL) ? (
+          <div className="icon-wrapper square-highlighted-potential">
+            <FontAwesomeIcon icon={faCircle} />
           </div>
         ) : null}
         {squareStatuses.includes(SquareStatus.EPV) ? (
@@ -103,6 +109,18 @@ const Square = (props: Props): JSX.Element => {
             <FontAwesomeIcon icon={faSkull} />
           </div>
         ) : null}
+        {activeAbility === 'hemoport' && squareStatuses.includes(SquareStatus.BLOODIED) ? (
+          <div className={`icon-wrapper hover-icon`} style={{ color: 'red', fontSize: '1.5rem' }}>
+            <FontAwesomeIcon icon={faDroplet} />
+          </div>
+        ) : null}
+        <div className="icon-wrapper">
+          <div className="square-statuses">
+            {props.content.inBounds && squareStatuses.includes(SquareStatus.BLOODIED) ? (
+              <FontAwesomeIcon icon={faWater} className="blood" />
+            ) : null}
+          </div>
+        </div>
       </div>
     </div>
   );

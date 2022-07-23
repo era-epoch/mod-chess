@@ -33,7 +33,7 @@ export const ScourgeQueen = (): Piece => {
     type: PieceType.queen,
     origin: PieceOrigin.scourge,
     id: genPID(),
-    name: 'Scourge Queen',
+    name: 'Vengeful Mutation',
   };
   return piece;
 };
@@ -77,7 +77,7 @@ const ScourgeQueenDetail = (props: GamePieceDetailProps): JSX.Element => {
         <FontAwesomeIcon icon={faStar} className="detail-icon" />
         <span className="detail-title">Greater Posthumous Transmission: </span>
         <span className="detail-info">
-          This piece cannot die of <span className="emph poison-text">poison</span>. Whenever this piece captures
+          This piece cannot die from <span className="emph poison-text">poison</span>. Whenever this piece captures
           another piece, gain 1 stack of <span className="emph poison-text">poisoned</span>. When this piece is
           captured, immediately transfer all stacks of <span className="emph poison-text">poisoned</span> from this
           piece to the capturing piece.

@@ -40,7 +40,7 @@ export const ScourgeRook = (): Piece => {
     type: PieceType.rook,
     origin: PieceOrigin.scourge,
     id: genPID(),
-    name: 'Scourge Rook',
+    name: 'Fetid Tower',
   };
   return piece;
 };
@@ -172,7 +172,7 @@ const infectAbilityF: AbilityFunction = (source: Piece, targetRow: number, targe
   const sourceLocation = getPieceLocation(source, state);
   const yDiff = Math.abs(targetRow - sourceLocation.row);
   const xDiff = Math.abs(targetCol - sourceLocation.col);
-  if (yDiff + xDiff < 2 && yDiff + xDiff > 0) {
+  if (yDiff < 2 && xDiff < 2 && yDiff + xDiff > 0) {
     if (state.board[targetRow][targetCol].piece.type !== PieceType.empty) {
       state.board[targetRow][targetCol].piece.statuses.push(PieceStatus.PSN);
       state.abilityActivatedFlag = true;

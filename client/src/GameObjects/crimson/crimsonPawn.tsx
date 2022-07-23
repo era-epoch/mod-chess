@@ -109,7 +109,6 @@ export const CrimsonPawnDetail = (props: GamePieceDetailProps): JSX.Element => {
       if (selectedCol && selectedRow) {
         dispatch(updateActiveAbility(abilityId));
         dispatch(tryActivateAbility({ row: selectedRow, col: selectedCol }));
-        dispatch(updateActiveAbility(''));
         if (store.getState().game.abilityActivatedFlag) {
           dispatch(endTurnDirect());
           if (store.getState().game.postTurnResolutionQueue.length === 0) {
@@ -199,7 +198,7 @@ const BloodthirstAbility: Ability = {
   name: 'Activate Bloodthirst',
   renderString: 'ability-bloodthirst',
   runeCost: 1,
-  quick: true,
+  quick: false,
   immediate: true,
   hoverF: standardAbilityHoverF,
   selectF: standardAbilitySelectF,

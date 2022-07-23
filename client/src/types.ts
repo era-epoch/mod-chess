@@ -17,10 +17,12 @@ export enum SquareStatus {
   HL = 'square-highlighted',
   HLC = 'square-highlighted-castle',
   HLK = 'square-highlighted-kill',
+  HL_POTENTIAL = 'highlighted-potential',
   SEL = 'square-selected',
   EPV = 'en-passant-vulnerable',
   QUICK_KILL = 'quick-kill',
   RUNE = 'rune',
+  BLOODIED = 'bloodied',
   AOE = 'aoe',
   AOE_L = 'aoe-left',
   AOE_R = 'aoe-right',
@@ -34,6 +36,7 @@ export enum PieceStatus {
   PSN = 'poisoned',
   bloodthirsty = 'bloodthirsty',
   immune = 'immune',
+  WINGS = 'wings',
 }
 
 export enum PieceType {
