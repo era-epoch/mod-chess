@@ -1,0 +1,11 @@
+.game-area-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  width: 10rem;
+  flex: 1;
+}
+
+.player-infos {
+  padding: 0rem 1rem 1rem 0rem;
+}

@@ -1,5 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { GameJoinedEvent, GameCreatedEvent } from '../../../../../ws/events';
+import { GameJoinedEvent, GameCreatedEvent, PlayerJoinedGameEvent } from '../../../../../ws/events';
+import { PlayerColour, UserInfo } from '../../../types';
+import { GameState } from '../game/slice';
 
 export enum AlertType {
   success = 'success',
@@ -42,51 +44,118 @@ export interface UIState {
   alerts: Alert[];
   activeGame: boolean;
   onlineGameStatus: OnlineGameStatus;
-  gameID: string;
+  roomId: string;
   chatlog: ChatItem[];
+  otherPlayers: UserInfo[];
+  player: UserInfo;
+  boardInversion: boolean;
+  createGameMenuOpen: boolean;
+  joinGameMenuOpen: boolean;
+  createLocalGameMenuOpen: boolean;
+  gameStartState: GameState | null;
 }
 
-// const testAlerts = [
-//   { type: AlertType.success, content: 'successsssssssssssssssssssssssssssssssssssssssssssssssssssssss', id: -1 },
-//   { type: AlertType.warning, content: 'warning', id: -2 },
-//   { type: AlertType.info, content: 'info', id: -3 },
-//   { type: AlertType.error, content: 'error', id: -4 },
-// ];
+const blankPlayer: UserInfo = {
+  colour: PlayerColour.neutral,
+  name: '',
+  id: '',
+};
 
-const initialUIState = {
+const initialUIState: UIState = {
   alerts: [],
   activeGame: false,
   onlineGameStatus: OnlineGameStatus.NONE,
-  gameID: '',
+  roomId: '',
   chatlog: [],
+  otherPlayers: [],
+  player: blankPlayer,
+  boardInversion: false,
+  createGameMenuOpen: false,
+  joinGameMenuOpen: false,
+  createLocalGameMenuOpen: false,
+  gameStartState: null,
 };
 
 const UISlice = createSlice({
   name: 'ui',
   initialState: initialUIState,
   reducers: {
+    updateBoardInversion: (state: UIState, action: PayloadAction<boolean>) => {
+      state.boardInversion = action.payload;
+    },
+    toggleBoardInversion: (state: UIState) => {
+      state.boardInversion = !state.boardInversion;
+    },
+    toggleCreateLocalGameMenu: (state: UIState) => {
+      state.createGameMenuOpen = false;
+      state.joinGameMenuOpen = false;
+      state.createLocalGameMenuOpen = !state.createLocalGameMenuOpen;
+    },
+    toggleCreateGameMenu: (state: UIState) => {
+      state.createLocalGameMenuOpen = false;
+      state.joinGameMenuOpen = false;
+      state.createGameMenuOpen = !state.createGameMenuOpen;
+    },
+    toggleJoinGameMenu: (state: UIState) => {
+      state.createLocalGameMenuOpen = false;
+      state.createGameMenuOpen = false;
+      state.joinGameMenuOpen = !state.joinGameMenuOpen;
+    },
+    closeAllMenus: (state: UIState) => {
+      state.createGameMenuOpen = false;
+      state.joinGameMenuOpen = false;
+      state.createLocalGameMenuOpen = false;
+    },
+    addPlayer: (state: UIState, action: PayloadAction<UserInfo>) => {
+      state.otherPlayers.push(action.payload);
+    },
+    removePlayer: (state: UIState, action: PayloadAction<UserInfo>) => {
+      state.otherPlayers = state.otherPlayers.filter((a: UserInfo) => a.id !== action.payload.id);
+    },
+    updatePlayer: (state: UIState, action: PayloadAction<UserInfo>) => {
+      state.player = action.payload;
+    },
+    swapLocalPlayer: (state: UIState) => {
+      const next = state.otherPlayers.pop();
+      if (next) {
+        state.otherPlayers.push(state.player);
+        state.player = next;
+      }
+    },
+    clearPlayers: (state: UIState) => {
+      state.otherPlayers = [];
+      state.player = blankPlayer;
+    },
     addAlert: (state: UIState, action: PayloadAction<Alert>) => {
       state.alerts.push(action.payload);
     },
     removeAlert: (state: UIState, action: PayloadAction<Alert>) => {
       state.alerts = state.alerts.filter((a: Alert) => a.id !== action.payload.id);
     },
-    setActiveGame: (state: UIState, action: PayloadAction<boolean>) => {
+    toggleActiveGame: (state: UIState, action: PayloadAction<boolean>) => {
       state.activeGame = action.payload;
     },
     createdOnlineGame: (state: UIState, action: PayloadAction<GameCreatedEvent>) => {
       state.onlineGameStatus = OnlineGameStatus.AWAITING;
-      state.gameID = action.payload.gameId;
+      state.roomId = action.payload.gameId;
+    },
+    anotherPlayerJoinedGame: (state: UIState, action: PayloadAction<PlayerJoinedGameEvent>) => {
+      state.otherPlayers.push(action.payload.player);
+      state.onlineGameStatus = OnlineGameStatus.SUCCESS;
     },
     joinedOnlineGame: (state: UIState, action: PayloadAction<GameJoinedEvent>) => {
       state.onlineGameStatus = OnlineGameStatus.SUCCESS;
-      state.gameID = action.payload.gameId;
+      state.roomId = action.payload.roomId;
+      state.otherPlayers.push(...action.payload.otherPlayers);
     },
     addChatItemToLog: (state: UIState, action: PayloadAction<ChatItem>) => {
       state.chatlog.push(action.payload);
     },
     clearChatlog: (state: UIState, action: PayloadAction) => {
       state.chatlog = [];
+    },
+    updateGameStartState: (state: UIState, action: PayloadAction<GameState>) => {
+      state.gameStartState = action.payload;
     },
   },
 });
@@ -95,9 +164,22 @@ export default UISlice.reducer;
 export const {
   addAlert,
   removeAlert,
-  setActiveGame,
+  toggleActiveGame,
   createdOnlineGame,
   addChatItemToLog,
   clearChatlog,
   joinedOnlineGame,
+  updatePlayer,
+  anotherPlayerJoinedGame,
+  addPlayer,
+  removePlayer,
+  swapLocalPlayer,
+  clearPlayers,
+  updateBoardInversion,
+  toggleBoardInversion,
+  toggleCreateGameMenu,
+  toggleJoinGameMenu,
+  toggleCreateLocalGameMenu,
+  updateGameStartState,
+  closeAllMenus,
 } = UISlice.actions;

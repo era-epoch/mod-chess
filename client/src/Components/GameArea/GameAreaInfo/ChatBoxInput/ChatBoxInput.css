@@ -1,0 +1,7 @@
+.chat-box-input {
+  padding: 0.5rem 1rem 0.5rem 0rem;
+}
+
+.chat-box-input input {
+  width: 100%;
+}

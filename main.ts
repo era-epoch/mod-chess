@@ -4,8 +4,19 @@ import path from 'path';
 import 'dotenv/config';
 import { Server } from 'socket.io';
 import { createServer } from 'http';
-import { CreateGameEvent, GameCreatedEvent, GameJoinedEvent, JoinGameEvent, MoveEvent } from './ws/events';
+import {
+  CreateGameEvent,
+  CreateGameInExistingRoomEvent,
+  GameCreatedEvent,
+  GameCreatedInExistingRoomEvent,
+  GameJoinedEvent,
+  JoinGameEvent,
+  MoveEvent,
+  PlayerJoinedGameEvent,
+} from './ws/events';
 import crypto from 'crypto';
+import { PlayerColour, UserInfo } from './client/src/types';
+import { GameState } from './client/src/state/slices/game/slice';
 
 const app = express();
 const server = createServer(app);
@@ -32,7 +43,8 @@ app.get('/*', (req: Request, res: Response) => {
 });
 
 // TEMPORARY, WILL USE DB
-const games = {};
+const games = {} as GameState[];
+const users = {} as UserInfo[];
 
 io.on('connection', (socket) => {
   console.log('a user connected');
@@ -43,33 +55,85 @@ io.on('connection', (socket) => {
 
   // Create Game
   socket.on('createGame', (event: CreateGameEvent) => {
-    console.log('game created');
-    socket.join('testroom');
-    // TODO: Database
-    games['testroom'] = event.game;
+    const newGameId = crypto.randomBytes(8).toString('hex');
+    // TODO: Database query
+    console.log('Created game:', newGameId);
+    socket.join(newGameId);
+    // Set up the creator player
+    let newPlayerColour: PlayerColour;
+    if (event.game.creatorColour === PlayerColour.random) {
+      if (Math.random() < 0.5) {
+        newPlayerColour = PlayerColour.light;
+      } else {
+        newPlayerColour = PlayerColour.dark;
+      }
+    } else {
+      newPlayerColour = event.game.creatorColour;
+    }
+    games[newGameId] = event.game;
+    const newPlayer = {
+      name: event.playerName,
+      id: crypto.randomBytes(8).toString('hex'),
+      colour: newPlayerColour,
+    };
+    users[newGameId] = [newPlayer];
     socket.emit('gameCreated', {
-      gameId: 'testroom',
-      game: games['testroom'],
-      playerId: crypto.randomBytes(8).toString('hex'),
+      gameId: newGameId,
+      game: games[newGameId],
+      player: newPlayer,
     } as GameCreatedEvent);
   });
 
   // Join Game
   socket.on('joinGame', (event: JoinGameEvent) => {
+    if (games[event.id] === undefined) {
+      socket.emit('joinGameFailed');
+      return;
+    }
+
     socket.join(event.id);
-    console.log('User joined game', event.id);
+    console.log('User joined game:', event.id);
+
+    const user: UserInfo = users[event.id][0];
+    let newColour: PlayerColour;
+    if (user.colour === PlayerColour.dark) {
+      newColour = PlayerColour.light;
+    } else {
+      newColour = PlayerColour.dark;
+    }
+
+    const newPlayer = {
+      name: event.playerName,
+      id: crypto.randomBytes(8).toString('hex'),
+      colour: newColour,
+    };
+
     socket.emit('gameJoined', {
-      gameId: event.id,
+      roomId: event.id,
       game: games[event.id],
-      playerId: crypto.randomBytes(8).toString('hex'),
+      player: newPlayer,
+      otherPlayers: users[event.id],
     } as GameJoinedEvent);
+
+    socket.to(event.id).emit('playerJoinedGame', {
+      player: newPlayer,
+    } as PlayerJoinedGameEvent);
   });
 
   // Move Made
   socket.on('makeMove', (event: MoveEvent) => {
     // TODO: replace testroom
-    console.log('Move made:', event.gameState.board[5][6]);
-    socket.to('testroom').emit('moveMade', event);
+    console.log('Move made:', event.gameState.moveHistory);
+    games[event.roomId] = event.gameState;
+    socket.to(event.roomId).emit('moveMade', event);
+  });
+  // TODO: merge CreateGame events in same handler
+  socket.on('createGameInExistingRoom', (event: CreateGameInExistingRoomEvent) => {
+    games[event.roomId] = event.gameState;
+    socket.to(event.roomId).emit('gameCreatedInExistingRoom', {
+      gameState: event.gameState,
+      player: event.player,
+    } as GameCreatedInExistingRoomEvent);
   });
 });
 
@@ -79,5 +143,3 @@ const port = process.env.PORT || 5000;
 server.listen(port, () => {
   console.log(`Listening on port ${port}...`);
 });
-
-// websockets(httpServer);
