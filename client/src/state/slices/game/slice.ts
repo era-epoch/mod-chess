@@ -12,6 +12,7 @@ import {
   ResolutionEventType,
   SquareContents,
   SquareStatus,
+  UserInfo,
 } from '../../../types';
 import {
   capturePieceAtLocation,
@@ -24,9 +25,8 @@ import {
 import emptyBoard from '../../../GameObjects/boards/emptyBoard';
 import { ChatItem } from '../ui/slice';
 import { getMoveF } from '../../../GameObjects/gamePiece';
-import { EmptySquare } from '../../../GameObjects/basic/emptySquare';
 import { getAbilityF, getAbilityHoverF, getAbilitySelectF } from '../../../GameObjects/ability';
-import { getCurrentPlayer } from '../../../util';
+import { getCurrentPlayer, isPlayersTurn } from '../../../util';
 
 export interface GameState {
   board: SquareContents[][];
@@ -129,13 +129,15 @@ const gameSlice = createSlice({
         handleEndOfTurn(state, pieceToMove.owner);
       }
     },
-    selectSquare: (state: GameState, action: PayloadAction<{ row: number; col: number }>) => {
+    selectSquare: (state: GameState, action: PayloadAction<{ row: number; col: number; player: UserInfo }>) => {
       const row = action.payload.row;
       const col = action.payload.col;
-      const movesToHighlight: Move[] = [];
-      const moveFunction = getMoveF(state.board[row][col].piece.identifier);
-      if (moveFunction) movesToHighlight.push(...moveFunction(state.board[row][col].piece, row, col, state, true));
       const selectedSameSquare = state.selectedRow === row && state.selectedCol === col;
+      const movesToHighlight: Move[] = [];
+      if (state.board[row][col].piece.owner === action.payload.player.colour) {
+        const moveFunction = getMoveF(state.board[row][col].piece.identifier);
+        if (moveFunction) movesToHighlight.push(...moveFunction(state.board[row][col].piece, row, col, state, true));
+      }
       for (let i = 0; i < state.board.length; i++) {
         for (let j = 0; j < state.board[i].length; j++) {
           let match = false;

@@ -1,12 +1,15 @@
 import './LeftBar.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
+  faArrowUp,
   faBucket,
   faComputer,
   faHome,
   faLocationDot,
   faNetworkWired,
+  faPlay,
   faPlusCircle,
+  faUserGroup,
 } from '@fortawesome/free-solid-svg-icons';
 import { useDispatch } from 'react-redux';
 import {
@@ -117,69 +120,31 @@ const LeftBar = (): JSX.Element => {
       <div className="sidebar-header"></div>
       <div className="sidebar-body">
         <div className="sidebar-menu-option" onClick={handleHomeClicked}>
-          <div className="accordion-title">
-            <div className="sidebar-icon">
-              <FontAwesomeIcon icon={faHome} />
-            </div>
-            <p>Home</p>
+          <div className="sidebar-icon">
+            <FontAwesomeIcon icon={faHome} />
           </div>
-          <div className="accordion-underline"></div>
-          <div className="accordion-content"></div>
-        </div>
-        <div className="sidebar-menu-option" onClick={handleCPUClicked}>
-          <div className="accordion-title">
-            <div className="sidebar-icon">
-              <FontAwesomeIcon icon={faComputer} />
-            </div>
-            <p>Play vs CPU</p>
-          </div>
-          <div className="accordion-underline"></div>
-          <div className="accordion-content"></div>
+          <div className="sidebar-title">Home</div>
         </div>
         <div className="sidebar-menu-option" onClick={handleCreateOnlineClicked}>
-          <div className="accordion-title">
-            <div className="sidebar-icon">
-              <FontAwesomeIcon icon={faPlusCircle} />
-            </div>
-            <p>Create Online Game</p>
+          <div className="sidebar-icon">
+            <FontAwesomeIcon icon={faPlusCircle} />
           </div>
-          <div className="accordion-underline"></div>
-          <div className="accordion-content"></div>
+          <div className="sidebar-title">Create Online Game</div>
         </div>
         <div className="sidebar-menu-option" onClick={handleJoinOnlineClicked}>
-          <div className="accordion-title">
-            <div className="sidebar-icon">
-              <FontAwesomeIcon icon={faNetworkWired} />
-            </div>
-            <p>Join Online Game</p>
+          <div className="sidebar-icon">
+            <FontAwesomeIcon icon={faUserGroup} />
           </div>
-          <div className="accordion-underline"></div>
-          <div className="accordion-content"></div>
+          <div className="sidebar-title">Join Online Game</div>
         </div>
         <div className="sidebar-menu-option" onClick={handleCreateLocalClicked}>
-          <div className="accordion-title">
-            <div className="sidebar-icon">
-              <FontAwesomeIcon icon={faLocationDot} />
-            </div>
-            <p>Play Locally</p>
+          <div className="sidebar-icon">
+            <FontAwesomeIcon icon={faPlay} />
           </div>
-          <div className="accordion-underline"></div>
-          <div className="accordion-content"></div>
-        </div>
-        <div className="sidebar-menu-option">
-          <div className="accordion-title">
-            <div className="sidebar-icon">
-              <FontAwesomeIcon icon={faBucket} />
-            </div>
-            <p>Sandbox</p>
-          </div>
-          <div className="accordion-underline"></div>
-          <div className="accordion-content"></div>
+          <div className="sidebar-title">Play Locally</div>
         </div>
       </div>
-      <div className="sidebar-footer">
-        <p>mod-chess.com</p>
-      </div>
+      <div className="sidebar-footer"></div>
     </div>
   );
 };

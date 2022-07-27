@@ -11,7 +11,7 @@ const GraveyardYard = (props: Props): JSX.Element => {
   return (
     <div className="graveyard">
       {props.graveyard.contents.length === 0 ? (
-        <p>No captures</p>
+        <p> </p>
       ) : (
         props.graveyard.contents.map((piece: Piece) => {
           return (

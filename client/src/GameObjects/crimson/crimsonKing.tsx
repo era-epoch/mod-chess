@@ -64,7 +64,7 @@ const CrimsonKingDetail = (props: GamePieceDetailProps): JSX.Element => {
         if (selectedCol && selectedRow) {
           dispatch(resetSelection()); // Since selecting the same square twice hides it
           dispatch(clearAOE());
-          dispatch(selectSquare({ row: selectedRow, col: selectedCol }));
+          dispatch(selectSquare({ row: selectedRow, col: selectedCol, player: player }));
         }
       }
     }
@@ -221,7 +221,7 @@ const Alacrity: Ability = {
   id: 'alacrity',
   name: 'Alacrity',
   renderString: 'ability-alacrity',
-  runeCost: 10,
+  runeCost: 15,
   quick: false,
   immediate: false,
   hoverF: standardAbilityHoverF,

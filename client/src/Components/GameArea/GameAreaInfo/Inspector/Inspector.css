@@ -1,10 +1,21 @@
 .inspector {
   display: flex;
   flex-direction: column;
+  padding: 1rem;
+  flex: 1;
+  overflow-y: auto;
+  background-color: #dedede;
 }
 
-.inspector-row {
+.inspector-entry {
   display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.inspector-header {
+  display: flex;
+  gap: 1rem;
 }
 
 .inspector-image {
@@ -23,6 +34,11 @@
 
 .inspector-image.light-image {
   background-color: grey;
+}
+
+.inspector-header-right {
+  display: flex;
+  flex-direction: column;
 }
 
 .inspector-details {

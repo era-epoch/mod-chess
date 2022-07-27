@@ -115,7 +115,7 @@ const CreateOnlineMenu = (): JSX.Element => {
           </div>
         </div>
       </div>
-      <div className="menu-section game-time-select" onChange={handleGameTimeChange}>
+      {/* <div className="menu-section game-time-select" onChange={handleGameTimeChange}>
         <div className="menu-section-title">Game Time (per player)</div>
         <div className="menu-row">
           <div>
@@ -139,7 +139,7 @@ const CreateOnlineMenu = (): JSX.Element => {
             <label htmlFor="game-time-1">1 minute</label>
           </div>
         </div>
-      </div>
+      </div> */}
       <div className="ui-button major-button create-game-button" onClick={createOnlineGame}>
         Create Game
       </div>

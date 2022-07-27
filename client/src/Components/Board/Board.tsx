@@ -73,14 +73,14 @@ const Board = (): JSX.Element => {
           resolve();
         }
       } else {
-        dispatch(selectSquare({ row: row, col: col }));
+        dispatch(selectSquare({ row: row, col: col, player: player }));
       }
     }
   };
 
   const handleSelect = (row: number, col: number) => {
     if (gameState.activeAbility === '') {
-      dispatch(selectSquare({ row: row, col: col }));
+      dispatch(selectSquare({ row: row, col: col, player: player }));
     } else if (isPlayersTurn(gameState.turn, player)) {
       dispatch(tryActivateAbility({ row: row, col: col }));
       const newGameState = store.getState().game;

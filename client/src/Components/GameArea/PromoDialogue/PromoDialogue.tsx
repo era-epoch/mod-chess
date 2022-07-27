@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../state/rootReducer';
 import { endTurnDirect, promotePiece } from '../../../state/slices/game/slice';
+import { store } from '../../../state/store';
 import { PieceIdentifier, ResolutionEventType } from '../../../types';
 
 const PromoDialogue = (): JSX.Element => {
@@ -23,6 +24,9 @@ const PromoDialogue = (): JSX.Element => {
   const promote = (target: PieceIdentifier) => {
     dispatch(promotePiece({ res: resolution[0], new: target }));
     dispatch(endTurnDirect());
+    // if (store.getState().game.postTurnResolutionQueue.length === 0) {
+    //   handleTurnEnd();
+    // }
   };
 
   return (

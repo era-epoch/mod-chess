@@ -30,12 +30,17 @@ const Inspector = (): JSX.Element => {
   return (
     <div className="inspector">
       {selected && piece && piece.type !== PieceType.empty ? (
-        <div className="inspector-row">
-          <div className={`inspector-image ${piece.owner === PlayerColour.dark ? 'dark-image' : 'light-image'}`}>
-            <BoardPiece piece={piece} />
+        <div className="inspector-entry">
+          <div className="inspector-header">
+            <div className={`inspector-image ${piece.owner === PlayerColour.dark ? 'dark-image' : 'light-image'}`}>
+              <BoardPiece piece={piece} />
+            </div>
+            <div className="inspector-header-right">
+              <div className="inspector-name">{piece.name}</div>
+              <div>{`${piece.owner === PlayerColour.dark ? 'Dark' : 'Light'} ${piece.type}`}</div>
+            </div>
           </div>
           <div className="inspector-details">
-            <div className="inspector-name">{piece.name}</div>
             {statusBits?.map((comp: React.FC<GamePieceDetailProps>, i) => {
               return <div key={uid(i)}>{React.createElement(comp, { piece: piece })}</div>;
             })}
@@ -45,15 +50,17 @@ const Inspector = (): JSX.Element => {
           </div>
         </div>
       ) : (
-        <div className="inspector-row">
-          <div className="inspector-image">
-            <div className="icon-wrapper">
-              <FontAwesomeIcon icon={faQuestion} />
+        <div className="inspector-entry">
+          <div className="inspector-header">
+            <div className="inspector-image">
+              <div className="icon-wrapper">
+                <FontAwesomeIcon icon={faQuestion} />
+              </div>
             </div>
-          </div>
-          <div className="inspector-details">
-            <div className="inspector-details-default">
-              Select a square to display information about its contents here.
+            <div className="inspector-details">
+              <div className="inspector-details-default">
+                Select a square to display information about its contents here.
+              </div>
             </div>
           </div>
         </div>

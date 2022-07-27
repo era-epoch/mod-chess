@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
 import { uid } from 'react-uid';
@@ -13,6 +14,10 @@ const ChatBox = (): JSX.Element => {
   const moveHistory = useSelector((state: RootState) => state.game.moveHistory);
   const winner = useSelector((state: RootState) => state.game.winner);
   const gameStartState = useSelector((state: RootState) => state.ui.gameStartState);
+  const chatOpen = useSelector((state: RootState) => state.ui.chatOpen);
+  const [chatMessage, setChatMessage] = useState('');
+
+  const handleSubmit = () => {};
 
   const allChat: ChatItem[] = [];
   allChat.push(...chatlog);
@@ -35,7 +40,7 @@ const ChatBox = (): JSX.Element => {
   };
 
   return (
-    <div className="chat-box">
+    <div className={`chat-box${chatOpen ? ' chat-box-shown' : ' chat-box-hidden'}`}>
       {allChat.map((item: ChatItem) => {
         // TODO: Why is the deserialization necessary?
         const time = new Date(item.time);
@@ -60,6 +65,9 @@ const ChatBox = (): JSX.Element => {
           </div>
         </div>
       ) : null}
+      {/* <div className="chat-box-input">
+        <input type="text" value={chatMessage} onChange={(event) => setChatMessage(event.target.value)}></input>
+      </div> */}
     </div>
   );
 };

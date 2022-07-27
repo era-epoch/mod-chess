@@ -5,4 +5,11 @@
   gap: 1rem;
   padding: 0 1rem;
   align-items: center;
+  border-top: var(--info-border);
+  min-height: 3.1rem;
+}
+
+.player-runes {
+  display: flex;
+  gap: 0.4rem;
 }

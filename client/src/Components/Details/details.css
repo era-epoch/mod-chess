@@ -32,7 +32,7 @@
 
 .ability {
   background-color: rgba(10, 124, 130, 0.1);
-  border: 2px solid rgb(10, 124, 130);
+  border: 2px solid var(--rune);
   border-radius: 0.5rem;
   padding: 0.5rem;
   transition: all 250ms ease;
@@ -65,7 +65,7 @@
 }
 
 .rune {
-  color: rgb(0, 255, 255);
+  color: var(--rune);
 }
 
 .immune {

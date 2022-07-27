@@ -3,6 +3,7 @@ import { Piece, PlayerColour, UserInfo } from './types';
 
 export const isPlayersTurn = (turn: number, player: UserInfo): boolean => {
   if (turn % 2 === 0) {
+    console.log(player.colour === PlayerColour.light);
     return player.colour === PlayerColour.light;
   } else {
     return player.colour === PlayerColour.dark;

@@ -63,7 +63,7 @@ const ScourgeRookDetail = (props: GamePieceDetailProps): JSX.Element => {
         if (selectedCol && selectedRow) {
           dispatch(resetSelection()); // Since selecting the same square twice hides it
           dispatch(clearAOE());
-          dispatch(selectSquare({ row: selectedRow, col: selectedCol }));
+          dispatch(selectSquare({ row: selectedRow, col: selectedCol, player: player }));
         }
       }
     }

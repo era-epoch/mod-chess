@@ -61,7 +61,7 @@ export const ScourgeBishopDetail = (props: GamePieceDetailProps): JSX.Element =>
         dispatch(updateActiveAbility(''));
         if (selectedCol && selectedRow) {
           dispatch(resetSelection()); // Since selecting the same square twice hides it
-          dispatch(selectSquare({ row: selectedRow, col: selectedCol }));
+          dispatch(selectSquare({ row: selectedRow, col: selectedCol, player: player }));
         }
       }
     }

@@ -1,9 +1,24 @@
 .chat-box {
-  flex: 1;
+  z-index: 1;
+  position: absolute;
+  left: 0;
   overflow-y: auto;
+  max-height: 50vh;
   display: flex;
   flex-direction: column;
-  padding: 0.5rem 1rem 0.5rem 0rem;
+  transition: all 750ms ease;
+  background-color: rgba(200, 200, 200, 0.95);
+  width: 100%;
+  padding: 1rem;
+  border-top: var(--info-border);
+}
+
+.chat-box-shown {
+  transform: translateY(-100%);
+}
+
+.chat-box-hidden {
+  transform: translateY(100%);
 }
 
 .chat-item {
