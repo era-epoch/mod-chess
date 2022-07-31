@@ -252,7 +252,6 @@ const gameSlice = createSlice({
       }
     },
     tryActivateAbility: (state: GameState, action: PayloadAction<{ row: number; col: number }>) => {
-      console.log('trying');
       const abilityF = getAbilityF(state.activeAbility);
       if (abilityF && state.selectedRow && state.selectedCol) {
         const source = state.board[state.selectedRow][state.selectedCol].piece;
@@ -268,6 +267,7 @@ const gameSlice = createSlice({
           state.board[i][j].enPassantOrigin = null;
         }
       }
+      console.log('ending turn');
       handleEndOfTurn(state, getCurrentPlayer(state.turn));
     },
     clearAOE: (state: GameState) => {

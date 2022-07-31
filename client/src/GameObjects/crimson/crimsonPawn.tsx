@@ -128,7 +128,8 @@ export const CrimsonPawnDetail = (props: GamePieceDetailProps): JSX.Element => {
         <span className="detail-title">{getAbilityName(abilityId)}: </span>
         <span className="detail-info">
           This piece becomes <span className="emph blood">bloodthirsty</span>: the next time it moves, it can capture by
-          moving one space forward.
+          moving one space forward. This piece loses one stack of <span className="emph blood">bloodthirsty</span> after
+          moving.
         </span>
       </div>
       <div>

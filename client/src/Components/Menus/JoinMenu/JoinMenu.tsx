@@ -24,7 +24,7 @@ const JoinMenu = (): JSX.Element => {
 
   return (
     <div className="menu-wrapper">
-      <p>JOIN</p>
+      <p>Join Online Game</p>
       <div className="menu-section game-id-select">
         <div className="menu-section-title">Game Join ID</div>
         <input

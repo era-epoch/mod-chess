@@ -21,6 +21,7 @@ import {
   closeAllMenus,
   toggleActiveGame,
   toggleCreateGameMenu,
+  toggleCreateLocalGameMenu,
   toggleJoinGameMenu,
   updatePlayer,
 } from '../../state/slices/ui/slice';
@@ -30,7 +31,7 @@ import { wsDisconnect } from '../../socketMiddleware';
 import { PlayerColour } from '../../types';
 import produce from 'immer';
 import { useCallback, useEffect } from 'react';
-import localBoard from '../../GameObjects/boards/localBoard';
+import classicBoard from '../../GameObjects/boards/classicBoard';
 
 export const ws_url = `http://${window.location.hostname}:5000`;
 
@@ -91,13 +92,6 @@ const LeftBar = (): JSX.Element => {
     dispatch(setUpGame());
   }, [dispatch]);
 
-  const handleHomeClicked = () => {
-    dispatch(wsDisconnect(ws_url));
-    dispatch(closeAllMenus());
-  };
-
-  const handleCPUClicked = () => {};
-
   const handleCreateOnlineClicked = () => {
     dispatch(toggleCreateGameMenu());
   };
@@ -107,8 +101,7 @@ const LeftBar = (): JSX.Element => {
   };
 
   const handleCreateLocalClicked = () => {
-    // dispatch(toggleCreateLocalGameMenu());
-    startLocalGame();
+    dispatch(toggleCreateLocalGameMenu());
   };
 
   useEffect(() => {
@@ -119,12 +112,6 @@ const LeftBar = (): JSX.Element => {
     <div className="sidebar">
       <div className="sidebar-header"></div>
       <div className="sidebar-body">
-        <div className="sidebar-menu-option" onClick={handleHomeClicked}>
-          <div className="sidebar-icon">
-            <FontAwesomeIcon icon={faHome} />
-          </div>
-          <div className="sidebar-title">Home</div>
-        </div>
         <div className="sidebar-menu-option" onClick={handleCreateOnlineClicked}>
           <div className="sidebar-icon">
             <FontAwesomeIcon icon={faPlusCircle} />
@@ -141,7 +128,7 @@ const LeftBar = (): JSX.Element => {
           <div className="sidebar-icon">
             <FontAwesomeIcon icon={faPlay} />
           </div>
-          <div className="sidebar-title">Play Locally</div>
+          <div className="sidebar-title">Play Local Hot Seat Game</div>
         </div>
       </div>
       <div className="sidebar-footer"></div>

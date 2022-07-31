@@ -28,7 +28,6 @@ const Board = (): JSX.Element => {
   const board = gameState.board.slice(0);
 
   const handleTurnEnd = () => {
-    console.log('ending turn');
     // If online game, emit the new game state
     if (onlineGame === OnlineGameStatus.SUCCESS) {
       const newGameState = store.getState().game;

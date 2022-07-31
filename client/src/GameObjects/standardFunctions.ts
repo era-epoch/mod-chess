@@ -31,6 +31,17 @@ export const standardOnDeathF: DeathFunction = (
   }
   // TODO: Neutral graveyard
   state.board[row][col].piece = EmptySquare();
+  // Get rid of trailing en-passant capture:
+  if (piece.type === PieceType.pawn) {
+    for (let i = 0; i < state.board.length; i++) {
+      for (let j = 0; j < state.board[i].length; j++) {
+        if (state.board[i][j].enPassantOrigin?.id === piece.id) {
+          state.board[i][j].squareStatuses = state.board[i][j].squareStatuses.filter((s) => s !== SquareStatus.EPV);
+          state.board[i][j].enPassantOrigin = null;
+        }
+      }
+    }
+  }
 };
 
 export const standardOnCaptureF: CaptureFunction = (
@@ -47,7 +58,6 @@ export const standardOnMovedF: LifecycleFunction = (piece: Piece, row: number, c
   piece.nMoves++;
   state.selectedRow = row;
   state.selectedCol = col;
-  console.log('selected reset');
 };
 
 export const standardOnTurnStartF: LifecycleFunction = (

@@ -74,7 +74,7 @@ const ScourgeRookDetail = (props: GamePieceDetailProps): JSX.Element => {
         <FontAwesomeIcon icon={faBolt} className="detail-icon rune" />
         <span className="detail-title">{getAbilityName(abilityId)}: </span>
         <span className="detail-info">
-          <span className="emph poison-text">Poison</span> any piece within one square of this piece.
+          <span className="emph poison-text">Poison</span> any piece within 2 squares of this piece.
         </span>
       </div>
       <div>
@@ -109,45 +109,16 @@ const infectSelectF: AbilitySelectFunction = (source: Piece, state: GameState) =
   clearHighlights(state);
   // AOE Effect Highlights
   if (state.selectedRow && state.selectedCol) {
-    if (state.board[state.selectedRow + 1][state.selectedCol].inBounds) {
-      state.board[state.selectedRow + 1][state.selectedCol].squareStatuses.push(
-        ...[SquareStatus.AOE, SquareStatus.AOE_PSN],
-      );
-    }
-    if (state.board[state.selectedRow - 1][state.selectedCol].inBounds) {
-      state.board[state.selectedRow - 1][state.selectedCol].squareStatuses.push(
-        ...[SquareStatus.AOE, SquareStatus.AOE_PSN],
-      );
-    }
-    if (state.board[state.selectedRow][state.selectedCol + 1].inBounds) {
-      state.board[state.selectedRow][state.selectedCol + 1].squareStatuses.push(
-        ...[SquareStatus.AOE, SquareStatus.AOE_PSN],
-      );
-    }
-    if (state.board[state.selectedRow][state.selectedCol - 1].inBounds) {
-      state.board[state.selectedRow][state.selectedCol - 1].squareStatuses.push(
-        ...[SquareStatus.AOE, SquareStatus.AOE_PSN],
-      );
-    }
-    if (state.board[state.selectedRow + 1][state.selectedCol - 1].inBounds) {
-      state.board[state.selectedRow + 1][state.selectedCol - 1].squareStatuses.push(
-        ...[SquareStatus.AOE, SquareStatus.AOE_PSN],
-      );
-    }
-    if (state.board[state.selectedRow - 1][state.selectedCol + 1].inBounds) {
-      state.board[state.selectedRow - 1][state.selectedCol + 1].squareStatuses.push(
-        ...[SquareStatus.AOE, SquareStatus.AOE_PSN],
-      );
-    }
-    if (state.board[state.selectedRow + 1][state.selectedCol + 1].inBounds) {
-      state.board[state.selectedRow + 1][state.selectedCol + 1].squareStatuses.push(
-        ...[SquareStatus.AOE, SquareStatus.AOE_PSN],
-      );
-    }
-    if (state.board[state.selectedRow - 1][state.selectedCol - 1].inBounds) {
-      state.board[state.selectedRow - 1][state.selectedCol - 1].squareStatuses.push(
-        ...[SquareStatus.AOE, SquareStatus.AOE_PSN],
-      );
+    const row = state.selectedRow;
+    const col = state.selectedCol;
+    for (let i = 0; i < state.board.length; i++) {
+      for (let j = 0; j < state.board[i].length; j++) {
+        const xDiff = Math.abs(j - col);
+        const yDiff = Math.abs(i - row);
+        if (xDiff < 3 && yDiff < 3 && xDiff + yDiff > 0 && state.board[i][j].inBounds) {
+          state.board[i][j].squareStatuses.push(...[SquareStatus.AOE, SquareStatus.AOE_PSN]);
+        }
+      }
     }
   }
 };
@@ -172,7 +143,7 @@ const infectAbilityF: AbilityFunction = (source: Piece, targetRow: number, targe
   const sourceLocation = getPieceLocation(source, state);
   const yDiff = Math.abs(targetRow - sourceLocation.row);
   const xDiff = Math.abs(targetCol - sourceLocation.col);
-  if (yDiff < 2 && xDiff < 2 && yDiff + xDiff > 0) {
+  if (yDiff < 3 && xDiff < 3 && yDiff + xDiff > 0) {
     if (state.board[targetRow][targetCol].piece.type !== PieceType.empty) {
       state.board[targetRow][targetCol].piece.statuses.push(PieceStatus.PSN);
       state.abilityActivatedFlag = true;

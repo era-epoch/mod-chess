@@ -2,7 +2,7 @@ import produce from 'immer';
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { CreateGameEvent } from '../../../../../ws/events';
-import localBoard from '../../../GameObjects/boards/localBoard';
+import classicBoard from '../../../GameObjects/boards/classicBoard';
 import { wsCreateGame } from '../../../socketMiddleware';
 import { toggleCreateGameMenu } from '../../../state/slices/ui/slice';
 import { PlayerColour } from '../../../types';
@@ -20,7 +20,7 @@ const CreateOnlineMenu = (): JSX.Element => {
     dispatch(
       wsCreateGame(ws_url, {
         game: {
-          board: produce(localBoard, () => {}),
+          board: produce(classicBoard, () => {}),
           turn: 0,
           selectedRow: null,
           selectedCol: null,
@@ -93,7 +93,7 @@ const CreateOnlineMenu = (): JSX.Element => {
 
   return (
     <div className="menu-wrapper">
-      <p>CREATE ONLINE GAME</p>
+      <p>Create Online Game</p>
       <div className="menu-section player-name-select">
         <div className="menu-section-title">Your Name</div>
         <input type="text" value={playerName} onChange={handlePlayerNameChange} />

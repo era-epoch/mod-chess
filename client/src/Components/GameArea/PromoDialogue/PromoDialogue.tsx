@@ -2,14 +2,30 @@ import { faChessBishop, faChessKnight, faChessQueen, faChessRook } from '@fortaw
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
+import { wsEmitMove } from '../../../socketMiddleware';
 import { RootState } from '../../../state/rootReducer';
 import { endTurnDirect, promotePiece } from '../../../state/slices/game/slice';
+import { OnlineGameStatus, swapLocalPlayer } from '../../../state/slices/ui/slice';
 import { store } from '../../../state/store';
 import { PieceIdentifier, ResolutionEventType } from '../../../types';
 
 const PromoDialogue = (): JSX.Element => {
   const resolution = useSelector((state: RootState) => state.game.postTurnResolutionQueue);
+  const onlineGame = useSelector((state: RootState) => state.ui.onlineGameStatus);
   const dispatch = useDispatch();
+
+  const handleTurnEnd = () => {
+    // If online game, emit the new game state
+    if (onlineGame === OnlineGameStatus.SUCCESS) {
+      const newGameState = store.getState().game;
+      dispatch(wsEmitMove(newGameState));
+    }
+    // If local hotseat game, switch players
+    if (onlineGame === OnlineGameStatus.NONE) {
+      dispatch(swapLocalPlayer());
+      // dispatch(toggleBoardInversion());
+    }
+  };
 
   const active = (): boolean => {
     if (resolution.length === 0) {
@@ -23,10 +39,11 @@ const PromoDialogue = (): JSX.Element => {
 
   const promote = (target: PieceIdentifier) => {
     dispatch(promotePiece({ res: resolution[0], new: target }));
+    console.log(store.getState().game.postTurnResolutionQueue);
     dispatch(endTurnDirect());
-    // if (store.getState().game.postTurnResolutionQueue.length === 0) {
-    //   handleTurnEnd();
-    // }
+    if (store.getState().game.postTurnResolutionQueue.length === 0) {
+      handleTurnEnd();
+    }
   };
 
   return (

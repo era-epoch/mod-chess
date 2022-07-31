@@ -1,9 +1,11 @@
+import { wsEmitMove } from './socketMiddleware';
 import { GameState } from './state/slices/game/slice';
+import { OnlineGameStatus, swapLocalPlayer } from './state/slices/ui/slice';
+import { store } from './state/store';
 import { Piece, PlayerColour, UserInfo } from './types';
 
 export const isPlayersTurn = (turn: number, player: UserInfo): boolean => {
   if (turn % 2 === 0) {
-    console.log(player.colour === PlayerColour.light);
     return player.colour === PlayerColour.light;
   } else {
     return player.colour === PlayerColour.dark;
