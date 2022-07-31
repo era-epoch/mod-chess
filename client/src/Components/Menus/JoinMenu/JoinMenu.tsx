@@ -27,16 +27,20 @@ const JoinMenu = (): JSX.Element => {
       <p>Join Online Game</p>
       <div className="menu-section game-id-select">
         <div className="menu-section-title">Game Join ID</div>
-        <input
-          className="game-name"
-          type="text"
-          value={gameId}
-          onChange={(event) => setGameId(event.target.value)}
-        ></input>
+        <div className="menu-row">
+          <input
+            className="game-name"
+            type="text"
+            value={gameId}
+            onChange={(event) => setGameId(event.target.value)}
+          ></input>
+        </div>
       </div>
       <div className="menu-section player-name-select">
         <div className="menu-section-title">Your Name</div>
-        <input type="text" value={playerName} onChange={handlePlayerNameChange} />
+        <div className="menu-row">
+          <input type="text" value={playerName} onChange={handlePlayerNameChange} />
+        </div>
       </div>
       <div className="ui-button major-button join-game-button" onClick={joinOnlineGame}>
         Join Game

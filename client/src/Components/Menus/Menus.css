@@ -4,12 +4,12 @@
   width: var(--gamearea-width);
   display: flex;
   flex-direction: column;
-  flex-wrap: wrap;
   height: 100vh;
   gap: 0rem;
   z-index: 10;
   background-color: rgba(255, 255, 255, 0.95);
-  padding: 0rem 1rem;
+  padding: 1rem;
+  overflow-y: auto;
 }
 
 .menu-wrapper > * {

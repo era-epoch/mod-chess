@@ -104,10 +104,6 @@ const LeftBar = (): JSX.Element => {
     dispatch(toggleCreateLocalGameMenu());
   };
 
-  useEffect(() => {
-    startLocalGame();
-  }, [startLocalGame]);
-
   return (
     <div className="sidebar">
       <div className="sidebar-header"></div>
