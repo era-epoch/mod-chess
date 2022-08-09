@@ -73,7 +73,7 @@ const initialUIState: UIState = {
   boardInversion: false,
   createGameMenuOpen: false,
   joinGameMenuOpen: false,
-  createLocalGameMenuOpen: true,
+  createLocalGameMenuOpen: false,
   gameStartState: null,
   chatOpen: true,
 };

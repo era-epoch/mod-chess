@@ -108,7 +108,7 @@ const LeftBar = (): JSX.Element => {
     <div className="sidebar">
       <div className="sidebar-header"></div>
       <div className="sidebar-body">
-        <div className="sidebar-menu-option" onClick={handleCreateOnlineClicked}>
+        {/* <div className="sidebar-menu-option" onClick={handleCreateOnlineClicked}>
           <div className="sidebar-icon">
             <FontAwesomeIcon icon={faPlusCircle} />
           </div>
@@ -119,7 +119,7 @@ const LeftBar = (): JSX.Element => {
             <FontAwesomeIcon icon={faUserGroup} />
           </div>
           <div className="sidebar-title">Join Online Game</div>
-        </div>
+        </div> */}
         <div className="sidebar-menu-option" onClick={handleCreateLocalClicked}>
           <div className="sidebar-icon">
             <FontAwesomeIcon icon={faPlay} />

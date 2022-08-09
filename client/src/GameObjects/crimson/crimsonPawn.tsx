@@ -114,6 +114,8 @@ export const CrimsonPawnDetail = (props: GamePieceDetailProps): JSX.Element => {
           if (store.getState().game.postTurnResolutionQueue.length === 0) {
             handleTurnEnd();
           }
+        } else {
+          dispatch(updateActiveAbility(''));
         }
       }
     }
