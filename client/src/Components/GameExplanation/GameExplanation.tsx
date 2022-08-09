@@ -21,7 +21,7 @@ const GameExplanation = (): JSX.Element => {
         <span className={`rune`}>
           <FontAwesomeIcon icon={faBolt} />
         </span>{' '}
-        (energy).
+        (energy). If an ability is marked (Quick), that means that using that ability does not take up your turn.
       </p>
       <p>
         <span className="emph">Runes:</span> Two squares on the board will have an icon (
@@ -34,6 +34,10 @@ const GameExplanation = (): JSX.Element => {
           <FontAwesomeIcon icon={faBolt} />
         </span>{' '}
         (energy).
+      </p>
+      <p>
+        Please note that the current build of the game may have major and/or minor bugs, and that the balance of the
+        pieces and sets has not yet been tested.
       </p>
       <p>
         To try the game out, select an option from the left sidebar (online play and computer opponents are currently a
