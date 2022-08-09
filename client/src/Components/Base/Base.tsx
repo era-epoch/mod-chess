@@ -7,6 +7,7 @@ import CreateOnlineMenu from '../Menus/CreateOnlineMenu/CreateOnlineMenu';
 import JoinMenu from '../Menus/JoinMenu/JoinMenu';
 import './Base.css';
 import '../Menus/Menus.css';
+import GameExplanation from '../GameExplanation/GameExplanation';
 
 const Base = (): JSX.Element => {
   const activeGame = useSelector((state: RootState) => state.ui.activeGame);
@@ -17,7 +18,7 @@ const Base = (): JSX.Element => {
   return (
     <div className="base">
       <LeftBar />
-      {activeGame ? <GameArea /> : null}
+      {activeGame ? <GameArea /> : <GameExplanation />}
       {createOnlineMenuOpen ? (
         <CreateOnlineMenu />
       ) : joinGameMenuOpen ? (

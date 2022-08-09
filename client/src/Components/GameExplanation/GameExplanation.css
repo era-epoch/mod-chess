@@ -1,0 +1,8 @@
+.game-explanation {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  font-size: 1.5rem;
+  gap: 1rem;
+  padding: 4rem;
+}
