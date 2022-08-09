@@ -35,7 +35,6 @@
   border: 2px solid var(--rune);
   border-radius: 0.5rem;
   padding: 0.5rem;
-  transition: all 250ms ease;
 }
 
 .ability:hover {

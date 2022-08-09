@@ -1,3 +1,5 @@
+import { faBolt } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import './GameExplanation.css';
 
 const GameExplanation = (): JSX.Element => {
@@ -14,10 +16,24 @@ const GameExplanation = (): JSX.Element => {
         ), each with unique abilities and mechanics that build upon the traditional rules of chess.
       </p>
       <p>
-        <span className="emph">Abilities:</span> The custom pieces in this game have abilities. These abilities
+        <span className="emph">Abilities:</span> The custom pieces in this game have abilities. Some of these abilities
+        can only be used by expending{' '}
+        <span className={`rune`}>
+          <FontAwesomeIcon icon={faBolt} />
+        </span>{' '}
+        (energy).
       </p>
       <p>
-        <span className="emph">Runes:</span>
+        <span className="emph">Runes:</span> Two squares on the board will have an icon (
+        <span className={`rune`}>
+          <FontAwesomeIcon icon={faBolt} />
+        </span>
+        ) denoting them as rune squares. At the end of <span className="emph">every</span> turn, for every piece a
+        player has on a rune square, they gain 1{' '}
+        <span className={`rune`}>
+          <FontAwesomeIcon icon={faBolt} />
+        </span>{' '}
+        (energy).
       </p>
       <p>
         To try the game out, select an option from the left sidebar (online play and computer opponents are currently a
