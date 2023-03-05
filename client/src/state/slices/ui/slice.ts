@@ -53,6 +53,7 @@ export interface UIState {
   joinGameMenuOpen: boolean;
   createLocalGameMenuOpen: boolean;
   gameStartState: GameState | null;
+  chatOpen: boolean;
 }
 
 const blankPlayer: UserInfo = {
@@ -74,6 +75,7 @@ const initialUIState: UIState = {
   joinGameMenuOpen: false,
   createLocalGameMenuOpen: false,
   gameStartState: null,
+  chatOpen: true,
 };
 
 const UISlice = createSlice({
@@ -157,6 +159,9 @@ const UISlice = createSlice({
     updateGameStartState: (state: UIState, action: PayloadAction<GameState>) => {
       state.gameStartState = action.payload;
     },
+    updateChatOpen: (state: UIState, action: PayloadAction<boolean>) => {
+      state.chatOpen = action.payload;
+    },
   },
 });
 
@@ -182,4 +187,5 @@ export const {
   toggleCreateLocalGameMenu,
   updateGameStartState,
   closeAllMenus,
+  updateChatOpen,
 } = UISlice.actions;

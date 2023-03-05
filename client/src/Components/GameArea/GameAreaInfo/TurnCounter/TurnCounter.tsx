@@ -11,12 +11,10 @@ const TurnCounter = (): JSX.Element => {
       <div className="turn-number-label">Turn {turn}</div>
       {winner !== null ? (
         <>
-          <div className="turn-player-label">
-            {winner === 0 ? 'White Wins!' : winner === 1 ? 'Black Wins!' : 'Draw'}
-          </div>
+          <div className="turn-player-label">{winner === 0 ? 'Light Wins!' : winner === 1 ? 'Dark Wins!' : 'Draw'}</div>
         </>
       ) : (
-        <div className="turn-player-label">{turn % 2 === 0 ? 'White to move.' : 'Black to move.'}</div>
+        <div className="turn-player-label">{turn % 2 === 0 ? 'Light to move' : 'Dark to move'}</div>
       )}
     </div>
   );

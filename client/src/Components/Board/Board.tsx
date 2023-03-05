@@ -28,7 +28,6 @@ const Board = (): JSX.Element => {
   const board = gameState.board.slice(0);
 
   const handleTurnEnd = () => {
-    console.log('ending turn');
     // If online game, emit the new game state
     if (onlineGame === OnlineGameStatus.SUCCESS) {
       const newGameState = store.getState().game;
@@ -73,14 +72,14 @@ const Board = (): JSX.Element => {
           resolve();
         }
       } else {
-        dispatch(selectSquare({ row: row, col: col }));
+        dispatch(selectSquare({ row: row, col: col, player: player }));
       }
     }
   };
 
   const handleSelect = (row: number, col: number) => {
     if (gameState.activeAbility === '') {
-      dispatch(selectSquare({ row: row, col: col }));
+      dispatch(selectSquare({ row: row, col: col, player: player }));
     } else if (isPlayersTurn(gameState.turn, player)) {
       dispatch(tryActivateAbility({ row: row, col: col }));
       const newGameState = store.getState().game;

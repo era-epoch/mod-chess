@@ -2,17 +2,23 @@ import produce from 'immer';
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { CreateGameEvent } from '../../../../../ws/events';
-import localBoard from '../../../GameObjects/boards/localBoard';
+import classicBoard from '../../../GameObjects/boards/classicBoard';
+import mirroredTestBoard from '../../../GameObjects/boards/mirroredTestBoard';
+import testBoard from '../../../GameObjects/boards/testBoard';
 import { wsCreateGame } from '../../../socketMiddleware';
 import { toggleCreateGameMenu } from '../../../state/slices/ui/slice';
-import { PlayerColour } from '../../../types';
+import { Board, PlayerColour } from '../../../types';
 import { ws_url } from '../../LeftBar/LeftBar';
+import BoardPreview from '../BoardPreview/BoardPreview';
 import './CreateOnlineMenu.css';
 
 const CreateOnlineMenu = (): JSX.Element => {
   const [creatorColour, setCreatorColour] = useState<PlayerColour>(PlayerColour.random);
   const [timedGame, setTimedGame] = useState(false);
   const [gameTime, setGameTime] = useState(10);
+  const [board, setBoard] = useState<Board>(classicBoard);
+  const [gameType, setGameType] = useState('');
+  const [runeSpawns, setRuneSpawns] = useState(0); // TEMPORARY
   const [playerName, setPlayerName] = useState('Player' + Math.random().toString().slice(-4, -1));
   const dispatch = useDispatch();
 
@@ -20,7 +26,7 @@ const CreateOnlineMenu = (): JSX.Element => {
     dispatch(
       wsCreateGame(ws_url, {
         game: {
-          board: produce(localBoard, () => {}),
+          board: produce(board, () => {}),
           turn: 0,
           selectedRow: null,
           selectedCol: null,
@@ -29,15 +35,15 @@ const CreateOnlineMenu = (): JSX.Element => {
             { player: PlayerColour.dark, contents: [] },
           ],
           lightRunes: 0,
-          darkRunes: 0,
+          darkRunes: 2,
           winner: null,
           creatorColour: creatorColour,
           timedGame: timedGame,
           gameTime: gameTime,
           turnTimeBack: 1,
           moveHistory: [],
-          lightRuneSpawns: 0,
-          darkRuneSpawns: 0,
+          lightRuneSpawns: runeSpawns,
+          darkRuneSpawns: runeSpawns,
           runeDuration: 0,
           runeSpawnTurn: 0,
           activeAbility: '',
@@ -63,40 +69,18 @@ const CreateOnlineMenu = (): JSX.Element => {
     }
   };
 
-  const handleGameTimeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    switch (event.target.value) {
-      case 'none':
-        setTimedGame(false);
-        break;
-      case '10':
-        setTimedGame(true);
-        setGameTime(10);
-        break;
-      case '5':
-        setTimedGame(true);
-        setGameTime(5);
-        break;
-      case '3':
-        setTimedGame(true);
-        setGameTime(3);
-        break;
-      case '1':
-        setTimedGame(true);
-        setGameTime(1);
-        break;
-    }
-  };
-
   const handlePlayerNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setPlayerName(event.target.value);
   };
 
   return (
     <div className="menu-wrapper">
-      <p>CREATE ONLINE GAME</p>
+      <p>Create Online Game</p>
       <div className="menu-section player-name-select">
         <div className="menu-section-title">Your Name</div>
-        <input type="text" value={playerName} onChange={handlePlayerNameChange} />
+        <div className="menu-row">
+          <input type="text" value={playerName} onChange={handlePlayerNameChange} />
+        </div>
       </div>
       <div className="menu-section creator-player-select" onChange={handleCreatorColourChange}>
         <div className="menu-section-title">Your Colour</div>
@@ -115,28 +99,41 @@ const CreateOnlineMenu = (): JSX.Element => {
           </div>
         </div>
       </div>
-      <div className="menu-section game-time-select" onChange={handleGameTimeChange}>
-        <div className="menu-section-title">Game Time (per player)</div>
+      <div className="menu-section">
+        <div className="menu-section-title">Game Type</div>
         <div className="menu-row">
-          <div>
-            <input type="radio" name="game-time" value="none" id="game-time-none" />
-            <label htmlFor="game-time-none">No time limit</label>
+          <div
+            className={`board-preview-wrapper ${gameType === 'classic' ? 'board-preview-selected' : ''}`}
+            onClick={() => {
+              setBoard(classicBoard);
+              setGameType('classic');
+              setRuneSpawns(0);
+            }}
+          >
+            <div className="board-preview-title">Classic</div>
+            <BoardPreview board={classicBoard} />
           </div>
-          <div>
-            <input type="radio" name="game-time" value="10" id="game-time-10" />
-            <label htmlFor="game-time-10">10 minutes</label>
+          <div
+            className={`board-preview-wrapper ${gameType === 'test' ? 'board-preview-selected' : ''}`}
+            onClick={() => {
+              setBoard(testBoard);
+              setGameType('test');
+              setRuneSpawns(1);
+            }}
+          >
+            <div className="board-preview-title">Scourge vs. Crimson</div>
+            <BoardPreview board={testBoard} />
           </div>
-          <div>
-            <input type="radio" name="game-time" value="5" id="game-time-5" />
-            <label htmlFor="game-time-5">5 minutes</label>
-          </div>
-          <div>
-            <input type="radio" name="game-time" value="3" id="game-time-3" />
-            <label htmlFor="game-time-3">3 minutes</label>
-          </div>
-          <div>
-            <input type="radio" name="game-time" value="1" id="game-time-1" />
-            <label htmlFor="game-time-1">1 minute</label>
+          <div
+            className={`board-preview-wrapper ${gameType === 'test-mirror' ? 'board-preview-selected' : ''}`}
+            onClick={() => {
+              setBoard(mirroredTestBoard);
+              setGameType('test-mirror');
+              setRuneSpawns(1);
+            }}
+          >
+            <div className="board-preview-title">Scourge vs. Crimson (Mirrored)</div>
+            <BoardPreview board={mirroredTestBoard} />
           </div>
         </div>
       </div>

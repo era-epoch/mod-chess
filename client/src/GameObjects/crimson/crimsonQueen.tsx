@@ -199,7 +199,7 @@ const CrimsonQueenAbilityDetail = (props: GamePieceDetailProps): JSX.Element => 
       dispatch(updateActiveAbility(''));
       dispatch(resetSelection()); // Since selecting the same square twice hides it
       dispatch(clearAOE());
-      dispatch(selectSquare({ row: selectedRow, col: selectedCol }));
+      dispatch(selectSquare({ row: selectedRow, col: selectedCol, player: player }));
     }
   };
   return (

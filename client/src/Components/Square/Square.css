@@ -100,7 +100,7 @@
 }
 
 .board-rune {
-  color: rgba(0, 255, 255, 0.75);
+  color: var(--rune-transparent);
   font-size: 2rem;
   z-index: 4;
 }

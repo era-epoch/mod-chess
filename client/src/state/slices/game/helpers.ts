@@ -212,29 +212,53 @@ export const spawnNewRunes = (state: GameState) => {
   }
 };
 
-export const isGameover = (gameState: GameState, player: PlayerColour): boolean => {
+export const gameover = (gameState: GameState, player: PlayerColour): boolean => {
+  let gameOver = false;
   const opponent: PlayerColour = (player + 1) % 2;
-  const validMoves: Move[] = [];
+  const opponentValidMoves: Move[] = [];
+  let opponentKingAlive = false;
+  let friendlyKingAlive = false;
   for (let i = 0; i < gameState.board.length; i++) {
     for (let j = 0; j < gameState.board[0].length; j++) {
-      if (gameState.board[i][j].piece.owner === opponent) {
-        const moveFunction = getMoveF(gameState.board[i][j].piece.identifier);
-        if (moveFunction) validMoves.push(...moveFunction(gameState.board[i][j].piece, i, j, gameState, true));
+      const piece = gameState.board[i][j].piece;
+      if (piece.owner === player && piece.type === PieceType.king) {
+        friendlyKingAlive = true;
+      }
+      if (piece.owner === opponent) {
+        if (piece.type === PieceType.king) {
+          opponentKingAlive = true;
+        }
+        const moveFunction = getMoveF(piece.identifier);
+        if (moveFunction) opponentValidMoves.push(...moveFunction(piece, i, j, gameState, true));
       }
     }
   }
-  return validMoves.length === 0;
-};
-
-export const handleGameover = (gameState: GameState, player: PlayerColour) => {
-  const opponent: PlayerColour = (player + 1) % 2;
-  if (kingInCheck(gameState, opponent)) {
-    // console.log('CHECKMATE');
-    gameState.winner = player;
-  } else {
-    // console.log('STALEMATE');
+  if (!opponentKingAlive && !friendlyKingAlive) {
+    // DRAW
     gameState.winner = PlayerColour.neutral;
+    gameOver = true;
+  } else if (!friendlyKingAlive) {
+    gameState.winner = opponent;
+    gameOver = true;
+  } else if (!opponentKingAlive) {
+    gameState.winner = player;
+    gameOver = true;
   }
+
+  let noRunes = false;
+  if (opponent === PlayerColour.dark) noRunes = gameState.darkRunes <= 0;
+  if (opponent === PlayerColour.light) noRunes = gameState.lightRunes <= 0;
+  if (opponentValidMoves.length === 0 && noRunes) {
+    gameOver = true;
+    if (kingInCheck(gameState, opponent)) {
+      // console.log('CHECKMATE');
+      gameState.winner = player;
+    } else {
+      // console.log('DRAW');
+      gameState.winner = PlayerColour.neutral;
+    }
+  }
+  return gameOver;
 };
 
 export const selectedPieceCanMove = (gameState: GameState, row: number, col: number) => {
@@ -288,13 +312,12 @@ export const handleEndOfTurn = (state: GameState, currentPlayer: PlayerColour) =
       state.board[i][j].squareStatuses = state.board[i][j].squareStatuses.filter((s) => s !== SquareStatus.QUICK_KILL);
     }
   }
+
+  endTurn(state);
+  state.turn++;
   // Check if any gameover conditions are met
-  if (isGameover(state, currentPlayer)) {
-    handleGameover(state, currentPlayer);
-  } else {
+  if (!gameover(state, currentPlayer)) {
     // If not, proceed to next turn
-    endTurn(state);
-    state.turn++;
     startTurn(state);
   }
   state.selectedRow = null;

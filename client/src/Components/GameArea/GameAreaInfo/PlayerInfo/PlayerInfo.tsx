@@ -1,4 +1,4 @@
-import { faChessPawn } from '@fortawesome/free-solid-svg-icons';
+import { faBolt, faChessPawn } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../../state/rootReducer';
@@ -21,7 +21,10 @@ const PlayerInfo = (props: Props): JSX.Element => {
         <FontAwesomeIcon icon={faChessPawn} />
       </div>
       <div className="player-name">{props.user.name}</div>
-      <div className="player-runes">Runes: {props.user.colour === PlayerColour.light ? lightRunes : darkRunes}</div>
+      <div className="player-runes">
+        <FontAwesomeIcon icon={faBolt} className="rune" />
+        {props.user.colour === PlayerColour.light ? lightRunes : darkRunes}
+      </div>
       <GraveyardYard graveyard={graveyard} />
     </div>
   );

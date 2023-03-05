@@ -15,6 +15,8 @@ body {
   --scourge-dark: darkgreen;
   --crimson-light: rgb(245, 146, 135);
   --crimson-dark: rgb(145, 39, 28);
+  --rune: rgb(10, 124, 130);
+  --rune-transparent: rgba(10, 124, 130, 0.75);
 }
 
 code {

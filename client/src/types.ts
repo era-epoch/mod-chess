@@ -156,6 +156,8 @@ export enum ResolutionEventType {
   AlacrityChain = 'AlacrityChain',
 }
 
+export type Board = SquareContents[][];
+
 export type MoveFunction = (piece: Piece, row: number, col: number, state: GameState, checkKing: boolean) => Move[];
 
 export type DeathFunction = (piece: Piece, row: number, col: number, state: GameState, capturer?: Piece) => void;

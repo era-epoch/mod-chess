@@ -87,7 +87,7 @@ const ScourgeKingDetail = (props: GamePieceDetailProps): JSX.Element => {
       dispatch(updateActiveAbility(''));
       dispatch(resetSelection()); // Since selecting the same square twice hides it
       dispatch(clearAOE());
-      dispatch(selectSquare({ row: selectedRow, col: selectedCol }));
+      dispatch(selectSquare({ row: selectedRow, col: selectedCol, player: player }));
     }
   };
   return (
@@ -101,7 +101,7 @@ const ScourgeKingDetail = (props: GamePieceDetailProps): JSX.Element => {
         <FontAwesomeIcon icon={faBolt} className="detail-icon rune" />
         <span className="detail-title">{getAbilityName(abilityId)}: </span>
         <span className="detail-info">
-          <span className="emph poison-text">Poison</span> every piece on the board.
+          (Quick) <span className="emph poison-text">Poison</span> every piece on the board.
         </span>
       </div>
       <div>
@@ -181,7 +181,7 @@ const Contagion: Ability = {
   id: 'contagion',
   name: 'Contagion',
   renderString: 'ability-contagion',
-  runeCost: 15,
+  runeCost: 20,
   quick: true,
   immediate: true,
   hoverF: contagionHoverF,

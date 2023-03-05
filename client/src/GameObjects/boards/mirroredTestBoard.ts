@@ -1,14 +1,20 @@
 import { SquareContents } from '../../types';
-import { BasicBishop } from '../basic/basicBishop';
-import { BasicKing } from '../basic/basicKing';
-import { BasicKnight } from '../basic/basicKnight';
-import { BasicPawn } from '../basic/basicPawn';
-import { BasicQueen } from '../basic/basicQueen';
-import { BasicRook } from '../basic/basicRook';
 import { EmptySquare } from '../basic/emptySquare';
+import { CrimsonBishop } from '../crimson/crimsonBishop';
+import { CrimsonKing } from '../crimson/crimsonKing';
+import { CrimsonKnight } from '../crimson/crimsonKnight';
+import { CrimsonPawn } from '../crimson/crimsonPawn';
+import { CrimsonQueen } from '../crimson/crimsonQueen';
+import { CrimsonRook } from '../crimson/crimsonRook';
 import { setUpSquare } from '../gameUtil';
+import { ScourgeBishop } from '../scourge/scourgeBishop';
+import { ScourgeKing } from '../scourge/scourgeKing';
+import { ScourgeKnight } from '../scourge/scourgeKnight';
+import { ScourgePawn } from '../scourge/scourgePawn';
+import { ScourgeQueen } from '../scourge/scourgeQueen';
+import { ScourgeRook } from '../scourge/scourgeRook';
 
-const localBoard: SquareContents[][] = [
+const mirroredTestBoard: SquareContents[][] = [
   [
     setUpSquare(0, 0, EmptySquare(), 2, 2, false),
     setUpSquare(0, 1, EmptySquare(), 2, 2, false),
@@ -23,26 +29,26 @@ const localBoard: SquareContents[][] = [
   ],
   [
     setUpSquare(1, 0, EmptySquare(), 2, 2, false),
-    setUpSquare(1, 1, BasicRook(), 1, 0, true),
-    setUpSquare(1, 2, BasicKnight(), 1, 0, true),
-    setUpSquare(1, 3, BasicBishop(), 1, 0, true),
-    setUpSquare(1, 4, BasicQueen(), 1, 0, true),
-    setUpSquare(1, 5, BasicKing(), 1, 0, true),
-    setUpSquare(1, 6, BasicBishop(), 1, 0, true),
-    setUpSquare(1, 7, BasicKnight(), 1, 0, true),
-    setUpSquare(1, 8, BasicRook(), 1, 0, true),
+    setUpSquare(1, 1, CrimsonRook(), 1, 0, true),
+    setUpSquare(1, 2, CrimsonKnight(), 1, 0, true),
+    setUpSquare(1, 3, CrimsonBishop(), 1, 0, true),
+    setUpSquare(1, 4, CrimsonQueen(), 1, 0, true),
+    setUpSquare(1, 5, CrimsonKing(), 1, 0, true),
+    setUpSquare(1, 6, CrimsonBishop(), 1, 0, true),
+    setUpSquare(1, 7, CrimsonKnight(), 1, 0, true),
+    setUpSquare(1, 8, CrimsonRook(), 1, 0, true),
     setUpSquare(1, 9, EmptySquare(), 2, 2, false),
   ],
   [
     setUpSquare(2, 0, EmptySquare(), 2, 2, false),
-    setUpSquare(2, 1, BasicPawn(), 1, 0, true),
-    setUpSquare(2, 2, BasicPawn(), 1, 0, true),
-    setUpSquare(2, 3, BasicPawn(), 1, 0, true),
-    setUpSquare(2, 4, BasicPawn(), 1, 0, true),
-    setUpSquare(2, 5, BasicPawn(), 1, 0, true),
-    setUpSquare(2, 6, BasicPawn(), 1, 0, true),
-    setUpSquare(2, 7, BasicPawn(), 1, 0, true),
-    setUpSquare(2, 8, BasicPawn(), 1, 0, true),
+    setUpSquare(2, 1, CrimsonPawn(), 1, 0, true),
+    setUpSquare(2, 2, CrimsonPawn(), 1, 0, true),
+    setUpSquare(2, 3, CrimsonPawn(), 1, 0, true),
+    setUpSquare(2, 4, CrimsonPawn(), 1, 0, true),
+    setUpSquare(2, 5, CrimsonPawn(), 1, 0, true),
+    setUpSquare(2, 6, CrimsonPawn(), 1, 0, true),
+    setUpSquare(2, 7, CrimsonPawn(), 1, 0, true),
+    setUpSquare(2, 8, CrimsonPawn(), 1, 0, true),
     setUpSquare(2, 9, EmptySquare(), 2, 2, false),
   ],
   [
@@ -95,26 +101,26 @@ const localBoard: SquareContents[][] = [
   ],
   [
     setUpSquare(7, 0, EmptySquare(), 2, 2, false),
-    setUpSquare(7, 1, BasicPawn(), 0, 1, true),
-    setUpSquare(7, 2, BasicPawn(), 0, 1, true),
-    setUpSquare(7, 3, BasicPawn(), 0, 1, true),
-    setUpSquare(7, 4, BasicPawn(), 0, 1, true),
-    setUpSquare(7, 5, BasicPawn(), 0, 1, true),
-    setUpSquare(7, 6, BasicPawn(), 0, 1, true),
-    setUpSquare(7, 7, BasicPawn(), 0, 1, true),
-    setUpSquare(7, 8, BasicPawn(), 0, 1, true),
+    setUpSquare(7, 1, ScourgePawn(), 0, 1, true),
+    setUpSquare(7, 2, ScourgePawn(), 0, 1, true),
+    setUpSquare(7, 3, ScourgePawn(), 0, 1, true),
+    setUpSquare(7, 4, ScourgePawn(), 0, 1, true),
+    setUpSquare(7, 5, ScourgePawn(), 0, 1, true),
+    setUpSquare(7, 6, ScourgePawn(), 0, 1, true),
+    setUpSquare(7, 7, ScourgePawn(), 0, 1, true),
+    setUpSquare(7, 8, ScourgePawn(), 0, 1, true),
     setUpSquare(7, 9, EmptySquare(), 2, 2, false),
   ],
   [
     setUpSquare(8, 0, EmptySquare(), 2, 2, false),
-    setUpSquare(8, 1, BasicRook(), 0, 1, true),
-    setUpSquare(8, 2, BasicKnight(), 0, 1, true),
-    setUpSquare(8, 3, BasicBishop(), 0, 1, true),
-    setUpSquare(8, 4, BasicQueen(), 0, 1, true),
-    setUpSquare(8, 5, BasicKing(), 0, 1, true),
-    setUpSquare(8, 6, BasicBishop(), 0, 1, true),
-    setUpSquare(8, 7, BasicKnight(), 0, 1, true),
-    setUpSquare(8, 8, BasicRook(), 0, 1, true),
+    setUpSquare(8, 1, ScourgeRook(), 0, 1, true),
+    setUpSquare(8, 2, ScourgeKnight(), 0, 1, true),
+    setUpSquare(8, 3, ScourgeBishop(), 0, 1, true),
+    setUpSquare(8, 4, ScourgeQueen(), 0, 1, true),
+    setUpSquare(8, 5, ScourgeKing(), 0, 1, true),
+    setUpSquare(8, 6, ScourgeBishop(), 0, 1, true),
+    setUpSquare(8, 7, ScourgeKnight(), 0, 1, true),
+    setUpSquare(8, 8, ScourgeRook(), 0, 1, true),
     setUpSquare(8, 9, EmptySquare(), 2, 2, false),
   ],
   [
@@ -131,4 +137,4 @@ const localBoard: SquareContents[][] = [
   ],
 ];
 
-export default localBoard;
+export default mirroredTestBoard;
