@@ -1,4 +1,4 @@
-ModChess (final name TBD) is a chess-based project built using React+Redux and Express. Play classic chess as well as fun variations! Craft unique strategies using new sets of pieces, each with their own interesting mechanics.
+ReactChess (final name TBD) is a chess-based project built using React+Redux and Express. Play classic chess as well as fun variations! Craft unique strategies using new sets of pieces, each with their own interesting mechanics.
 
 This project is not currently hosted online, but you can download the source code and play locally (see instructions in the next section).
 
